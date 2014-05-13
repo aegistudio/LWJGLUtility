@@ -1,0 +1,1 @@
+This is a utility for LWJGL developed by net.aegistudio. Plz refer to this repository while distributing it. The copyright of LWJGL belongs to LWJGL developers while ALL source file in this repository belongs to net.aegistudio.
