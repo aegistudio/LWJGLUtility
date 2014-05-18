@@ -7,12 +7,12 @@ public class GraphicPlainCanvas extends Canvas
 	private final int canvaswidth, canvasheight;
 	private final float refreshcolorred, refreshcolorgreen, refreshcolorblue, refreshcoloralpha;
 	
-	public GraphicPlainCanvas(int canvaswidth, int canvasheight) throws GraphicIllegalStateException
+	public GraphicPlainCanvas(int canvaswidth, int canvasheight)
 	{
 		this(canvaswidth, canvasheight, 0.0f, 0.0f, 0.0f, 0.0f);
 	}
 	
-	public GraphicPlainCanvas(int canvaswidth, int canvasheight, float refreshcolorred, float refreshcolorblue, float refreshcolorgreen, float refreshcoloralpha) throws GraphicIllegalStateException
+	public GraphicPlainCanvas(int canvaswidth, int canvasheight, float refreshcolorred, float refreshcolorblue, float refreshcolorgreen, float refreshcoloralpha)
 	{
 		super();
 		
@@ -26,19 +26,19 @@ public class GraphicPlainCanvas extends Canvas
 	}
 	
 	@Override
-	public void onInitialize() throws GraphicIllegalStateException
+	public void onInitialize(Canvas canvas) throws GraphicIllegalStateException
 	{
-		super.onInitialize();
+		super.onInitialize(canvas);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, this.canvaswidth, 0, this.canvasheight, -1, 1);
 	}
 	
 	@Override
-	public void onRefresh() throws GraphicIllegalStateException
+	public void onRefresh(Canvas canvas) throws GraphicIllegalStateException
 	{
 		GL11.glClearColor(this.refreshcolorred, this.refreshcolorblue, this.refreshcolorgreen, this.refreshcoloralpha);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		super.onRefresh();
+		super.onRefresh(canvas);
 	}
 }

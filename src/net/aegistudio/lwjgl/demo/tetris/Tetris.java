@@ -57,7 +57,7 @@ public class Tetris implements InputEventListener
 		synchronized(this.tetris)
 		{
 			this.currentgameblock_left.settetrisblock(false);
-
+			
 			if(this.keyboard_a == inputeventmonitor) this.currentgameblock_left.moveleft();
 			if(this.keyboard_d == inputeventmonitor) this.currentgameblock_left.moveright();
 			if(this.keyboard_s == inputeventmonitor) while(this.currentgameblock_left.movedownward());
@@ -104,7 +104,7 @@ public class Tetris implements InputEventListener
 	
 	public void onInitialize() throws Exception
 	{
-		this.tetris_canvas.onInitialize();
+		this.tetris_canvas.onInitialize(null);
 		this.tetris_canvas.registerDrawable(new TetrisColor(Math.random(),Math.random(),Math.random()));
 		
 		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1));
@@ -143,7 +143,7 @@ public class Tetris implements InputEventListener
 	
 	public void onRefresh() throws Exception
 	{
-		this.tetris_canvas.onRefresh();
+		this.tetris_canvas.onRefresh(null);
 		
 		Display.update();
 		Display.sync(60);
@@ -151,7 +151,7 @@ public class Tetris implements InputEventListener
 	
 	public void onTerminate() throws Exception
 	{
-		this.tetris_canvas.onTerminate();
+		this.tetris_canvas.onTerminate(null);
 		this.keyboard_w.stopInputEventMonitor();
 		this.keyboard_s.stopInputEventMonitor();
 		this.keyboard_a.stopInputEventMonitor();
