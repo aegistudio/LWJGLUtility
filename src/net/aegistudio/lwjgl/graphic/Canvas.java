@@ -35,13 +35,21 @@ public abstract class Canvas implements Drawable
 	public void onRefresh(Canvas canvas) throws GraphicIllegalStateException
 	{
 		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not refresh canvas, the lwjgl OpenGL context has not yet been created.");
-		for(int i = 0; i < this.drawable.size(); i++) this.drawable.get(i).onRefresh(this);
+		synchronized(this.drawable)
+		{
+			int drawablesize = this.drawable.size();
+			for(int i = 0; i < drawablesize; i++) this.drawable.get(i).onRefresh(this);
+		}
 	}
 	
 	public void onTerminate(Canvas canvas) throws GraphicIllegalStateException
 	{
 		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not terminate canvas, the lwjgl OpenGL context has not yet been created.");
-		for(int i = 0; i < this.drawable.size(); i++) this.drawable.get(i).onTerminate(this);
+		synchronized(this.drawable)
+		{
+			int drawablesize = this.drawable.size();
+			for(int i = 0; i < drawablesize; i++) this.drawable.get(i).onTerminate(this);
+		}
 	}
 	
 }
