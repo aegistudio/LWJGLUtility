@@ -1,6 +1,5 @@
 package net.aegistudio.lwjgl.demo.tetris;
 
-import org.lwjgl.examples.spaceinvaders.Texture;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -9,13 +8,12 @@ import org.lwjgl.opengl.GL11;
 import net.aegistudio.lwjgl.graphic.*;
 import net.aegistudio.lwjgl.input.*;
 import net.aegistudio.lwjgl.input.keyboard.KeyboardStatusEventMonitor;
-import net.aegistudio.lwjgl.util.image.Image;
 import net.aegistudio.lwjgl.util.image.ImageRGBA;
-import net.aegistudio.lwjgl.util.image.ImageUtils;
 import net.aegistudio.lwjgl.util.texture.ImageTexture;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -30,6 +28,7 @@ public class Tetris implements InputEventListener
 	private final KeyboardStatusEventMonitor keyboard_up, keyboard_down, keyboard_left, keyboard_right;
 	
 	private Block currentgameblock_left, currentgameblock_right;
+	private Random random;
 	
 	public Tetris(int width, int height, int length) throws Exception
 	{
@@ -51,6 +50,8 @@ public class Tetris implements InputEventListener
 		this.keyboard_down = new KeyboardStatusEventMonitor(this, Keyboard.getKeyIndex("DOWN"));
 		this.keyboard_left = new KeyboardStatusEventMonitor(this, Keyboard.getKeyIndex("LEFT"));
 		this.keyboard_right = new KeyboardStatusEventMonitor(this, Keyboard.getKeyIndex("RIGHT"));
+		
+		this.random = new Random(System.currentTimeMillis());
 	}
 	
 	@Override
@@ -113,7 +114,7 @@ public class Tetris implements InputEventListener
 	public void onInitialize() throws Exception
 	{
 		this.tetris_canvas.onInitialize(null);
-		this.tetris_canvas.registerDrawable(new TetrisColor(Math.random(),Math.random(),Math.random()));
+		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		
 		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1));
 		for(int i = 0; i < this.tetris_height; i++)
@@ -122,7 +123,7 @@ public class Tetris implements InputEventListener
 			this.tetris_canvas.registerDrawable(new TetrisBlock(this, this.tetris_width, i));
 		}
 		
-		this.tetris_canvas.registerDrawable(new TetrisColor(Math.random(),Math.random(),Math.random()));
+		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		for(int i = 0; i < this.tetris_width; i++) for(int j = 0; j < this.tetris_height; j++) this.tetris_canvas.registerDrawable(new TetrisGameBlock(this, i, j));
 		
 		this.keyboard_w.startInputEventMonitor();
@@ -194,9 +195,9 @@ public class Tetris implements InputEventListener
 	
 	public Block pickupBlockRandomly(int positionx, int positiony)
 	{
-		int randomizedindex = (int)(7 * Math.random());
-		int randomizedorientation = (int)(4 * Math.random());
-		boolean randomboolean = Math.random() > 0.5;
+		int randomizedindex = random.nextInt(7);
+		int randomizedorientation = random.nextInt(4);
+		boolean randomboolean = random.nextBoolean();
 		switch(randomizedindex)
 		{
 			case 0: return new SShapedBlock(this, positionx, positiony, randomboolean);

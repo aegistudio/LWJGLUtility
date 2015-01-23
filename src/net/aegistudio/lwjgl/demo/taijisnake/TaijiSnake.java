@@ -1,5 +1,7 @@
 package net.aegistudio.lwjgl.demo.taijisnake;
 
+import java.util.Random;
+
 import net.aegistudio.lwjgl.graphic.Canvas;
 
 public class TaijiSnake extends Canvas
@@ -9,6 +11,7 @@ public class TaijiSnake extends Canvas
 	private TaijiSnakeBody head;
 	private TaijiSnakeBody food;
 	private boolean turningprotection;
+	private Random random;
 	
 	public TaijiSnake(TaijiSnakeGame taijisnake, TaijiSnakeOrientation orientation) throws Exception
 	{
@@ -16,6 +19,7 @@ public class TaijiSnake extends Canvas
 		this.taijisnake = taijisnake;
 		this.orientation = orientation;
 		this.turningprotection = false;
+		random = new Random(System.currentTimeMillis());
 	}
 	
 	public void onInitialize(Canvas canvas, int xaxis, int yaxis, int length) throws Exception
@@ -42,7 +46,7 @@ public class TaijiSnake extends Canvas
 		while(shouldfindnextfood)
 		{
 			shouldfindnextfood = false;
-			this.food = new TaijiSnakeBody(this.taijisnake, (int)(plainsize * Math.random()), (int)(plainsize * Math.random()));
+			this.food = new TaijiSnakeBody(this.taijisnake, random.nextInt(plainsize), random.nextInt(plainsize));
 			for(TaijiSnakeBody snakebody = this.head; snakebody !=null; snakebody = snakebody.getSnakeNextComponent()) if(snakebody.hasSnakeHeadCollided(this.food))
 			{
 				shouldfindnextfood = true;

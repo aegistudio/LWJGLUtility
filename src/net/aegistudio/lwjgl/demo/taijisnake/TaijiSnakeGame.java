@@ -5,6 +5,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 
 import net.aegistudio.lwjgl.input.InputEventException;
 import net.aegistudio.lwjgl.input.InputEventListener;
@@ -168,6 +169,8 @@ public class TaijiSnakeGame implements InputEventListener
 		Display.setTitle("TaijiSnake");
 		Display.create();
 		Display.setVSyncEnabled(true);
+		
+		GL11.glEnable(GL13.GL_MULTISAMPLE);
 		
 		taijisnake.onInitialize();
 		while(!Display.isCloseRequested() && !taijisnake.hasSnakeGameOver()) taijisnake.onRefresh();
