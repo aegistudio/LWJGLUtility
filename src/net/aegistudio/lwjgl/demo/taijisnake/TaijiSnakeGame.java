@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import net.aegistudio.lwjgl.input.InputEventException;
 import net.aegistudio.lwjgl.input.InputEventListener;

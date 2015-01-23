@@ -1,5 +1,6 @@
 package net.aegistudio.lwjgl.demo.tetris;
 
+import org.lwjgl.examples.spaceinvaders.Texture;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -8,8 +9,15 @@ import org.lwjgl.opengl.GL11;
 import net.aegistudio.lwjgl.graphic.*;
 import net.aegistudio.lwjgl.input.*;
 import net.aegistudio.lwjgl.input.keyboard.KeyboardStatusEventMonitor;
+import net.aegistudio.lwjgl.util.image.Image;
+import net.aegistudio.lwjgl.util.image.ImageRGBA;
+import net.aegistudio.lwjgl.util.image.ImageUtils;
+import net.aegistudio.lwjgl.util.texture.ImageTexture;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class Tetris implements InputEventListener
 {
@@ -231,6 +239,8 @@ public class Tetris implements InputEventListener
 		}
 	}
 	
+	public static ImageTexture blockTexture = null;
+	
 	@SuppressWarnings("deprecation")
 	public static void main(String[] arguments) throws Exception
 	{
@@ -244,6 +254,22 @@ public class Tetris implements InputEventListener
 		Display.setTitle("Tetris");
 		
 		Display.create();
+
+		try
+		{
+			blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(new File("tetris_block.png"))))
+			{
+				protected void settingTextureEnvironments()
+				{
+					GL11.glTexEnvf(super.texTarget, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MULT);
+				}
+			};
+			blockTexture.create();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 		TetrisInvoker tetrisinvoker = new TetrisInvoker(tetris, refreshrate);
 		tetrisinvoker.start();
@@ -364,12 +390,26 @@ class TetrisBlock implements Drawable
 		int beginx = (this.x + 1) * length;
 		int beginy = (this.y + 1) * length;
 		
+		if(Tetris.blockTexture != null) Tetris.blockTexture.bind();
+		
 		GL11.glBegin(GL11.GL_QUADS);
+		if(Tetris.blockTexture == null)
+		{
 			GL11.glVertex2i(beginx, beginy);
 			GL11.glVertex2i(beginx, beginy+length);
 			GL11.glVertex2i(beginx + length, beginy + length);
 			GL11.glVertex2i(beginx + length, beginy);
+		}
+		else
+		{
+			Tetris.blockTexture.addVertexWithST(beginx, beginy, 0, 0);
+			Tetris.blockTexture.addVertexWithST(beginx, beginy + length, 0, 1);
+			Tetris.blockTexture.addVertexWithST(beginx + length, beginy + length, 1, 1);
+			Tetris.blockTexture.addVertexWithST(beginx + length, beginy, 1, 0);
+		}
 		GL11.glEnd();
+		
+		if(Tetris.blockTexture != null) Tetris.blockTexture.bind();
 	}
 	
 	@Override

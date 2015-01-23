@@ -10,17 +10,28 @@ import net.aegistudio.lwjgl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.BufferHelper;
 import net.aegistudio.lwjgl.util.EnumDataType;
 import net.aegistudio.lwjgl.util.BufferHelper.BufferProcessor;
+import net.aegistudio.lwjgl.util.image.Image;
 
 public class ImageTexture
 {
-	private int textureId = 0;
-	private int pixelFormat;
-	private int pixelType;
-	private int width;
-	private int height;
-	private int texTarget;
+	protected int textureId = 0;
+	protected int pixelFormat;
+	protected int pixelType;
+	protected int width;
+	protected int height;
+	protected int texTarget;
 	
 	private ByteBuffer buffer;
+	
+	public ImageTexture(Image image, int texTarget)
+	{
+		this(image.getRasterData(), image.getPixelFormat(), image.getPixelType(), image.getWidth(), image.getHeight(), texTarget);
+	}
+	
+	public ImageTexture(Image image)
+	{
+		this(image, GL11.GL_TEXTURE_2D);
+	}
 	
 	public ImageTexture(Object texture, int pixelFormat, int pixelType, int width, int height, int texTarget)
 	{
