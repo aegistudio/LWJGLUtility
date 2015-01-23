@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import net.aegistudio.lwjgl.graphic.*;
 import net.aegistudio.lwjgl.input.*;
@@ -29,6 +30,8 @@ public class Tetris implements InputEventListener
 	
 	private Block currentgameblock_left, currentgameblock_right;
 	private Random random;
+	
+	public int score = 0;
 	
 	public Tetris(int width, int height, int length) throws Exception
 	{
@@ -116,15 +119,15 @@ public class Tetris implements InputEventListener
 		this.tetris_canvas.onInitialize(null);
 		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		
-		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1));
+		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1, Tetris.wallTexture));
 		for(int i = 0; i < this.tetris_height; i++)
 		{
-			this.tetris_canvas.registerDrawable(new TetrisBlock(this, -1, i));
-			this.tetris_canvas.registerDrawable(new TetrisBlock(this, this.tetris_width, i));
+			this.tetris_canvas.registerDrawable(new TetrisBlock(this, -1, i, Tetris.wallTexture));
+			this.tetris_canvas.registerDrawable(new TetrisBlock(this, this.tetris_width, i, Tetris.wallTexture));
 		}
 		
 		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
-		for(int i = 0; i < this.tetris_width; i++) for(int j = 0; j < this.tetris_height; j++) this.tetris_canvas.registerDrawable(new TetrisGameBlock(this, i, j));
+		for(int i = 0; i < this.tetris_width; i++) for(int j = 0; j < this.tetris_height; j++) this.tetris_canvas.registerDrawable(new TetrisGameBlock(this, i, j, Tetris.blockTexture));
 		
 		this.keyboard_w.startInputEventMonitor();
 		this.keyboard_s.startInputEventMonitor();
@@ -135,6 +138,8 @@ public class Tetris implements InputEventListener
 		this.keyboard_down.startInputEventMonitor();
 		this.keyboard_left.startInputEventMonitor();
 		this.keyboard_right.startInputEventMonitor();
+		
+		this.tetris_canvas.registerDrawable(drawBackground);
 	}
 	
 	public boolean isTetrisBlock(int x, int y)
@@ -153,10 +158,42 @@ public class Tetris implements InputEventListener
 	public void onRefresh() throws Exception
 	{
 		this.tetris_canvas.onRefresh(null);
-		
+		Display.setTitle(title + " - score: " + score);
 		Display.update();
 		Display.sync(60);
 	}
+	
+	public Drawable drawBackground = new Drawable()
+	{
+
+		@Override
+		public void onInitialize(Canvas canvas) throws GraphicIllegalStateException
+		{
+		}
+
+		@Override
+		public void onRefresh(Canvas canvas) throws GraphicIllegalStateException
+		{
+			if(backgroundTexture != null)
+			{
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+				backgroundTexture.bind();
+				GL11.glBegin(GL11.GL_QUADS);
+					backgroundTexture.addVertexWithST(0, 0, -0.1, 0, 0);
+					backgroundTexture.addVertexWithST(0, getWindowHeight(), -0.1, 0, tetris_height);
+					backgroundTexture.addVertexWithST(getWindowWidth(), getWindowHeight(), -0.1, tetris_width, tetris_height);
+					backgroundTexture.addVertexWithST(getWindowWidth(), 0, -0.1, tetris_width, 0);
+				GL11.glEnd();
+				backgroundTexture.unbind();
+			}
+		}
+
+		@Override
+		public void onTerminate(Canvas canvas) throws GraphicIllegalStateException
+		{
+		}
+		
+	};
 	
 	public void onTerminate() throws Exception
 	{
@@ -174,7 +211,14 @@ public class Tetris implements InputEventListener
 	
 	public boolean isGameOver()
 	{
-		if(this.isgameover) System.out.println("Game over, the stack inside your brain has run out of boundary, I think.");
+		if(this.isgameover) try
+		{
+			throw new StackOverflowError("It's not the program stack over flow, it's your brain!");
+		}
+		catch(Error e)
+		{
+			e.printStackTrace();
+		}
 		return this.isgameover;
 	}
 	
@@ -223,24 +267,32 @@ public class Tetris implements InputEventListener
 				boolean movedownward_left = this.currentgameblock_left.movedownward();
 				boolean movedownward_right = this.currentgameblock_right.movedownward();
 				
+				int erased = 0;
 				for(int i = 0; i < this.tetris_height; i++) while(this.tetris.refreshTetrisRow(i))
 				{
 						this.currentgameblock_left.movedownward();
 						this.currentgameblock_right.movedownward();	
 						System.out.println("Wow, you've erased a row!");
+						erased ++;
 				}
+				if(erased == 1) score += 1;
+				else if(erased == 2) score += 3;
+				else if(erased == 3) score += 6;
+				else score += erased << 2;
 				
 				this.currentgameblock_left.settetrisblock(true);
 				this.currentgameblock_right.settetrisblock(true);
 				
 				if(!movedownward_left) this.generateblock_left();
 				if(!movedownward_right) this.generateblock_right();
-				
 			}
 		}
 	}
 	
 	public static ImageTexture blockTexture = null;
+	public static ImageTexture wallTexture = null;
+	public static ImageTexture backgroundTexture = null;
+	public static final String title = "Tetricraft";
 	
 	@SuppressWarnings("deprecation")
 	public static void main(String[] arguments) throws Exception
@@ -250,22 +302,47 @@ public class Tetris implements InputEventListener
 		int blockwidth = (arguments.length >= 3)? Integer.parseInt(arguments[2]):20;
 		int refreshrate = (arguments.length >= 4)? Integer.parseInt(arguments[3]):100;
 		
+		ArrayList<File> blocks = new ArrayList<File>();
+		File dir = new File("textures");
+		File[] files = dir.listFiles();
+		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png"))
+			if(!file.getName().equals("dirt.png")) blocks.add(file);
+		
 		Tetris tetris = new Tetris(rowcount, columncount, blockwidth);
 		Display.setDisplayMode(new DisplayMode(tetris.getWindowWidth(), tetris.getWindowHeight()));
-		Display.setTitle("Tetris");
+		Display.setTitle(title);
 		
 		Display.create();
 
 		try
 		{
-			blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(new File("tetris_block.png"))))
+			
+			int candidated = tetris.random.nextInt(blocks.size());
+			wallTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(candidated))))
 			{
+				/*
 				protected void settingTextureEnvironments()
 				{
 					GL11.glTexEnvf(super.texTarget, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MULT);
 				}
+				*/
+			};
+			wallTexture.create();
+			blocks.remove(candidated);
+			
+			blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(tetris.random.nextInt(blocks.size())))))
+			{
+				/*
+				protected void settingTextureEnvironments()
+				{
+					GL11.glTexEnvf(super.texTarget, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MULT);
+				}
+				*/
 			};
 			blockTexture.create();
+			
+			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(new File(dir, "dirt.png"))));
+			backgroundTexture.create();
 		}
 		catch(Exception e)
 		{
@@ -353,9 +430,9 @@ class TetrisColor implements Drawable
 class TetrisGameBlock extends TetrisBlock
 {
 	
-	public TetrisGameBlock(Tetris tetris, int x, int y)
+	public TetrisGameBlock(Tetris tetris, int x, int y, ImageTexture texture)
 	{
-		super(tetris, x, y);
+		super(tetris, x, y, texture);
 	}
 	
 	@Override
@@ -371,12 +448,14 @@ class TetrisBlock implements Drawable
 	
 	protected final Tetris tetris;
 	protected final int x, y;
+	protected final ImageTexture texture;
 	
-	public TetrisBlock(Tetris tetris, int x, int y)
+	public TetrisBlock(Tetris tetris, int x, int y, ImageTexture texture)
 	{
 		this.tetris = tetris;
 		this.x = x;
 		this.y = y;
+		this.texture = texture;
 	}
 	
 	@Override
@@ -391,10 +470,10 @@ class TetrisBlock implements Drawable
 		int beginx = (this.x + 1) * length;
 		int beginy = (this.y + 1) * length;
 		
-		if(Tetris.blockTexture != null) Tetris.blockTexture.bind();
+		if(texture != null) texture.bind();
 		
 		GL11.glBegin(GL11.GL_QUADS);
-		if(Tetris.blockTexture == null)
+		if(texture == null)
 		{
 			GL11.glVertex2i(beginx, beginy);
 			GL11.glVertex2i(beginx, beginy+length);
@@ -403,14 +482,14 @@ class TetrisBlock implements Drawable
 		}
 		else
 		{
-			Tetris.blockTexture.addVertexWithST(beginx, beginy, 0, 0);
-			Tetris.blockTexture.addVertexWithST(beginx, beginy + length, 0, 1);
-			Tetris.blockTexture.addVertexWithST(beginx + length, beginy + length, 1, 1);
-			Tetris.blockTexture.addVertexWithST(beginx + length, beginy, 1, 0);
+			texture.addVertexWithST(beginx, beginy, 0, 0);
+			texture.addVertexWithST(beginx, beginy + length, 0, 1);
+			texture.addVertexWithST(beginx + length, beginy + length, 1, 1);
+			texture.addVertexWithST(beginx + length, beginy, 1, 0);
 		}
 		GL11.glEnd();
 		
-		if(Tetris.blockTexture != null) Tetris.blockTexture.bind();
+		if(texture != null) texture.bind();
 	}
 	
 	@Override
