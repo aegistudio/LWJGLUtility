@@ -16,7 +16,7 @@ import org.lwjgl.opengl.ARBVertexBufferObject;
 
 public class VertexBufferObject
 {
-	private int bufferId;
+	private int bufferId = 0;
 	
 	private final int bufferTarget;
 	private final int bufferUsage;
@@ -49,7 +49,6 @@ public class VertexBufferObject
 			processor.putBuffer(this.buffer, buffer, i);
 		this.buffer.flip();
 	}
-	
 	
 	private static final Map<EnumDataType, BufferProcessor> bufferTypeMap = new HashMap<EnumDataType, BufferProcessor>();
 	static
@@ -211,7 +210,7 @@ public class VertexBufferObject
 		if(this.bufferId == 0)
 		{
 			this.bufferId = ARBVertexBufferObject.glGenBuffersARB();
-			if(this.bufferId == 0) throw new RuntimeException("Fail to create space for the vertex buffer object!");
+			if(this.bufferId == 0) throw new BindingFailureException("Fail to create space for the vertex buffer object!");
 			
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, bufferId);
 			ARBVertexBufferObject.glBufferDataARB(bufferTarget, buffer, bufferUsage);
@@ -275,7 +274,10 @@ public class VertexBufferObject
 	 */
 	public void delete()
 	{
-		ARBVertexBufferObject.glDeleteBuffersARB(bufferId);
-		this.bufferId = 0;
+		if(this.bufferId != 0)
+		{
+			ARBVertexBufferObject.glDeleteBuffersARB(bufferId);
+			this.bufferId = 0;
+		}
 	}
 }

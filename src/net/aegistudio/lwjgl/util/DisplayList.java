@@ -30,7 +30,7 @@ public abstract class DisplayList
 		if(this.displayListId == 0)
 		{
 			this.displayListId = GL11.glGenLists(displayListRange);
-			if(this.displayListId == 0) throw new RuntimeException("Unable to allocate display list location!");
+			if(this.displayListId == 0) throw new BindingFailureException("Unable to allocate display list location!");
 			
 			for(int i = 0; i < this.displayListRange; i ++)
 			{
@@ -47,14 +47,17 @@ public abstract class DisplayList
 	public void call(int displayListIndex)
 	{
 		if(displayListIndex > this.displayListRange || displayListIndex < 0)
-			throw new RuntimeException("The display list index is out of permitted display list range!");
+			throw new IllegalArgumentException("The display list index is out of permitted display list range!");
 		if(this.displayListId != 0) GL11.glCallList(this.displayListId + displayListIndex);
 		else this.display(displayListIndex);
 	}
 	
 	public void delete()
 	{
-		GL11.glDeleteLists(displayListId, displayListRange);
-		displayListId = 0;
+		if(this.displayListId != 0)
+		{
+			GL11.glDeleteLists(displayListId, displayListRange);
+			displayListId = 0;
+		}
 	}
 }
