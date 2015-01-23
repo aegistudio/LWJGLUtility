@@ -12,13 +12,13 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-public class ShaderObject
+public class Shader
 {
 	private String glslSource;
 	private int glslShaderType;
 	private int glslShaderId;
 	
-	public ShaderObject(String glslSource, int shaderType)
+	public Shader(String glslSource, int shaderType)
 	{
 		this.glslSource = glslSource;
 		this.glslShaderType = shaderType;
@@ -70,7 +70,7 @@ public class ShaderObject
 				ARBShaderObjects.glGetObjectParameteriARB(glslObjectId, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
 	}
 	
-	public static ShaderObject createShaderFromSourceFile(File sourceFile, int shaderType) throws Exception
+	public static Shader createShaderFromSourceFile(File sourceFile, int shaderType) throws Exception
 	{
 		if(!sourceFile.exists()) throw new FileNotFoundException();
 		StringBuilder sb = new StringBuilder();
@@ -78,6 +78,6 @@ public class ShaderObject
 		String currentLine = null;
 		while((currentLine = buffReader.readLine()) != null) sb.append(currentLine).append('\n');
 		buffReader.close();
-		return new ShaderObject(new String(sb), shaderType);
+		return new Shader(new String(sb), shaderType);
 	}
 }

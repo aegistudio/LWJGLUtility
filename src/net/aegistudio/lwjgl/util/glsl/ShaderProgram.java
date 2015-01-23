@@ -8,17 +8,17 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-public class ShaderProgramObject
+public class ShaderProgram
 {
-	private ShaderObject[] attachments;
+	private Shader[] shaders;
 	private int shaderProgramId = 0;
 	
 	private HashMap<String, Integer> uniformVariables = new HashMap<String, Integer>();
 	private HashMap<String, Integer> attributeVariables = new HashMap<String, Integer>();
 	
-	public ShaderProgramObject(ShaderObject[] shaderObjects)
+	public ShaderProgram(Shader[] shaders)
 	{
-		this.attachments = shaderObjects;
+		this.shaders = shaders;
 	}
 	
 	public int create()
@@ -30,23 +30,23 @@ public class ShaderProgramObject
 			
 			try
 			{
-				for(ShaderObject shaderObject : attachments) if(shaderObject != null)
+				for(Shader shader : shaders) if(shader != null)
 				{
-					if(shaderObject.getShaderObjectId() == 0) shaderObject.create();
-					ARBShaderObjects.glAttachObjectARB(shaderProgramId, shaderObject.getShaderObjectId());
+					if(shader.getShaderObjectId() == 0) shader.create();
+					ARBShaderObjects.glAttachObjectARB(shaderProgramId, shader.getShaderObjectId());
 				}
 				
 				ARBShaderObjects.glLinkProgramARB(shaderProgramId);
 		        if(ARBShaderObjects.glGetObjectParameteriARB(shaderProgramId, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE)
 		        {
-		        	String failureInfo = ShaderObject.checkStatus(shaderProgramId);
+		        	String failureInfo = Shader.checkStatus(shaderProgramId);
 		        	throw new LinkFailureException("Unable to link shader objects, cause by: " + failureInfo);
 		        }
 		        
 		        ARBShaderObjects.glValidateProgramARB(shaderProgramId);
 		        if (ARBShaderObjects.glGetObjectParameteriARB(shaderProgramId, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE)
 		        {
-		        	String failureInfo = ShaderObject.checkStatus(shaderProgramId);
+		        	String failureInfo = Shader.checkStatus(shaderProgramId);
 		        	throw new ValidateFailureException("Unable to validate shader objects, cause by: " + failureInfo);
 		        }
 			}
@@ -73,8 +73,8 @@ public class ShaderProgramObject
 	
 	public void delete()
 	{
-		for(ShaderObject shaderObj : attachments) if(shaderObj != null)
-			ARBShaderObjects.glDetachObjectARB(shaderProgramId, shaderObj.getShaderObjectId());
+		for(Shader shader : shaders) if(shader != null)
+			ARBShaderObjects.glDetachObjectARB(shaderProgramId, shader.getShaderObjectId());
 		ARBShaderObjects.glDeleteObjectARB(shaderProgramId);
 		this.shaderProgramId = 0;
 	}

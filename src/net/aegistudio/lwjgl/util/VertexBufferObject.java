@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.util;
 
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
+
+import net.aegistudio.lwjgl.util.BufferHelper.BufferProcessor;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBVertexBufferObject;
@@ -44,161 +44,10 @@ public class VertexBufferObject
 		int arrayLength = Array.getLength(buffer);
 		this.buffer = BufferUtils.createByteBuffer(arrayLength * this.bufferType.getDataTypeSize());
 		
-		BufferProcessor processor = bufferTypeMap.get(this.bufferType);
+		BufferProcessor processor = BufferHelper.getBufferProcessor(this.bufferType);
 		for(int i = 0; i < arrayLength; i ++)
 			processor.putBuffer(this.buffer, buffer, i);
 		this.buffer.flip();
-	}
-	
-	private static final Map<EnumDataType, BufferProcessor> bufferTypeMap = new HashMap<EnumDataType, BufferProcessor>();
-	static
-	{
-		bufferTypeMap.put(EnumDataType.BYTE, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.put(Array.getByte(bufferArray, index));
-			}
-
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.put((Byte)obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.BYTE_WRAPPED, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.put((Byte) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.put((Byte) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.INT, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putInt(Array.getInt(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putInt((Integer) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.INT_WRAPPED, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putInt((Integer) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putInt((Integer) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.DOUBLE, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putDouble(Array.getDouble(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putDouble((Double) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.DOUBLE_WRAPPED, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putDouble((Double) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putDouble((Double) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.FLOAT, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putFloat(Array.getFloat(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putFloat((Float) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.FLOAT_WRAPPED, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putFloat((Float) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putFloat((Float) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.SHORT, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putShort(Array.getShort(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putShort((Short) obj);
-			}
-		});
-		
-		bufferTypeMap.put(EnumDataType.SHORT_WRAPPED, new BufferProcessor() {
-			@Override
-			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
-			{
-				buffer.putShort((Short) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putShort((Short) obj);
-			}
-		});
-		
-	}
-	
-	private interface BufferProcessor
-	{
-		public void putBuffer(ByteBuffer buffer, Object bufferArray, int index);
-		public void putSubBuffer(ByteBuffer subbuffer, Object obj);
 	}
 	
 	/**
@@ -224,7 +73,7 @@ public class VertexBufferObject
 	 */
 	public void bind()
 	{
-		if(bufferId == 0) throw new RuntimeException("You must create the buffer before binding it!");
+		if(bufferId == 0) throw new BindingFailureException("You must create the buffer before binding it!");
 		ARBVertexBufferObject.glBindBufferARB(bufferTarget, bufferId);
 	}
 	
@@ -233,7 +82,7 @@ public class VertexBufferObject
 	 */
 	public void unbind()
 	{
-		if(bufferId == 0) throw new RuntimeException("You must create the buffer before unbinding it!");
+		if(bufferId == 0) throw new BindingFailureException("You must create the buffer before unbinding it!");
 		ARBVertexBufferObject.glBindBufferARB(bufferTarget, 0);
 	}
 	
@@ -252,7 +101,7 @@ public class VertexBufferObject
 			if((EnumDataType.getDataType(obj.getClass()) == null) || (EnumDataType.getDataType(obj.getClass()).inferGLType() != this.bufferType.inferGLType()))
 				throw new IllegalArgumentException("Mismatch between buffer component type and the type of element to change!");
 			
-			bufferTypeMap.get(this.bufferType).putSubBuffer(subbuffer, obj);
+			BufferHelper.getBufferProcessor(this.bufferType).putSubBuffer(subbuffer, obj);
 			subbuffer.flip();
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, bufferId);
 			ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * this.bufferType.getDataTypeSize(), subbuffer);
