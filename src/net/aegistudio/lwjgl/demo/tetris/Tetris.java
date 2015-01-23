@@ -4,7 +4,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import net.aegistudio.lwjgl.graphic.*;
 import net.aegistudio.lwjgl.input.*;
@@ -208,7 +207,6 @@ public class Tetris implements InputEventListener
 		this.keyboard_right.stopInputEventMonitor();
 	}
 	
-	
 	public boolean isGameOver()
 	{
 		if(this.isgameover) try
@@ -303,17 +301,16 @@ public class Tetris implements InputEventListener
 		int refreshrate = (arguments.length >= 4)? Integer.parseInt(arguments[3]):100;
 		
 		ArrayList<File> blocks = new ArrayList<File>();
-		File dir = new File("textures");
+		File dir = new File("res");
 		File[] files = dir.listFiles();
-		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png"))
-			if(!file.getName().equals("dirt.png")) blocks.add(file);
+		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) blocks.add(file);
 		
 		Tetris tetris = new Tetris(rowcount, columncount, blockwidth);
 		Display.setDisplayMode(new DisplayMode(tetris.getWindowWidth(), tetris.getWindowHeight()));
 		Display.setTitle(title);
 		
 		Display.create();
-
+		
 		try
 		{
 			
@@ -341,7 +338,7 @@ public class Tetris implements InputEventListener
 			};
 			blockTexture.create();
 			
-			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(new File(dir, "dirt.png"))));
+			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(new File(new File(dir, "pics"), "dirt.png"))));
 			backgroundTexture.create();
 		}
 		catch(Exception e)
