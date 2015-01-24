@@ -301,9 +301,12 @@ public class Tetris implements InputEventListener
 		int refreshrate = (arguments.length >= 4)? Integer.parseInt(arguments[3]):100;
 		
 		ArrayList<File> blocks = new ArrayList<File>();
+		ArrayList<File> backgrounds = new ArrayList<File>();
 		File dir = new File("res");
 		File[] files = dir.listFiles();
 		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) blocks.add(file);
+		files = new File(dir, "back").listFiles();
+		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) backgrounds.add(file);
 		
 		Tetris tetris = new Tetris(rowcount, columncount, blockwidth);
 		Display.setDisplayMode(new DisplayMode(tetris.getWindowWidth(), tetris.getWindowHeight()));
@@ -338,7 +341,7 @@ public class Tetris implements InputEventListener
 			};
 			blockTexture.create();
 			
-			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(new File(new File(dir, "pics"), "dirt.png"))));
+			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(backgrounds.get(tetris.random.nextInt(backgrounds.size())))));
 			backgroundTexture.create();
 		}
 		catch(Exception e)
