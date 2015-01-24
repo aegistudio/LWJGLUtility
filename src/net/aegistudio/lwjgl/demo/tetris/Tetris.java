@@ -12,6 +12,7 @@ import net.aegistudio.lwjgl.util.image.ImageRGBA;
 import net.aegistudio.lwjgl.util.texture.ImageTexture;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -41,7 +42,39 @@ public class Tetris implements InputEventListener
 		
 		this.tetris = new TetrisSheet(this.tetris_height, this.tetris_width);
 		
-		this.tetris_canvas = new GraphicPlainCanvas(this.getWindowWidth(), this.getWindowHeight());
+		this.tetris_canvas = new GraphicPlainCanvas(this.getWindowWidth(), this.getWindowHeight())
+		{
+			public void onInit(Canvas canvas)
+			{
+				super.onInit(canvas);
+				
+				ArrayList<File> blocks = new ArrayList<File>();
+				ArrayList<File> backgrounds = new ArrayList<File>();
+				File dir = new File("res");
+				File[] files = dir.listFiles();
+				for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) blocks.add(file);
+				files = new File(dir, "back").listFiles();
+				for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) backgrounds.add(file);
+				
+				try
+				{
+					int candidated = random.nextInt(blocks.size());
+					wallTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(candidated))));
+					wallTexture.create();
+					blocks.remove(candidated);
+					
+					blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(random.nextInt(blocks.size())))));
+					blockTexture.create();
+					backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(backgrounds.get(random.nextInt(backgrounds.size())))));
+					backgroundTexture.create();
+				}
+				catch(IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+			}
+		};
 		
 		this.keyboard_w = new KeyboardStatusEventMonitor(this, Keyboard.getKeyIndex("W"));
 		this.keyboard_s = new KeyboardStatusEventMonitor(this, Keyboard.getKeyIndex("S"));
@@ -300,38 +333,11 @@ public class Tetris implements InputEventListener
 		int blockwidth = (arguments.length >= 3)? Integer.parseInt(arguments[2]):20;
 		int refreshrate = (arguments.length >= 4)? Integer.parseInt(arguments[3]):100;
 		
-		ArrayList<File> blocks = new ArrayList<File>();
-		ArrayList<File> backgrounds = new ArrayList<File>();
-		File dir = new File("res");
-		File[] files = dir.listFiles();
-		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) blocks.add(file);
-		files = new File(dir, "back").listFiles();
-		for(File file : files) if(file.isFile()) if(file.getName().endsWith(".png")) backgrounds.add(file);
-		
 		Tetris tetris = new Tetris(rowcount, columncount, blockwidth);
 		Display.setDisplayMode(new DisplayMode(tetris.getWindowWidth(), tetris.getWindowHeight()));
 		Display.setTitle(title);
 		
 		Display.create();
-		
-		try
-		{
-			
-			int candidated = tetris.random.nextInt(blocks.size());
-			wallTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(candidated))));
-			wallTexture.create();
-			blocks.remove(candidated);
-			
-			blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(tetris.random.nextInt(blocks.size())))));
-			blockTexture.create();
-			
-			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(backgrounds.get(tetris.random.nextInt(backgrounds.size())))));
-			backgroundTexture.create();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 		
 		TetrisInvoker tetrisinvoker = new TetrisInvoker(tetris, refreshrate);
 		tetrisinvoker.start();
