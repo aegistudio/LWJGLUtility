@@ -5,7 +5,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
 
 import net.aegistudio.lwjgl.input.InputEventException;
 import net.aegistudio.lwjgl.input.InputEventListener;
@@ -115,7 +114,7 @@ public class TaijiSnakeGame implements InputEventListener
 	
 	public void onInitialize() throws Exception
 	{
-		this.taijisnakecanvas.onInitialize(null);
+		this.taijisnakecanvas.onInit(null);
 		this.taijisnakecanvas.registerDrawable(new TaijiSnakePlayground(this));
 		this.taijisnakecanvas.registerDrawable(this.taijisnake);
 		
@@ -131,7 +130,7 @@ public class TaijiSnakeGame implements InputEventListener
 	
 	public void onRefresh() throws Exception
 	{
-		this.taijisnakecanvas.onRefresh(null);
+		this.taijisnakecanvas.onDraw(null);
 		Display.update();
 		Display.sync(60);
 	}
@@ -139,7 +138,7 @@ public class TaijiSnakeGame implements InputEventListener
 	@SuppressWarnings("deprecation")
 	public void onTerminate() throws Exception
 	{
-		this.taijisnakecanvas.onTerminate(null);
+		this.taijisnakecanvas.onDestroy(null);
 		this.taijisnakeinvoker.stop();
 		
 		this.UP_ARROW.stopInputEventMonitor();
@@ -191,13 +190,13 @@ class TaijiSnakePlayground implements Drawable
 	}
 	
 	@Override
-	public void onInitialize(Canvas canvas)
+	public void onInit(Canvas canvas)
 	{
 		
 	}
 	
 	@Override
-	public void onRefresh(Canvas canvas)
+	public void onDraw(Canvas canvas)
 	{
 		int plainsize = this.taijisnake.getChessPlainSize();
 		GL11.glColor3f(1.0f, 1.0f, 1.0f);
@@ -215,7 +214,7 @@ class TaijiSnakePlayground implements Drawable
 	}
 	
 	@Override
-	public void onTerminate(Canvas canvas)
+	public void onDestroy(Canvas canvas)
 	{
 		
 	}

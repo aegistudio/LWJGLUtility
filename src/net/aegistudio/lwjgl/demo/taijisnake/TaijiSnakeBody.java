@@ -42,13 +42,13 @@ public class TaijiSnakeBody implements Drawable
 	}
 	
 	@Override
-	public void onInitialize(Canvas canvas)
+	public void onInit(Canvas canvas)
 	{
 		
 	}
 	
 	@Override
-	public void onRefresh(Canvas canvas)
+	public void onDraw(Canvas canvas)
 	{
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glVertex2d(this.taijisnake.getPositionXByAxis(xaxis, yaxis), this.taijisnake.getPositionYByAxis(xaxis, yaxis));
@@ -59,7 +59,7 @@ public class TaijiSnakeBody implements Drawable
 	}
 	
 	@Override
-	public void onTerminate(Canvas canvas)
+	public void onDestroy(Canvas canvas)
 	{
 		
 	}

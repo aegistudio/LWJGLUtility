@@ -24,7 +24,7 @@ public class TaijiSnake extends Canvas
 	
 	public void onInitialize(Canvas canvas, int xaxis, int yaxis, int length) throws Exception
 	{
-		super.onInitialize(canvas);
+	//	super.onInit(canvas);
 		
 		int deltax = this.orientation.getSnakeDeltaX();
 		int deltay = this.orientation.getSnakeDeltaY();
@@ -138,6 +138,12 @@ public class TaijiSnake extends Canvas
 			if(this == LEFT || this == RIGHT) if(previousorientation == UP || previousorientation == DOWN) return previousorientation;
 			return this;
 		}
+	}
+
+	@Override
+	public void onInit(Canvas canvas)
+	{
+		
 	}
 	
 }

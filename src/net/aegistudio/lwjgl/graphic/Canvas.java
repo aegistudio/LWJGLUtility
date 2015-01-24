@@ -1,49 +1,59 @@
 package net.aegistudio.lwjgl.graphic;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import org.lwjgl.opengl.Display;
+import java.util.Queue;
 
 public abstract class Canvas implements Drawable
 {
 	
+	protected final Queue<Drawable> pendingDrawables;
 	protected final ArrayList<Drawable> drawable;
 	
 	public Canvas()
 	{
 		this.drawable = new ArrayList<Drawable>();
+		this.pendingDrawables = new ArrayDeque<Drawable>();
 	}
 	
-	public void onInitialize(Canvas canvas) throws GraphicIllegalStateException
+	public synchronized boolean registerDrawable(Drawable drawable)
 	{
-		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not initialize canvas, the lwjgl OpenGL context has not yet been created.");;
+		if(drawable == null) return false;
+		if(this.drawable.contains(drawable) || this.pendingDrawables.contains(drawable)) return false;
+		this.pendingDrawables.add(drawable);
+		return true;
 	}
 	
-	public synchronized boolean registerDrawable(Drawable drawable) throws GraphicIllegalStateException
+	public synchronized boolean unregisterDrawable(Drawable drawable)
 	{
-		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not register drawable, the lwjgl OpenGL context has not yet been created.");
-		drawable.onInitialize(this);
-		return this.drawable.add(drawable);
+		if(drawable == null) return false;
+		if(this.drawable.contains(drawable))
+		{
+			this.drawable.remove(drawable);
+			drawable.onDestroy(this);
+			return true;
+		}
+		else if(this.pendingDrawables.contains(drawable))
+		{
+			this.pendingDrawables.remove();
+			return true;
+		}
+		else return false;
 	}
 	
-	public synchronized boolean unregisterDrawable(Drawable drawable) throws GraphicIllegalStateException
+	public synchronized void onDraw(Canvas canvas)
 	{
-		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not unregister drawable, the lwjgl OpenGL context has not yet been created.");
-		drawable.onTerminate(this);
-		return this.drawable.remove(drawable);
+		while(!this.pendingDrawables.isEmpty())
+		{
+			Drawable pending = this.pendingDrawables.remove();
+			pending.onInit(this);
+			drawable.add(pending);
+		}
+		for(Drawable drawable : drawable) drawable.onDraw(this);
 	}
 	
-	public synchronized void onRefresh(Canvas canvas) throws GraphicIllegalStateException
+	public synchronized void onDestroy(Canvas canvas)
 	{
-		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not refresh canvas, the lwjgl OpenGL context has not yet been created.");
-		int drawablesize = this.drawable.size();
-		for(int i = 0; i < drawablesize; i++) this.drawable.get(i).onRefresh(this);
+		for(Drawable drawable : drawable) drawable.onDestroy(this);
 	}
-	
-	public synchronized void onTerminate(Canvas canvas) throws GraphicIllegalStateException
-	{
-		if(!Display.isCreated()) throw new GraphicIllegalStateException("Could not terminate canvas, the lwjgl OpenGL context has not yet been created.");
-		int drawablesize = this.drawable.size();
-		for(int i = 0; i < drawablesize; i++) this.drawable.get(i).onTerminate(this);
-	}
-	
 }

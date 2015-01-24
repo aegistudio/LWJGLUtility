@@ -115,7 +115,7 @@ public class Tetris implements InputEventListener
 	
 	public void onInitialize() throws Exception
 	{
-		this.tetris_canvas.onInitialize(null);
+		this.tetris_canvas.onInit(null);
 		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		
 		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1, Tetris.wallTexture));
@@ -156,7 +156,7 @@ public class Tetris implements InputEventListener
 	
 	public void onRefresh() throws Exception
 	{
-		this.tetris_canvas.onRefresh(null);
+		this.tetris_canvas.onDraw(null);
 		Display.setTitle(title + " - score: " + score);
 		Display.update();
 		Display.sync(60);
@@ -166,12 +166,12 @@ public class Tetris implements InputEventListener
 	{
 
 		@Override
-		public void onInitialize(Canvas canvas) throws GraphicIllegalStateException
+		public void onInit(Canvas canvas)
 		{
 		}
 
 		@Override
-		public void onRefresh(Canvas canvas) throws GraphicIllegalStateException
+		public void onDraw(Canvas canvas)
 		{
 			if(backgroundTexture != null)
 			{
@@ -188,7 +188,7 @@ public class Tetris implements InputEventListener
 		}
 
 		@Override
-		public void onTerminate(Canvas canvas) throws GraphicIllegalStateException
+		public void onDestroy(Canvas canvas)
 		{
 		}
 		
@@ -196,7 +196,7 @@ public class Tetris implements InputEventListener
 	
 	public void onTerminate() throws Exception
 	{
-		this.tetris_canvas.onTerminate(null);
+		this.tetris_canvas.onDestroy(null);
 		this.keyboard_w.stopInputEventMonitor();
 		this.keyboard_s.stopInputEventMonitor();
 		this.keyboard_a.stopInputEventMonitor();
@@ -318,27 +318,11 @@ public class Tetris implements InputEventListener
 		{
 			
 			int candidated = tetris.random.nextInt(blocks.size());
-			wallTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(candidated))))
-			{
-				/*
-				protected void settingTextureEnvironments()
-				{
-					GL11.glTexEnvf(super.texTarget, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MULT);
-				}
-				*/
-			};
+			wallTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(candidated))));
 			wallTexture.create();
 			blocks.remove(candidated);
 			
-			blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(tetris.random.nextInt(blocks.size())))))
-			{
-				/*
-				protected void settingTextureEnvironments()
-				{
-					GL11.glTexEnvf(super.texTarget, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MULT);
-				}
-				*/
-			};
+			blockTexture = new ImageTexture(new ImageRGBA(ImageIO.read(blocks.get(tetris.random.nextInt(blocks.size())))));
 			blockTexture.create();
 			
 			backgroundTexture = new ImageTexture(new ImageRGBA(ImageIO.read(backgrounds.get(tetris.random.nextInt(backgrounds.size())))));
@@ -408,19 +392,19 @@ class TetrisColor implements Drawable
 	}
 	
 	@Override
-	public void onInitialize(Canvas canvas)
+	public void onInit(Canvas canvas)
 	{
 		
 	}
 	
 	@Override
-	public void onRefresh(Canvas canvas)
+	public void onDraw(Canvas canvas)
 	{
 		GL11.glColor3d(this.red, this.green, this.blue);
 	}
 	
 	@Override
-	public void onTerminate(Canvas canvas)
+	public void onDestroy(Canvas canvas)
 	{
 		
 	}
@@ -436,9 +420,9 @@ class TetrisGameBlock extends TetrisBlock
 	}
 	
 	@Override
-	public void onRefresh(Canvas canvas)
+	public void onDraw(Canvas canvas)
 	{
-		if(super.tetris.isTetrisBlock(super.x, super.y)) super.onRefresh(canvas);
+		if(super.tetris.isTetrisBlock(super.x, super.y)) super.onDraw(canvas);
 	}
 	
 }
@@ -459,12 +443,12 @@ class TetrisBlock implements Drawable
 	}
 	
 	@Override
-	public void onInitialize(Canvas canvas)
+	public void onInit(Canvas canvas)
 	{
 	}
 	
 	@Override
-	public void onRefresh(Canvas canvas)
+	public void onDraw(Canvas canvas)
 	{
 		int length = tetris.getTetrisBlockLength();
 		int beginx = (this.x + 1) * length;
@@ -493,7 +477,7 @@ class TetrisBlock implements Drawable
 	}
 	
 	@Override
-	public void onTerminate(Canvas canvas)
+	public void onDestroy(Canvas canvas)
 	{
 		
 	}

@@ -1,10 +1,29 @@
 package net.aegistudio.lwjgl.graphic;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import net.aegistudio.lwjgl.graphic.Canvas;
 
 public interface Drawable
 {
-	public void onInitialize(Canvas canvas) throws GraphicIllegalStateException;
-	public void onRefresh(Canvas canvas) throws GraphicIllegalStateException;
-	public void onTerminate(Canvas canvas) throws GraphicIllegalStateException;
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Init{}
+	
+	public void onInit(Canvas canvas);
+	
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Draw{}
+	
+	public void onDraw(Canvas canvas);
+	
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Destroy{}
+	
+	public void onDestroy(Canvas canvas);
 }
