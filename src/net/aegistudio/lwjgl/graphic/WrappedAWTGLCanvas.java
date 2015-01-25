@@ -49,6 +49,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 				this.shouldInitialize = false;
 			}
 			this.onDraw(null);
+			swapBuffers();
 		}
 		catch(Exception exception)
 		{
