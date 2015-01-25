@@ -26,16 +26,15 @@ public abstract class InputEventMonitor implements Runnable
 		return true;
 	}
 	
-	@SuppressWarnings("static-access")
 	public void run()
 	{
 		try
 		{
 			while(true)
 			{
-				while(!this.onCheckInputEvent()) this.inputeventmonitor.sleep(this.inputeventrefreshrate);
+				while(!this.onCheckInputEvent()) Thread.sleep(this.inputeventrefreshrate);
 				this.inputeventlistener.onInputEventResponse(this);
-				while(!this.onResumeInputEvent()) this.inputeventmonitor.sleep(this.inputeventrefreshrate);
+				while(!this.onResumeInputEvent()) Thread.sleep(this.inputeventrefreshrate);
 				this.inputeventlistener.onInputEventResume(this);
 			}
 		}
