@@ -11,7 +11,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 	private boolean shouldInitialize;
 	private long refreshInterval = 60;
 	
-	public boolean lockedRatio = true;
+	public boolean lockedRatio = false;
 	public double ratio;
 	
 	private Thread refreshThread = new Thread()
@@ -122,4 +122,52 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 		this.canvas.onDestroy(canvas);
 	}
 	
+	public static void main(String[] args) throws Exception
+	{	
+		java.awt.Frame frame = new java.awt.Frame();
+		Canvas subcanvas = new Canvas()
+		{
+			@Override
+			public void onInit(Canvas canvas)
+			{
+				GL11.glClearColor(1.0f, 0, 0, 1.0f);
+			}
+			
+			public void onDraw(Canvas canvas)
+			{
+				GL11.glColor3d(0, 1, 0);
+				GL11.glBegin(GL11.GL_QUADS);
+					GL11.glVertex2d(0, 0);
+					GL11.glVertex2d(0, 1);
+					GL11.glVertex2d(1, 1);
+					GL11.glVertex2d(1, 0);
+				GL11.glEnd();
+			}
+			
+		};
+		Canvas topCanvas = new Canvas()
+		{
+
+			@Override
+			public void onInit(Canvas canvas)
+			{
+				
+			}
+			
+		};
+		topCanvas.registerDrawable(subcanvas);
+		WrappedAWTGLCanvas canvas = new WrappedAWTGLCanvas(topCanvas);
+		canvas.lockedRatio = true;
+		frame.setSize(600, 480);
+		frame.add(canvas);
+		frame.setVisible(true);
+		
+		frame.addWindowListener(new java.awt.event.WindowAdapter()
+		{
+			public void windowClosing(java.awt.event.WindowEvent event)
+			{
+				System.exit(1);
+			}
+		});
+	}
 }
