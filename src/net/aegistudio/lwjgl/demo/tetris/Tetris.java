@@ -149,7 +149,6 @@ public class Tetris implements InputEventListener
 	public void onInitialize() throws Exception
 	{
 		this.tetris_canvas.onInit(null);
-		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		
 		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1, Tetris.wallTexture));
 		for(int i = 0; i < this.tetris_height; i++)
@@ -158,7 +157,6 @@ public class Tetris implements InputEventListener
 			this.tetris_canvas.registerDrawable(new TetrisBlock(this, this.tetris_width, i, Tetris.wallTexture));
 		}
 		
-		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		for(int i = 0; i < this.tetris_width; i++) for(int j = 0; j < this.tetris_height; j++) this.tetris_canvas.registerDrawable(new TetrisGameBlock(this, i, j, Tetris.blockTexture));
 		
 		this.keyboard_w.startInputEventMonitor();
@@ -381,38 +379,6 @@ class TetrisInvoker extends Thread implements Runnable
 		{
 			exception.printStackTrace();
 		}
-	}
-	
-}
-
-class TetrisColor implements Drawable
-{
-	
-	private final double red, green, blue;
-	
-	public TetrisColor(double red, double green, double blue)
-	{
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
-	}
-	
-	@Override
-	public void onInit(Canvas canvas)
-	{
-		
-	}
-	
-	@Override
-	public void onDraw(Canvas canvas)
-	{
-		GL11.glColor3d(this.red, this.green, this.blue);
-	}
-	
-	@Override
-	public void onDestroy(Canvas canvas)
-	{
-		
 	}
 	
 }
