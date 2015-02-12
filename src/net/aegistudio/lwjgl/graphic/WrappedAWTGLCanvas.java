@@ -5,9 +5,9 @@ import org.lwjgl.opengl.AWTGLCanvas;
 import org.lwjgl.opengl.GL11;
 
 @SuppressWarnings("serial")
-public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
+public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 {
-	private final Canvas canvas;
+	private final Container theContainer;
 	private boolean shouldInitialize;
 	private long refreshInterval = 60;
 	
@@ -41,13 +41,24 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 		}
 	}
 	
-	public WrappedAWTGLCanvas(Canvas theCanvas) throws LWJGLException
+	public WrappedAWTGLCanvas(Container container) throws LWJGLException
 	{
 		super();
-		if(theCanvas == null) throw new IllegalArgumentException("The canvas should not be null!");
-		this.canvas = theCanvas;
+		if(container == null) throw new IllegalArgumentException("The canvas should not be null!");
+		this.theContainer = container;
 		this.shouldInitialize = true;
 		this.refreshThread.start();
+	}
+	
+	public WrappedAWTGLCanvas() throws LWJGLException
+	{
+		this(new Canvas()
+		{
+			@Override
+			public void onInit(Container container)
+			{
+			}
+		});
 	}
 	
 	public int width = 0;
@@ -107,19 +118,44 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 	@Override
 	public void onInit(Container canvas)
 	{
-		this.canvas.onInit(canvas);
+		this.theContainer.onInit(canvas);
 	}
 
 	@Override
 	public void onDraw(Container canvas)
 	{
-		this.canvas.onDraw(canvas);
+		this.theContainer.onDraw(canvas);
 	}
 
 	@Override
 	public void onDestroy(Container canvas)
 	{
-		this.canvas.onDestroy(canvas);
+		this.theContainer.onDestroy(canvas);
+	}
+	
+	@Override
+	public boolean registerDrawable(Drawable drawable)
+	{
+		return theContainer.registerDrawable(drawable);
+	}
+	
+	@Override
+	public boolean unregisterDrawable(Drawable drawable)
+	{
+		return theContainer.unregisterDrawable(drawable);
+	}
+	
+	@Override
+	public boolean registerSementicDrawable(Object sementicDrawable)
+	{
+		return theContainer.registerSementicDrawable(sementicDrawable);
+	}
+	
+
+	@Override
+	public boolean unregisterSementicDrawable(Object sementicDrawable)
+	{
+		return theContainer.unregisterSementicDrawable(sementicDrawable);
 	}
 	
 	public static void main(String[] args) throws Exception
@@ -145,18 +181,9 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 			}
 			
 		};
-		Canvas topCanvas = new Canvas()
-		{
 
-			@Override
-			public void onInit(Container canvas)
-			{
-				
-			}
-			
-		};
-		topCanvas.registerDrawable(subcanvas);
-		WrappedAWTGLCanvas canvas = new WrappedAWTGLCanvas(topCanvas);
+		WrappedAWTGLCanvas canvas = new WrappedAWTGLCanvas();
+		canvas.registerDrawable(subcanvas);
 		canvas.lockedRatio = true;
 		frame.setSize(600, 480);
 		frame.add(canvas);

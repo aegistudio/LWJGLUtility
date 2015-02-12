@@ -37,7 +37,7 @@ public abstract class LocatedContainer implements Container
 	@Override
 	public void onInit(Container container)
 	{
-		this.theContainer.onDraw(container);
+		this.theContainer.onInit(container);
 	}
 	
 	@Override
@@ -73,7 +73,7 @@ public abstract class LocatedContainer implements Container
 	@Override
 	public boolean unregisterSementicDrawable(Object sementicDrawable)
 	{
-		return this.theContainer.registerSementicDrawable(sementicDrawable);
+		return this.theContainer.unregisterSementicDrawable(sementicDrawable);
 	}
 	
 	public void translate(double x, double y, double z)
