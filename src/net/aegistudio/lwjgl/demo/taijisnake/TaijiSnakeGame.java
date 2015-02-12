@@ -11,10 +11,11 @@ import net.aegistudio.lwjgl.input.InputEventListener;
 import net.aegistudio.lwjgl.input.InputEventMonitor;
 import net.aegistudio.lwjgl.input.keyboard.KeyboardStatusEventMonitor;
 import net.aegistudio.lwjgl.demo.taijisnake.TaijiSnake.TaijiSnakeOrientation;
+import net.aegistudio.lwjgl.graphic.Container;
 import net.aegistudio.lwjgl.graphic.Drawable;
-import net.aegistudio.lwjgl.graphic.Canvas;
 import net.aegistudio.lwjgl.graphic.GraphicPlainCanvas;
 
+@SuppressWarnings("deprecation")
 public class TaijiSnakeGame implements InputEventListener
 {
 	private final int chessplainsize, blocklength;
@@ -135,7 +136,6 @@ public class TaijiSnakeGame implements InputEventListener
 		Display.sync(60);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void onTerminate() throws Exception
 	{
 		this.taijisnakecanvas.onDestroy(null);
@@ -190,15 +190,16 @@ class TaijiSnakePlayground implements Drawable
 	}
 	
 	@Override
-	public void onInit(Canvas canvas)
+	public void onInit(Container canvas)
 	{
 		
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas)
+	public void onDraw(Container canvas)
 	{
 		int plainsize = this.taijisnake.getChessPlainSize();
+		
 		GL11.glColor3f(1.0f, 1.0f, 1.0f);
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 			GL11.glVertex2d(this.taijisnake.getPositionXByAxis(0, 0), this.taijisnake.getPositionYByAxis(0, 0));
@@ -208,13 +209,13 @@ class TaijiSnakePlayground implements Drawable
 		GL11.glEnd();
 		
 		GL11.glBegin(GL11.GL_POINTS);
-		for(int i = 1; i < plainsize; i++) for(int j = 1; j < plainsize; j++) GL11.glVertex2d(this.taijisnake.getPositionXByAxis(i, j), this.taijisnake.getPositionYByAxis(i, j));
+		for(int i = 1; i < plainsize; i++)
+			for(int j = 1; j < plainsize; j++) GL11.glVertex2d(this.taijisnake.getPositionXByAxis(i, j), this.taijisnake.getPositionYByAxis(i, j));
 		GL11.glEnd();
-		
 	}
 	
 	@Override
-	public void onDestroy(Canvas canvas)
+	public void onDestroy(Container canvas)
 	{
 		
 	}
@@ -234,7 +235,6 @@ class TaijiSnakeInvoker extends Thread implements Runnable
 	}
 	
 	@Override
-	@SuppressWarnings("static-access")
 	public void run()
 	{
 		try
@@ -242,7 +242,7 @@ class TaijiSnakeInvoker extends Thread implements Runnable
 			while(true)
 			{
 				if(!this.taijisnake.hasSnakeGameOver()) this.taijisnake.onGame();
-				this.sleep(this.refreshrate);
+				Thread.sleep(this.refreshrate);
 			}
 		}
 		catch(Exception exception)

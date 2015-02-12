@@ -5,25 +5,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.aegistudio.lwjgl.graphic.Canvas;
-
 public interface Drawable
 {
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Init{}
 	
-	public void onInit(Canvas canvas);
+	public void onInit(Container canvas);
 	
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Draw{}
 	
-	public void onDraw(Canvas canvas);
+	public void onDraw(Container canvas);
 	
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Destroy{}
 	
-	public void onDestroy(Canvas canvas);
+	public void onDestroy(Container canvas);
 }

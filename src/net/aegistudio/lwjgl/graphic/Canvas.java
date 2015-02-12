@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 
-public abstract class Canvas implements Drawable
+public abstract class Canvas implements Container
 {
 	
 	protected final Queue<Drawable> pendingDrawables;
@@ -14,6 +14,20 @@ public abstract class Canvas implements Drawable
 	{
 		this.drawable = new ArrayList<Drawable>();
 		this.pendingDrawables = new ArrayDeque<Drawable>();
+	}
+	
+	public synchronized boolean registerSementicDrawable(Object drawable)
+	{
+		if(drawable instanceof Drawable) return this.registerDrawable((Drawable)drawable);
+		Drawable wrappedDrawable = new WrappedDrawable(drawable);
+		return this.registerDrawable(wrappedDrawable);
+	}
+	
+	public synchronized boolean unregisterSementicDrawable(Object drawable)
+	{
+		if(drawable instanceof Drawable) return this.unregisterDrawable((Drawable)drawable);
+		Drawable wrappedDrawable = new WrappedDrawable(drawable);
+		return this.unregisterDrawable(wrappedDrawable);
 	}
 	
 	public synchronized boolean registerDrawable(Drawable drawable)
@@ -41,7 +55,7 @@ public abstract class Canvas implements Drawable
 		else return false;
 	}
 	
-	public synchronized void onDraw(Canvas canvas)
+	public synchronized void onDraw(Container canvas)
 	{
 		while(!this.pendingDrawables.isEmpty())
 		{
@@ -52,7 +66,7 @@ public abstract class Canvas implements Drawable
 		for(Drawable drawable : drawable) drawable.onDraw(this);
 	}
 	
-	public synchronized void onDestroy(Canvas canvas)
+	public synchronized void onDestroy(Container canvas)
 	{
 		for(Drawable drawable : drawable) drawable.onDestroy(this);
 	}

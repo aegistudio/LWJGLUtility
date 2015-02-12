@@ -1,6 +1,7 @@
 package net.aegistudio.lwjgl.util.image;
 
 import java.awt.image.BufferedImage;
+import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.GL11;
 
@@ -10,14 +11,32 @@ public class ImageRGBA implements Image
 	private final int width;
 	private byte[] imageRGBA;
 	
+	public ImageRGBA(IntBuffer intbuffer, int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+		
+		int[] pixels = intbuffer.array();
+		if(pixels.length < this.width * this.height)
+			throw new IllegalArgumentException("The image provided in the buffer should not be smaller than the product of width and height!");
+		
+		this.convertImage(pixels);
+	}
+	
 	public ImageRGBA(BufferedImage bufferedImage)
 	{
 		this.height = bufferedImage.getHeight();
 		this.width = bufferedImage.getWidth();
-		this.imageRGBA = new byte[(this.height * this.width) << 2];
 		
 		int[] pixels = new int[this.height * this.width];
 		bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
+		
+		this.convertImage(pixels);
+	}
+	
+	private void convertImage(int[] pixels)
+	{
+		this.imageRGBA = new byte[(this.height * this.width) << 2];
 		
 		for(int y = 0, lineFactor = 0; y < this.height; y ++)
 		{

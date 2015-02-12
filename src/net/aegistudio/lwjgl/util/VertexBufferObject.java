@@ -7,6 +7,7 @@ import net.aegistudio.lwjgl.util.BufferHelper.BufferProcessor;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBVertexBufferObject;
+import org.lwjgl.opengl.GLContext;
 
 /**
  * This class encapsulates the OpenGL vertex buffer object (VBO), which is used to store
@@ -58,6 +59,7 @@ public class VertexBufferObject
 	{
 		if(this.bufferId == 0)
 		{
+			if(!GLContext.getCapabilities().GL_ARB_vertex_buffer_object) throw new FeatureNotSupportedException("vertex buffer object");
 			this.bufferId = ARBVertexBufferObject.glGenBuffersARB();
 			if(this.bufferId == 0) throw new BindingFailureException("Fail to create space for the vertex buffer object!");
 			

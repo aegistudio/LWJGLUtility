@@ -3,6 +3,7 @@ package net.aegistudio.lwjgl.demo.taijisnake;
 import java.util.Random;
 
 import net.aegistudio.lwjgl.graphic.Canvas;
+import net.aegistudio.lwjgl.graphic.Container;
 
 public class TaijiSnake extends Canvas
 {
@@ -141,7 +142,7 @@ public class TaijiSnake extends Canvas
 	}
 
 	@Override
-	public void onInit(Canvas canvas)
+	public void onInit(Container canvas)
 	{
 		
 	}

@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.demo.taijisnake;
 
 import org.lwjgl.opengl.GL11;
 
+import net.aegistudio.lwjgl.graphic.Container;
 import net.aegistudio.lwjgl.graphic.Drawable;
-import net.aegistudio.lwjgl.graphic.Canvas;
 
 public class TaijiSnakeBody implements Drawable
 {
@@ -42,13 +42,13 @@ public class TaijiSnakeBody implements Drawable
 	}
 	
 	@Override
-	public void onInit(Canvas canvas)
+	public void onInit(Container canvas)
 	{
 		
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas)
+	public void onDraw(Container canvas)
 	{
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glVertex2d(this.taijisnake.getPositionXByAxis(xaxis, yaxis), this.taijisnake.getPositionYByAxis(xaxis, yaxis));
@@ -59,7 +59,7 @@ public class TaijiSnakeBody implements Drawable
 	}
 	
 	@Override
-	public void onDestroy(Canvas canvas)
+	public void onDestroy(Container canvas)
 	{
 		
 	}

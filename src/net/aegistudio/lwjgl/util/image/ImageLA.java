@@ -1,6 +1,7 @@
 package net.aegistudio.lwjgl.util.image;
 
 import java.awt.image.BufferedImage;
+import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.GL11;
 
@@ -10,15 +11,33 @@ public class ImageLA implements Image
 	private final int width;
 	private byte[] imageBW;
 	
+	public ImageLA(IntBuffer intbuffer, int width, int height, float r, float g, float b)
+	{
+		this.height = height;
+		this.width = width;
+		
+		int[] pixels = intbuffer.array();
+		if(pixels.length < this.width * this.height)
+			throw new IllegalArgumentException("The image provided in the buffer should not be smaller than the product of width and height!");
+		
+		this.convertImage(pixels, r, g, b);
+	}
+	
 	public ImageLA(BufferedImage bufferedImage, float r, float g, float b)
 	{
-		if(r + g + b == 0) throw new IllegalArgumentException("The sum of r factor, g factor, b factor should not be zero!");
 		this.height = bufferedImage.getHeight();
 		this.width = bufferedImage.getWidth();
-		this.imageBW = new byte[(this.height * this.width) << 1];
 		
 		int[] pixels = new int[this.height * this.width];
 		bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
+		
+		this.convertImage(pixels, r, g, b);
+	}
+	
+	private void convertImage(int[] pixels, float r, float g, float b)
+	{
+		if(r + g + b == 0) throw new IllegalArgumentException("The sum of r factor, g factor, b factor should not be zero!");
+		this.imageBW = new byte[(this.height * this.width) << 1];
 		
 		for(int y = 0, lineFactor = 0; y < this.height; y ++)
 		{
@@ -73,4 +92,5 @@ public class ImageLA implements Image
 	{
 		return GL11.GL_UNSIGNED_BYTE;
 	}
+	
 }

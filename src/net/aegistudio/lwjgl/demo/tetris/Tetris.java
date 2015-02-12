@@ -18,6 +18,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+@SuppressWarnings("deprecation")
 public class Tetris implements InputEventListener
 {
 	private final TetrisSheet tetris;
@@ -44,7 +45,7 @@ public class Tetris implements InputEventListener
 		
 		this.tetris_canvas = new GraphicPlainCanvas(this.getWindowWidth(), this.getWindowHeight())
 		{
-			public void onInit(Canvas canvas)
+			public void onInit(Container canvas)
 			{
 				super.onInit(canvas);
 				
@@ -149,6 +150,7 @@ public class Tetris implements InputEventListener
 	public void onInitialize() throws Exception
 	{
 		this.tetris_canvas.onInit(null);
+		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		
 		for(int i = -1; i < this.tetris_width + 1; i++) this.tetris_canvas.registerDrawable(new TetrisBlock(this, i, -1, Tetris.wallTexture));
 		for(int i = 0; i < this.tetris_height; i++)
@@ -157,6 +159,7 @@ public class Tetris implements InputEventListener
 			this.tetris_canvas.registerDrawable(new TetrisBlock(this, this.tetris_width, i, Tetris.wallTexture));
 		}
 		
+		this.tetris_canvas.registerDrawable(new TetrisColor(random.nextFloat(), random.nextFloat(), random.nextFloat()));
 		for(int i = 0; i < this.tetris_width; i++) for(int j = 0; j < this.tetris_height; j++) this.tetris_canvas.registerDrawable(new TetrisGameBlock(this, i, j, Tetris.blockTexture));
 		
 		this.keyboard_w.startInputEventMonitor();
@@ -197,12 +200,12 @@ public class Tetris implements InputEventListener
 	{
 
 		@Override
-		public void onInit(Canvas canvas)
+		public void onInit(Container canvas)
 		{
 		}
 
 		@Override
-		public void onDraw(Canvas canvas)
+		public void onDraw(Container canvas)
 		{
 			if(backgroundTexture != null)
 			{
@@ -219,7 +222,7 @@ public class Tetris implements InputEventListener
 		}
 
 		@Override
-		public void onDestroy(Canvas canvas)
+		public void onDestroy(Container canvas)
 		{
 		}
 		
@@ -323,7 +326,6 @@ public class Tetris implements InputEventListener
 	public static ImageTexture backgroundTexture = null;
 	public static final String title = "Tetricraft";
 	
-	@SuppressWarnings("deprecation")
 	public static void main(String[] arguments) throws Exception
 	{
 		int rowcount = (arguments.length >= 1)? Integer.parseInt(arguments[0]):20;
@@ -383,6 +385,38 @@ class TetrisInvoker extends Thread implements Runnable
 	
 }
 
+class TetrisColor implements Drawable
+{
+	
+	private final double red, green, blue;
+	
+	public TetrisColor(double red, double green, double blue)
+	{
+		this.red = red;
+		this.green = green;
+		this.blue = blue;
+	}
+	
+	@Override
+	public void onInit(Container canvas)
+	{
+		
+	}
+	
+	@Override
+	public void onDraw(Container canvas)
+	{
+		GL11.glColor3d(this.red, this.green, this.blue);
+	}
+	
+	@Override
+	public void onDestroy(Container canvas)
+	{
+		
+	}
+	
+}
+
 class TetrisGameBlock extends TetrisBlock
 {
 	
@@ -392,7 +426,7 @@ class TetrisGameBlock extends TetrisBlock
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas)
+	public void onDraw(Container canvas)
 	{
 		if(super.tetris.isTetrisBlock(super.x, super.y)) super.onDraw(canvas);
 	}
@@ -415,12 +449,12 @@ class TetrisBlock implements Drawable
 	}
 	
 	@Override
-	public void onInit(Canvas canvas)
+	public void onInit(Container canvas)
 	{
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas)
+	public void onDraw(Container canvas)
 	{
 		int length = tetris.getTetrisBlockLength();
 		int beginx = (this.x + 1) * length;
@@ -449,7 +483,7 @@ class TetrisBlock implements Drawable
 	}
 	
 	@Override
-	public void onDestroy(Canvas canvas)
+	public void onDestroy(Container canvas)
 	{
 		
 	}

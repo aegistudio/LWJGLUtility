@@ -105,19 +105,19 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 	}
 	
 	@Override
-	public void onInit(Canvas canvas)
+	public void onInit(Container canvas)
 	{
 		this.canvas.onInit(canvas);
 	}
 
 	@Override
-	public void onDraw(Canvas canvas)
+	public void onDraw(Container canvas)
 	{
 		this.canvas.onDraw(canvas);
 	}
 
 	@Override
-	public void onDestroy(Canvas canvas)
+	public void onDestroy(Container canvas)
 	{
 		this.canvas.onDestroy(canvas);
 	}
@@ -128,12 +128,12 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 		Canvas subcanvas = new Canvas()
 		{
 			@Override
-			public void onInit(Canvas canvas)
+			public void onInit(Container canvas)
 			{
 				GL11.glClearColor(1.0f, 0, 0, 1.0f);
 			}
 			
-			public void onDraw(Canvas canvas)
+			public void onDraw(Container canvas)
 			{
 				GL11.glColor3d(0, 1, 0);
 				GL11.glBegin(GL11.GL_QUADS);
@@ -149,7 +149,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Drawable
 		{
 
 			@Override
-			public void onInit(Canvas canvas)
+			public void onInit(Container canvas)
 			{
 				
 			}

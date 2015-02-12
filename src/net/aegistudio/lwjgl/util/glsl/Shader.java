@@ -30,7 +30,7 @@ public class Shader
 		if(this.glslShaderId == 0)
 		{
 			if(!GLContext.getCapabilities().GL_ARB_shader_objects)
-				throw new FeatureNotSupportedException("Your video driver does not support GL shading languague object (Feature: GL_ARB_shader_objects)!");
+				throw new FeatureNotSupportedException("shading languague object");
 			
 			this.glslShaderId = ARBShaderObjects.glCreateShaderObjectARB(glslShaderType);
 			if(this.glslShaderId == 0) throw new BindingFailureException("Unable to allocate space for shader object!");

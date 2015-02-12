@@ -3,8 +3,8 @@ package net.aegistudio.lwjgl.util;
 @SuppressWarnings("serial")
 public class FeatureNotSupportedException extends RuntimeException
 {
-	public FeatureNotSupportedException(String info)
+	public FeatureNotSupportedException(String featureName)
 	{
-		super(info);
+		super("Your video card does not support feature $featureName!".replace("$featureName", featureName));
 	}
 }
