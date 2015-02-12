@@ -2,6 +2,7 @@ package net.aegistudio.lwjgl.graphic;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.AWTGLCanvas;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 @SuppressWarnings("serial")
@@ -12,6 +13,8 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 	private long refreshInterval = 60;
 	
 	public boolean lockedRatio = false;
+	public boolean useLWJGLDisplay = false;
+	
 	public double ratio;
 	
 	private Thread refreshThread = new Thread()
@@ -20,8 +23,16 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 		{
 			while(WrappedAWTGLCanvas.this.refreshInterval > 0) try
 			{
-				if(WrappedAWTGLCanvas.this.isVisible()) WrappedAWTGLCanvas.this.repaint();
-				Thread.sleep(WrappedAWTGLCanvas.this.refreshInterval);
+				if(useLWJGLDisplay)
+				{
+					Display.update();
+					Display.sync((int)(1000 / refreshInterval));
+				}
+				else
+				{
+					if(WrappedAWTGLCanvas.this.isVisible()) WrappedAWTGLCanvas.this.repaint();
+					Thread.sleep(WrappedAWTGLCanvas.this.refreshInterval);
+				}
 			}
 			catch(Exception exception)
 			{
@@ -161,7 +172,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 	public static void main(String[] args) throws Exception
 	{	
 		java.awt.Frame frame = new java.awt.Frame();
-		Canvas subcanvas = new Canvas()
+		Drawable drawable = new Drawable()
 		{
 			@Override
 			public void onInit(Container canvas)
@@ -179,11 +190,15 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 					GL11.glVertex2d(1, 0);
 				GL11.glEnd();
 			}
-			
+
+			@Override
+			public void onDestroy(Container container)
+			{
+			}
 		};
 
 		WrappedAWTGLCanvas canvas = new WrappedAWTGLCanvas();
-		canvas.registerDrawable(subcanvas);
+		canvas.registerDrawable(drawable);
 		canvas.lockedRatio = true;
 		frame.setSize(600, 480);
 		frame.add(canvas);
