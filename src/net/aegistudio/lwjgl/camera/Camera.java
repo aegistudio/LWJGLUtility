@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.camera;
 
 import org.lwjgl.opengl.GL11;
 
-import net.aegistudio.lwjgl.graphic.Canvas;
 import net.aegistudio.lwjgl.graphic.Container;
+import net.aegistudio.lwjgl.graphic.LocatedContainer;
 
 /**
  * To reach the usage target of camera, it should be the top level container
@@ -11,59 +11,33 @@ import net.aegistudio.lwjgl.graphic.Container;
  * @author aegistudio
  */
 
-public abstract class Camera extends Canvas
+public abstract class Camera extends LocatedContainer
 {
-	protected double x, y, z;
-	protected double yawx, yawy, yawz;
-	protected double zoomx, zoomy, zoomz;
+	protected Camera()
 	{
-		this.reset();
+		super();
 	}
 	
-	
-	public void translate(double x, double y, double z)
+	protected Camera(Container container)
 	{
-		this.x += x; this.y += y; this.z += z;
-	}
-	
-	public void rotate(double x, double y, double z)
-	{
-		this.yawx += x; this.yawy += y; this.yawz += z;
-	}
-	
-	public void scale(double x, double y, double z)
-	{
-		this.zoomx *= x; this.zoomy *= y; this.zoomz *= z;
+		super(container);
 	}
 	
 	protected abstract void settingCamera();
-	
-	public void reset()
-	{
-		this.x = this.y = this.z = 0.D;
-		this.yawx = this.yawy = this.yawz = 0.D;
-		this.zoomx = this.zoomy = this.zoomz = 1.D;
-	}
-	
-	@Override
-	public void onInit(Container containter)
-	{
-		
-	}
 	
 	public void onDraw(Container container)
 	{
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
-		GL11.glScaled(zoomx, zoomy, zoomz);
+		GL11.glScaled(scalex, scaley, scalez);
 		
-		GL11.glRotated(- yawz, 0.0D, 0.0D, 1.0D);
-		GL11.glRotated(- yawy, 0.0D, 1.0D, 0.0D);
-		GL11.glRotated(- yawx, 1.0D, 0.0D, 0.0D);
+		GL11.glRotated(- rotz, 0.0D, 0.0D, 1.0D);
+		GL11.glRotated(- roty, 0.0D, 1.0D, 0.0D);
+		GL11.glRotated(- rotx, 1.0D, 0.0D, 0.0D);
 		
 		GL11.glTranslated(-x, -y, -z);
 		
 		this.settingCamera();
-		super.onDraw(container);
+		theContainer.onDraw(container);
 	}
 }

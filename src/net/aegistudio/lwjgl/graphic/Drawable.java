@@ -11,17 +11,17 @@ public interface Drawable
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Init{}
 	
-	public void onInit(Container canvas);
+	public void onInit(Container container);
 	
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Draw{}
 	
-	public void onDraw(Container canvas);
+	public void onDraw(Container container);
 	
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Destroy{}
 	
-	public void onDestroy(Container canvas);
+	public void onDestroy(Container container);
 }

@@ -1,5 +1,7 @@
 package net.aegistudio.lwjgl.camera;
 
+import net.aegistudio.lwjgl.graphic.Container;
+
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -10,9 +12,21 @@ import org.lwjgl.opengl.GL11;
 
 public class Frustum extends Camera
 {
-	protected final double widthHalved, heightHalved, zNear, zFar;
+	protected double widthHalved, heightHalved, zNear, zFar;
 	
 	public Frustum(double width, double height, double focusDistance, double depth)
+	{
+		super();
+		this.setupParameters(width, height, focusDistance, depth);
+	}
+	
+	public Frustum(Container container, double width, double height, double focusDistance, double depth)
+	{
+		super(container);
+		this.setupParameters(width, height, focusDistance, depth);
+	}
+	
+	public void setupParameters(double width, double height, double focusDistance, double depth)
 	{
 		this.widthHalved = width / 2.0D;
 		this.heightHalved = height / 2.0D;
