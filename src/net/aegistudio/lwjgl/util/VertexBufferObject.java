@@ -123,7 +123,7 @@ public class VertexBufferObject
 	/**
 	 * Remove / release the vertex buffer object on the VRAM.
 	 */
-	public void delete()
+	public void destroy()
 	{
 		if(this.bufferId != 0)
 		{

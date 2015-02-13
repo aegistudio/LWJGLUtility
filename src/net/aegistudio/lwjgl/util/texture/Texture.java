@@ -28,7 +28,7 @@ public abstract class Texture
 		GL11.glTexParameteri(texTarget, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 	}
 	
-	public void delete()
+	public void destroy()
 	{
 		if(this.textureId != 0)
 		{

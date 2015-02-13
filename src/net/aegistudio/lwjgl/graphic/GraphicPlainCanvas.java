@@ -53,6 +53,6 @@ public class GraphicPlainCanvas extends Canvas
 	@Override
 	public void onDestroy(Container canvas)
 	{
-		this.graphicPlainCanvasCallback.delete();
+		this.graphicPlainCanvasCallback.destroy();
 	}
 }

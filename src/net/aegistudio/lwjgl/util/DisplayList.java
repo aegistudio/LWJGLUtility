@@ -52,7 +52,7 @@ public abstract class DisplayList
 		else this.display(displayListIndex);
 	}
 	
-	public void delete()
+	public void destroy()
 	{
 		if(this.displayListId != 0)
 		{

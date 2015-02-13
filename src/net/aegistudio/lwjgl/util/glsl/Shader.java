@@ -50,7 +50,7 @@ public class Shader
 		return this.glslShaderId;
 	}
 	
-	public void delete()
+	public void destroy()
 	{
 		if(this.glslShaderId != 0)
 		{

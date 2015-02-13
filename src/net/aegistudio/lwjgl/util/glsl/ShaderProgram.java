@@ -52,7 +52,7 @@ public class ShaderProgram
 			}
 			catch(RuntimeException re)
 			{
-				this.delete();
+				this.destroy();
 				throw re;
 			}
 		}
@@ -71,7 +71,7 @@ public class ShaderProgram
 		ARBShaderObjects.glUseProgramObjectARB(0);
 	}
 	
-	public void delete()
+	public void destroy()
 	{
 		for(Shader shader : shaders) if(shader != null)
 			ARBShaderObjects.glDetachObjectARB(shaderProgramId, shader.getShaderObjectId());
