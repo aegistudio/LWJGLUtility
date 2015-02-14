@@ -10,10 +10,11 @@ import net.aegistudio.lwjgl.input.InputEventException;
 import net.aegistudio.lwjgl.input.InputEventListener;
 import net.aegistudio.lwjgl.input.InputEventMonitor;
 import net.aegistudio.lwjgl.input.keyboard.KeyboardStatusEventMonitor;
+import net.aegistudio.lwjgl.camera.Camera;
+import net.aegistudio.lwjgl.camera.Ortho;
 import net.aegistudio.lwjgl.demo.taijisnake.TaijiSnake.TaijiSnakeOrientation;
 import net.aegistudio.lwjgl.graphic.Container;
 import net.aegistudio.lwjgl.graphic.Drawable;
-import net.aegistudio.lwjgl.graphic.GraphicPlainCanvas;
 
 @SuppressWarnings("deprecation")
 public class TaijiSnakeGame implements InputEventListener
@@ -25,7 +26,7 @@ public class TaijiSnakeGame implements InputEventListener
 	private final double[] cosinetheta, sinetheta;
 	private final double windowlength;
 	
-	private final GraphicPlainCanvas taijisnakecanvas;
+	private final Camera taijisnakecanvas;
 	private final TaijiSnake taijisnake;
 	private boolean hasgameover = false;
 	
@@ -56,7 +57,9 @@ public class TaijiSnakeGame implements InputEventListener
 		
 		this.rotationposition = 0;
 		
-		this.taijisnakecanvas = new GraphicPlainCanvas((int)this.windowlength, (int)this.windowlength);
+		this.taijisnakecanvas = new Ortho(this.windowlength, this.windowlength, 2);
+		this.taijisnakecanvas.translate(this.windowlength / 2, this.windowlength / 2, 0);
+		
 		this.taijisnake = new TaijiSnake(this, TaijiSnake.TaijiSnakeOrientation.RIGHT);
 		this.taijisnakeinvoker = new TaijiSnakeInvoker(this, rotatecycle);
 		
@@ -131,6 +134,7 @@ public class TaijiSnakeGame implements InputEventListener
 	
 	public void onRefresh() throws Exception
 	{
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		this.taijisnakecanvas.onDraw(null);
 		Display.update();
 		Display.sync(60);

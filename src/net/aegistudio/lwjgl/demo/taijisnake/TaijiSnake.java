@@ -23,7 +23,7 @@ public class TaijiSnake extends Canvas
 		random = new Random(System.currentTimeMillis());
 	}
 	
-	public void onInitialize(Canvas canvas, int xaxis, int yaxis, int length) throws Exception
+	public void onInitialize(Container canvas, int xaxis, int yaxis, int length) throws Exception
 	{
 	//	super.onInit(canvas);
 		
