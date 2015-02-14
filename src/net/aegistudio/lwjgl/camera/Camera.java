@@ -61,9 +61,11 @@ public abstract class Camera extends LocatedContainer
 			double theta = (y > 0)? Math.acos(theta_ratio) : 2.D * Math.PI - Math.acos(theta_ratio);
 			this.rotx = theta * GL_ANGLE_RATIO;
 			
+			//The rotation on y axis depends on the angle formed by its projection vector and original vector.
+			
 			double phi_ratio = x / Math.sqrt(modulus_sq);
 			double phi = Math.asin(phi_ratio);
-			this.roty = - phi;
+			this.roty = - phi * GL_ANGLE_RATIO;
 			
 			this.rotz = 0.D;
 		}
