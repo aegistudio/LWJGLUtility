@@ -1,5 +1,7 @@
 package net.aegistudio.lwjgl.opengl.texture;
 
+import java.nio.ByteBuffer;
+
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.opengl.util.FrameBufferObject;
 
@@ -15,6 +17,10 @@ public class FBOTexture extends Texture
 	 * @param fbo - The frame buffer object to attach.
 	 * @param attachment - The attachment point of the FBO, like GL_COLOR_ATTACHMENTn, GL_DEPTH_ATTACHMENT, etc.
 	 */
+	public FBOTexture(FrameBufferObject fbo, int width, int height, int attachment)
+	{
+		this(fbo, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, width, height, GL11.GL_TEXTURE_2D, attachment);
+	}
 	
 	public FBOTexture(FrameBufferObject fbo, int pixelFormat, int pixelType, int width, int height, int texTarget, int attachment)
 	{
@@ -38,7 +44,7 @@ public class FBOTexture extends Texture
 			
 			GL11.glBindTexture(texTarget, this.textureId);
 			this.settingTextureParameters();
-			GL11.glTexImage2D(texTarget, mipmapLevels, innerFormat, this.width, this.height, 0, this.pixelFormat, this.pixelType, 0);
+			GL11.glTexImage2D(texTarget, mipmapLevels, innerFormat, this.width, this.height, 0, this.pixelFormat, this.pixelType, (ByteBuffer)null);
 			GL11.glBindTexture(texTarget, 0);
 			
 			int fboId = this.fbo.create();
