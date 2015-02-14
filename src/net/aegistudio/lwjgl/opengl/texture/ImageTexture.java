@@ -58,6 +58,7 @@ public class ImageTexture extends Texture
 			GL11.glBindTexture(texTarget, this.textureId);
 			this.settingTextureParameters();
 			GL11.glTexImage2D(texTarget, mipmapLevels, innerFormat, this.width, this.height, 0, this.pixelFormat, this.pixelType, this.buffer);
+			GL11.glBindTexture(texTarget, 0);
 		}
 		return this.textureId;
 	}
