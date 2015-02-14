@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import net.aegistudio.lwjgl.graphic.Container;
 import net.aegistudio.lwjgl.graphic.Drawable;
 import net.aegistudio.lwjgl.graphic.LocatedContainer;
+import net.aegistudio.lwjgl.util.FlyweightDrawable;
 
 /**
  * To reach the usage target of camera, it should be the top level container
@@ -73,7 +74,7 @@ public abstract class Camera extends LocatedContainer
 		else
 		{
 			this.rotx = 0.D;
-			this.roty = (x > 0)? 90.D : 270.D;
+			this.roty = (x > 0)? 270.D : 90.D;
 			this.rotz = 0.D;
 		}
 	}
@@ -81,53 +82,5 @@ public abstract class Camera extends LocatedContainer
 	public void orient(double theta, double phi)
 	{
 		this.orient(Math.cos(phi) * Math.cos(theta), Math.cos(phi) * Math.sin(theta), Math.sin(phi));
-	}
-	
-	public static void main(String[] arguments) throws Exception
-	{
-		Display.setTitle("test");
-		Display.setDisplayMode(new DisplayMode(600, 480));
-		Display.create();
-		Camera theCamera = new Frustum(600, 480, 2, 2);
-		theCamera.onInit(null);
-		theCamera.orient(1, 0, 0);
-		theCamera.registerDrawable(new Drawable()
-		{
-
-			@Override
-			public void onInit(Container container)
-			{
-
-			}
-
-			@Override
-			public void onDraw(Container container)
-			{
-				GL11.glColor3d(1, 1, 1);
-				GL11.glBegin(GL11.GL_QUADS);
-					GL11.glVertex3d(3, 0, 0);
-					GL11.glVertex3d(3, 100, 0);
-					GL11.glVertex3d(3, 100, 100);
-					GL11.glVertex3d(3, 0, 100);
-				GL11.glEnd();
-			}
-
-			@Override
-			public void onDestroy(Container container)
-			{
-				
-			}
-		});
-		
-		while(!Display.isCloseRequested())
-		{
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			theCamera.onDraw(null);
-			Display.update();
-			Display.sync(60);
-		}
-		
-		theCamera.onDestroy(null);
-		Display.destroy();
 	}
 }
