@@ -1,13 +1,9 @@
 package net.aegistudio.lwjgl.camera;
 
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.lwjgl.graphic.Container;
-import net.aegistudio.lwjgl.graphic.Drawable;
 import net.aegistudio.lwjgl.graphic.LocatedContainer;
-import net.aegistudio.lwjgl.util.FlyweightDrawable;
 
 /**
  * To reach the usage target of camera, it should be the top level container
