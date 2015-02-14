@@ -1,8 +1,11 @@
 package net.aegistudio.lwjgl.camera;
 
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.lwjgl.graphic.Container;
+import net.aegistudio.lwjgl.graphic.Drawable;
 import net.aegistudio.lwjgl.graphic.LocatedContainer;
 
 /**
@@ -39,5 +42,92 @@ public abstract class Camera extends LocatedContainer
 		
 		this.settingCamera();
 		theContainer.onDraw(container);
+	}
+	
+	private static final double GL_ANGLE_RATIO = 180.D / Math.PI;
+	
+	public void orient(double x, double y, double z)
+	{
+		double modulus_sq = x * x + y * y + z * z;
+		if(modulus_sq <= 0) throw new IllegalArgumentException("The modulus of the given vector should be larger than zero!");
+		
+		double projection_modulus = Math.sqrt(y * y + z * z);
+		
+		if(projection_modulus != 0.D)
+		{
+			//(0, y, z) is the projection vector on the YZ-Plane, and the (x, 0, 0) is the normal vector of the
+			//Firstly, find the angle between (0, 0, -1) and (0, y, z)
+			//|a||b|cos theta = a`b = -z thus cos theta = -z / sqrt(y2 + z2), theta = arccos(-z / sqrt(y2 + z2)).
+			//when y > 0, theta = theta, when y < 0, theta = 2 * pi - theta.
+			
+			double theta_ratio = -z / projection_modulus;
+			double theta = (y > 0)? Math.acos(theta_ratio) : 2.D * Math.PI - Math.acos(theta_ratio);
+			this.rotx = theta * GL_ANGLE_RATIO;
+			
+			double phi_ratio = x / Math.sqrt(modulus_sq);
+			double phi = Math.asin(phi_ratio);
+			this.roty = - phi;
+			
+			this.rotz = 0.D;
+		}
+		else
+		{
+			this.rotx = 0.D;
+			this.roty = (x > 0)? 90.D : 270.D;
+			this.rotz = 0.D;
+		}
+	}
+	
+	public void orient(double theta, double phi)
+	{
+		this.orient(Math.cos(phi) * Math.cos(theta), Math.cos(phi) * Math.sin(theta), Math.sin(phi));
+	}
+	
+	public static void main(String[] arguments) throws Exception
+	{
+		Display.setTitle("test");
+		Display.setDisplayMode(new DisplayMode(600, 480));
+		Display.create();
+		Camera theCamera = new Frustum(600, 480, 2, 2);
+		theCamera.onInit(null);
+		theCamera.orient(1, 0, 0);
+		theCamera.registerDrawable(new Drawable()
+		{
+
+			@Override
+			public void onInit(Container container)
+			{
+
+			}
+
+			@Override
+			public void onDraw(Container container)
+			{
+				GL11.glColor3d(1, 1, 1);
+				GL11.glBegin(GL11.GL_QUADS);
+					GL11.glVertex3d(3, 0, 0);
+					GL11.glVertex3d(3, 100, 0);
+					GL11.glVertex3d(3, 100, 100);
+					GL11.glVertex3d(3, 0, 100);
+				GL11.glEnd();
+			}
+
+			@Override
+			public void onDestroy(Container container)
+			{
+				
+			}
+		});
+		
+		while(!Display.isCloseRequested())
+		{
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			theCamera.onDraw(null);
+			Display.update();
+			Display.sync(60);
+		}
+		
+		theCamera.onDestroy(null);
+		Display.destroy();
 	}
 }
