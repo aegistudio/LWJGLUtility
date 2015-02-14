@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.demo.taijisnake;
 
 import org.lwjgl.opengl.GL11;
 
-import net.aegistudio.lwjgl.graphic.Container;
-import net.aegistudio.lwjgl.graphic.Drawable;
+import net.aegistudio.lwjgl.opengl.Container;
+import net.aegistudio.lwjgl.opengl.Drawable;
 
 public class TaijiSnakeBody implements Drawable
 {

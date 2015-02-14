@@ -5,11 +5,14 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
-import net.aegistudio.lwjgl.graphic.*;
+import net.aegistudio.lwjgl.opengl.Canvas;
+import net.aegistudio.lwjgl.opengl.Container;
+import net.aegistudio.lwjgl.opengl.Drawable;
+import net.aegistudio.lwjgl.opengl.GraphicPlainCanvas;
+import net.aegistudio.lwjgl.opengl.image.ImageRGBA;
+import net.aegistudio.lwjgl.opengl.texture.ImageTexture;
 import net.aegistudio.lwjgl.input.*;
 import net.aegistudio.lwjgl.input.keyboard.KeyboardStatusEventMonitor;
-import net.aegistudio.lwjgl.util.image.ImageRGBA;
-import net.aegistudio.lwjgl.util.texture.ImageTexture;
 
 import java.io.File;
 import java.io.IOException;

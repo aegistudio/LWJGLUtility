@@ -4,17 +4,16 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import net.aegistudio.lwjgl.input.InputEventException;
 import net.aegistudio.lwjgl.input.InputEventListener;
 import net.aegistudio.lwjgl.input.InputEventMonitor;
 import net.aegistudio.lwjgl.input.keyboard.KeyboardStatusEventMonitor;
-import net.aegistudio.lwjgl.camera.Camera;
-import net.aegistudio.lwjgl.camera.Ortho;
+import net.aegistudio.lwjgl.opengl.Container;
+import net.aegistudio.lwjgl.opengl.Drawable;
+import net.aegistudio.lwjgl.opengl.camera.Camera;
+import net.aegistudio.lwjgl.opengl.camera.Ortho;
 import net.aegistudio.lwjgl.demo.taijisnake.TaijiSnake.TaijiSnakeOrientation;
-import net.aegistudio.lwjgl.graphic.Container;
-import net.aegistudio.lwjgl.graphic.Drawable;
 
 @SuppressWarnings("deprecation")
 public class TaijiSnakeGame implements InputEventListener
@@ -172,8 +171,6 @@ public class TaijiSnakeGame implements InputEventListener
 		Display.setTitle("TaijiSnake");
 		Display.create();
 		Display.setVSyncEnabled(true);
-		
-		GL11.glEnable(GL13.GL_MULTISAMPLE);
 		
 		taijisnake.onInitialize();
 		while(!Display.isCloseRequested() && !taijisnake.hasSnakeGameOver()) taijisnake.onRefresh();

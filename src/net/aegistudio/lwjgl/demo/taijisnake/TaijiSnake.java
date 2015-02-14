@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.demo.taijisnake;
 
 import java.util.Random;
 
-import net.aegistudio.lwjgl.graphic.Canvas;
-import net.aegistudio.lwjgl.graphic.Container;
+import net.aegistudio.lwjgl.opengl.Canvas;
+import net.aegistudio.lwjgl.opengl.Container;
 
 public class TaijiSnake extends Canvas
 {
