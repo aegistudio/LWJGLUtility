@@ -8,21 +8,21 @@ import net.aegistudio.lwjgl.opengl.util.FrameBufferObject;
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;
 
-public class FBOTexture extends Texture
+public class RenderTexture extends Texture
 {
 	private final FrameBufferObject fbo;
-	private final int attachment;
+	private final int[] attachments;
 	
 	/**
 	 * @param fbo - The frame buffer object to attach.
-	 * @param attachment - The attachment point of the FBO, like GL_COLOR_ATTACHMENTn, GL_DEPTH_ATTACHMENT, etc.
+	 * @param attachments - The attachment point of the FBO, like GL_COLOR_ATTACHMENTn, GL_DEPTH_ATTACHMENT, etc.
 	 */
-	public FBOTexture(FrameBufferObject fbo, int width, int height, int attachment)
+	public RenderTexture(FrameBufferObject fbo, int width, int height, int... attachments)
 	{
-		this(fbo, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, width, height, GL11.GL_TEXTURE_2D, attachment);
+		this(fbo, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, width, height, GL11.GL_TEXTURE_2D, attachments);
 	}
 	
-	public FBOTexture(FrameBufferObject fbo, int pixelFormat, int pixelType, int width, int height, int texTarget, int attachment)
+	public RenderTexture(FrameBufferObject fbo, int pixelFormat, int pixelType, int width, int height, int texTarget, int... attachments)
 	{
 		if(fbo == null) throw new IllegalArgumentException("The rendering FBO for this texture should not be null!");
 		this.fbo = fbo;
@@ -32,7 +32,7 @@ public class FBOTexture extends Texture
 		this.pixelType = pixelType;
 		this.width = width;
 		this.height = height;
-		this.attachment = attachment;
+		this.attachments = attachments;
 	}
 	
 	public int create(int innerFormat, int mipmapLevels)
@@ -49,7 +49,7 @@ public class FBOTexture extends Texture
 			
 			int fboId = this.fbo.create();
 			ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, fboId);
-			ARBFramebufferObject.glFramebufferTexture2D(ARBFramebufferObject.GL_FRAMEBUFFER, attachment, texTarget, textureId, mipmapLevels);
+			for(int attachment : this.attachments) ARBFramebufferObject.glFramebufferTexture2D(ARBFramebufferObject.GL_FRAMEBUFFER, attachment, texTarget, textureId, mipmapLevels);
 			ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, 0);
 		}
 		return this.textureId;
