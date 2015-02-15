@@ -2,6 +2,7 @@ package net.aegistudio.lwjgl.test;
 
 import net.aegistudio.lwjgl.opengl.Container;
 import net.aegistudio.lwjgl.opengl.Drawable;
+import net.aegistudio.lwjgl.opengl.Scene;
 import net.aegistudio.lwjgl.opengl.camera.Camera;
 import net.aegistudio.lwjgl.opengl.camera.Ortho;
 import net.aegistudio.lwjgl.opengl.texture.RenderTexture;
@@ -18,6 +19,8 @@ public final class RenderTextureTest
 	{
 		final FrameBufferObject theFBO = new FrameBufferObject(new Drawable()
 		{
+			int rot = 0;
+			
 			@Override
 			public void onInit(Container container)
 			{
@@ -27,9 +30,24 @@ public final class RenderTextureTest
 			@Override
 			public void onDraw(Container container)
 			{
-				GL11.glClearColor(1, 0, 1, 0);
+				
+				rot ++;
+				GL11.glClearColor(1, 0, 1, 1);
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-				System.out.println("Drawing fbo!");
+				
+				
+				GL11.glMatrixMode(GL11.GL_PROJECTION);
+				GL11.glLoadIdentity();
+				GL11.glMatrixMode(GL11.GL_MODELVIEW);
+				GL11.glLoadIdentity();
+				GL11.glRotated(rot, 0, 0, 1);
+				
+				GL11.glBegin(GL11.GL_QUADS);
+					GL11.glVertex2d(0.5, 0.5);
+					GL11.glVertex2d(-0.5, 0.5);
+					GL11.glVertex2d(-0.5, -0.5);
+					GL11.glVertex2d(0.5, -0.5);
+				GL11.glEnd();
 			}
 
 			@Override
@@ -39,10 +57,12 @@ public final class RenderTextureTest
 			}
 		});
 		final RenderTexture fboTex = new RenderTexture(theFBO, 200, 200, ARBFramebufferObject.GL_COLOR_ATTACHMENT0);
+		theFBO.setViewport(200, 200);
 		
 		Camera theCamera = new Ortho(600, 480, 2);
-		theCamera.registerDrawable(theFBO);
-		theCamera.registerDrawable(new Drawable()
+		Scene theScene = new Scene();
+		theCamera.registerDrawable(theScene);
+		theScene.registerDrawable(new Drawable()
 		{
 
 			@Override
@@ -55,7 +75,6 @@ public final class RenderTextureTest
 			public void onDraw(Container container)
 			{
 				fboTex.bind();
-				GL11.glColor3d(1, 0, 0);
 				GL11.glBegin(GL11.GL_QUADS);
 					fboTex.addVertexWithST(100, 100, 1, 1);//GL11.glVertex2d(100, 100);
 					fboTex.addVertexWithST(100, -100, 1, 0);//GL11.glVertex2d(100, -100);
@@ -63,7 +82,6 @@ public final class RenderTextureTest
 					fboTex.addVertexWithST(-100, 100, 0, 1);//GL11.glVertex2d(-100, 100);
 				GL11.glEnd();
 				fboTex.unbind();
-				System.out.println("Drawing windows buffer!");
 			}
 
 			@Override
@@ -78,10 +96,12 @@ public final class RenderTextureTest
 		theCamera.onInit(null);
 		while(!Display.isCloseRequested())
 		{
-			GL11.glClearColor(0, 0, 0, 0);
+			theFBO.onDraw(null);
+			
+			GL11.glClearColor(0, 0, 0, 1);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			theCamera.onDraw(null);
-			theCamera.unregisterDrawable(theFBO);
+			
 			Display.update();
 			Display.sync(60);
 		}

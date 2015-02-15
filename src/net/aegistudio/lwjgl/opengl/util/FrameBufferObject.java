@@ -4,6 +4,7 @@ import net.aegistudio.lwjgl.opengl.Container;
 import net.aegistudio.lwjgl.opengl.Drawable;
 
 import org.lwjgl.opengl.ARBFramebufferObject;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 public class FrameBufferObject implements Drawable
@@ -11,11 +12,25 @@ public class FrameBufferObject implements Drawable
 	private int bufferId = 0;
 	private final Drawable drawable;
 	
+	private int viewportWidth = 100, viewportHeight = 100;
+	private int savingAttribute = GL11.GL_VIEWPORT_BIT;
+	
 	public FrameBufferObject(Drawable drawable)
 	{
 		if(drawable == null)
 			throw new IllegalArgumentException("The inner drawable of frame buffer object should not be empty!");
 		this.drawable = drawable;
+	}
+	
+	public void setViewport(int width, int height)
+	{
+		this.viewportWidth = width;
+		this.viewportHeight = height;
+	}
+	
+	public void setSavingAttribute(int attributeBit)
+	{
+		this.savingAttribute = attributeBit;
 	}
 	
 	public int create()
@@ -49,7 +64,13 @@ public class FrameBufferObject implements Drawable
 	{
 		ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, this.bufferId);
 		int fbo_status = ARBFramebufferObject.glCheckFramebufferStatus(ARBFramebufferObject.GL_FRAMEBUFFER);
-		if(fbo_status == ARBFramebufferObject.GL_FRAMEBUFFER_COMPLETE) this.drawable.onDraw(container);
+		if(fbo_status == ARBFramebufferObject.GL_FRAMEBUFFER_COMPLETE)
+		{
+			GL11.glPushAttrib(savingAttribute);
+			GL11.glViewport(0, 0, viewportWidth, viewportHeight);
+			this.drawable.onDraw(container);
+			GL11.glPopAttrib();
+		}
 		ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, 0);
 	}
 
