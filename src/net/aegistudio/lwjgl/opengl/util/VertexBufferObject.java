@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 import net.aegistudio.lwjgl.opengl.util.BufferHelper.BufferProcessor;
+import net.aegistudio.lwjgl.util.Bindable;
+import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBVertexBufferObject;

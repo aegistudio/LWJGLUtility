@@ -1,5 +1,7 @@
 package net.aegistudio.lwjgl.opengl.util;
 
+import net.aegistudio.lwjgl.util.Scoped;
+
 import org.lwjgl.opengl.GL11;
 
 /**

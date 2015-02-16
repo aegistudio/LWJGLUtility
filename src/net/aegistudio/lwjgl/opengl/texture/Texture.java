@@ -1,8 +1,8 @@
 package net.aegistudio.lwjgl.opengl.texture;
 
-import net.aegistudio.lwjgl.opengl.util.Bindable;
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
-import net.aegistudio.lwjgl.opengl.util.Scoped;
+import net.aegistudio.lwjgl.util.Bindable;
+import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.GL11;
 

@@ -5,7 +5,6 @@ import net.aegistudio.lwjgl.opengl.Drawable;
 import net.aegistudio.lwjgl.opengl.Scene;
 import net.aegistudio.lwjgl.opengl.camera.Camera;
 import net.aegistudio.lwjgl.opengl.camera.Frustum;
-import net.aegistudio.lwjgl.opengl.camera.Ortho;
 import net.aegistudio.lwjgl.opengl.texture.RenderTexture;
 import net.aegistudio.lwjgl.opengl.util.FrameBufferObject;
 

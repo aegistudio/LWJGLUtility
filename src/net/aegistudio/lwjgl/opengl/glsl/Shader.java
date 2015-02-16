@@ -7,7 +7,7 @@ import java.io.FileReader;
 
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.opengl.util.FeatureNotSupportedException;
-import net.aegistudio.lwjgl.opengl.util.Scoped;
+import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;

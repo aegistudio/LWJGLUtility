@@ -2,9 +2,9 @@ package net.aegistudio.lwjgl.opengl.glsl;
 
 import java.util.HashMap;
 
-import net.aegistudio.lwjgl.opengl.util.Bindable;
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
-import net.aegistudio.lwjgl.opengl.util.Scoped;
+import net.aegistudio.lwjgl.util.Bindable;
+import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;

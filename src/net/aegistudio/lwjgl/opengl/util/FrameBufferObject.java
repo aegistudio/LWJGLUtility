@@ -2,6 +2,7 @@ package net.aegistudio.lwjgl.opengl.util;
 
 import net.aegistudio.lwjgl.opengl.Container;
 import net.aegistudio.lwjgl.opengl.Drawable;
+import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;
