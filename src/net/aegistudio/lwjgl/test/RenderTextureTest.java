@@ -4,6 +4,7 @@ import net.aegistudio.lwjgl.opengl.Container;
 import net.aegistudio.lwjgl.opengl.Drawable;
 import net.aegistudio.lwjgl.opengl.Scene;
 import net.aegistudio.lwjgl.opengl.camera.Camera;
+import net.aegistudio.lwjgl.opengl.camera.Frustum;
 import net.aegistudio.lwjgl.opengl.camera.Ortho;
 import net.aegistudio.lwjgl.opengl.texture.RenderTexture;
 import net.aegistudio.lwjgl.opengl.util.FrameBufferObject;
@@ -59,7 +60,9 @@ public final class RenderTextureTest
 		final RenderTexture fboTex = new RenderTexture(theFBO, 200, 200, ARBFramebufferObject.GL_COLOR_ATTACHMENT0);
 		theFBO.setViewport(200, 200);
 		
-		Camera theCamera = new Ortho(600, 480, 2);
+		Camera theCamera = new Frustum(600, 480, 0.1, 2);
+		theCamera.translate(0, 0, -0.12);
+		theCamera.orient(0, 0.0002, 1);
 		Scene theScene = new Scene();
 		theCamera.registerDrawable(theScene);
 		theScene.registerDrawable(new Drawable()

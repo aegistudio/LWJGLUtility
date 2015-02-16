@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
  * @author aegistudio
  */
 
-public abstract class DisplayList
+public abstract class DisplayList implements Scoped
 {
 	private int displayListId = 0;
 	private final int displayListRange;

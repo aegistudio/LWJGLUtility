@@ -7,7 +7,7 @@ import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-public class FrameBufferObject implements Drawable
+public class FrameBufferObject implements Drawable, Scoped
 {
 	private int bufferId = 0;
 	private final Drawable drawable;

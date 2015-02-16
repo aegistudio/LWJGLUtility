@@ -3,7 +3,7 @@ package net.aegistudio.lwjgl.opengl.util;
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;
 
-public class RenderBuffer
+public class RenderBuffer implements Scoped
 {
 	private final FrameBufferObject fbo;
 	private final int internalFormat;

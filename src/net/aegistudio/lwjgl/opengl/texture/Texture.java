@@ -1,10 +1,12 @@
 package net.aegistudio.lwjgl.opengl.texture;
 
+import net.aegistudio.lwjgl.opengl.util.Bindable;
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
+import net.aegistudio.lwjgl.opengl.util.Scoped;
 
 import org.lwjgl.opengl.GL11;
 
-public abstract class Texture
+public abstract class Texture implements Scoped, Bindable
 {
 	protected int textureId = 0;
 	protected int pixelFormat;

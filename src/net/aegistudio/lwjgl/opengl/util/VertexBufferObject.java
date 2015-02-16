@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GLContext;
  * @author aegistudio
  */
 
-public class VertexBufferObject
+public class VertexBufferObject implements Scoped, Bindable
 {
 	private int bufferId = 0;
 	

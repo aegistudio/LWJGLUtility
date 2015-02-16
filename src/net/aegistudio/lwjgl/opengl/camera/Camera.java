@@ -33,7 +33,7 @@ public abstract class Camera extends LocatedContainer
 		
 		GL11.glRotated(- rotz, 0.0D, 0.0D, 1.0D);
 		GL11.glRotated(- roty, 0.0D, 1.0D, 0.0D);
-		GL11.glRotated(- rotx, 1.0D, 0.0D, 0.0D);
+		GL11.glRotated(- rotx, 1.0D, 0.0D, 0.0D);	
 		
 		GL11.glTranslated(-x, -y, -z);
 		

@@ -7,12 +7,13 @@ import java.io.FileReader;
 
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.opengl.util.FeatureNotSupportedException;
+import net.aegistudio.lwjgl.opengl.util.Scoped;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-public class Shader
+public class Shader implements Scoped
 {
 	private String glslSource;
 	private int glslShaderType;

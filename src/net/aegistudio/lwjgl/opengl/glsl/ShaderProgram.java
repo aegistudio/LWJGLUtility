@@ -2,13 +2,15 @@ package net.aegistudio.lwjgl.opengl.glsl;
 
 import java.util.HashMap;
 
+import net.aegistudio.lwjgl.opengl.util.Bindable;
 import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
+import net.aegistudio.lwjgl.opengl.util.Scoped;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-public class ShaderProgram
+public class ShaderProgram implements Scoped, Bindable
 {
 	private Shader[] shaders;
 	private int shaderProgramId = 0;
