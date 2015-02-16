@@ -1,8 +1,10 @@
 package net.aegistudio.lwjgl.openal;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.sound.sampled.AudioSystem;
 import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.openal.AL10;
@@ -12,19 +14,19 @@ public class Wave implements Scoped
 {
 	private final WaveData waveData;
 	
-	public Wave(InputStream inputStream)
+	public Wave(InputStream inputStream) throws Exception
 	{
-		waveData = WaveData.create(inputStream);
+		waveData = WaveData.create(AudioSystem.getAudioInputStream(inputStream));
 	}
 	
-	public Wave(URL url)
+	public Wave(URL url) throws Exception
 	{
-		waveData = WaveData.create(url);
+		waveData = WaveData.create(AudioSystem.getAudioInputStream(url));
 	}
 	
-	public Wave(String path)
+	public Wave(String path) throws Exception
 	{
-		waveData = WaveData.create(path);
+		waveData = WaveData.create(AudioSystem.getAudioInputStream(new File(path)));
 	}
 	
 	private int bufferId = 0;
