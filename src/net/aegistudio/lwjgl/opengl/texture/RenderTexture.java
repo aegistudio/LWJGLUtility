@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.opengl.texture;
 
 import java.nio.ByteBuffer;
 
-import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.opengl.util.FrameBufferObject;
+import net.aegistudio.lwjgl.util.BindingFailureException;
 
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;

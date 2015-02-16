@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.opengl.util.FeatureNotSupportedException;
+import net.aegistudio.lwjgl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.ARBShaderObjects;
@@ -80,5 +80,11 @@ public class Shader implements Scoped
 		while((currentLine = buffReader.readLine()) != null) sb.append(currentLine).append('\n');
 		buffReader.close();
 		return new Shader(new String(sb), shaderType);
+	}
+	
+	public void finalize() throws Throwable
+	{
+		this.destroy();
+		super.finalize();
 	}
 }

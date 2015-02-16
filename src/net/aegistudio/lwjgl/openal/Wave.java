@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 import javax.sound.sampled.AudioSystem;
+
+import net.aegistudio.lwjgl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.openal.AL10;
@@ -33,11 +35,11 @@ public class Wave implements Scoped
 	
 	public int create()
 	{
-		if(this.waveData == null) throw new RuntimeException("The wave data to be buffered is invalid!");
+		if(this.waveData == null) throw new BindingFailureException("The wave data to be buffered is invalid!");
 		if(this.bufferId == 0)
 		{
 			this.bufferId = AL10.alGenBuffers();
-			if(AL10.alGetError() != AL10.AL_NO_ERROR) throw new RuntimeException("Error while generating buffer!");
+			if(AL10.alGetError() != AL10.AL_NO_ERROR) throw new BindingFailureException("Error while generating buffer!");
 			
 			AL10.alBufferData(this.bufferId, this.waveData.format, this.waveData.data, this.waveData.samplerate);
 			this.waveData.dispose();
@@ -53,5 +55,11 @@ public class Wave implements Scoped
 			AL10.alDeleteBuffers(bufferId);
 			this.bufferId = 0;
 		}
+	}
+	
+	public void finalize() throws Throwable
+	{
+		this.destroy();
+		super.finalize();
 	}
 }

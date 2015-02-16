@@ -1,7 +1,7 @@
 package net.aegistudio.lwjgl.opengl.texture;
 
-import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Bindable;
+import net.aegistudio.lwjgl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.GL11;
@@ -81,5 +81,11 @@ public abstract class Texture implements Scoped, Bindable
 	{
 		GL11.glTexCoord4d(s, t, r, q);
 		GL11.glVertex3d(x, y, z);
+	}
+	
+	public void finalize() throws Throwable
+	{
+		this.destroy();
+		super.finalize();
 	}
 }

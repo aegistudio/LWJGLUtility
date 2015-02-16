@@ -70,4 +70,10 @@ public abstract class Canvas implements Container
 	{
 		for(Drawable drawable : drawable) drawable.onDestroy(this);
 	}
+	
+	public void finalize() throws Throwable
+	{
+		this.onDestroy(null);
+		super.finalize();
+	}
 }

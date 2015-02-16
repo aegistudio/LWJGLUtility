@@ -1,5 +1,6 @@
 package net.aegistudio.lwjgl.openal;
 
+import net.aegistudio.lwjgl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.openal.AL10;
@@ -20,7 +21,7 @@ public class Source implements Scoped
 		if(this.sourceId == 0)
 		{
 			this.sourceId = AL10.alGenSources();
-			if(AL10.alGetError() != AL10.AL_NO_ERROR) throw new RuntimeException("Error while generating source!");
+			if(AL10.alGetError() != AL10.AL_NO_ERROR) throw new BindingFailureException("Error while generating source!");
 			
 			AL10.alSourcei(this.sourceId, AL10.AL_BUFFER, wave.create());
 			AL10.alSource3f(this.sourceId, AL10.AL_POSITION, this.x, this.y, this.z);
@@ -96,5 +97,11 @@ public class Source implements Scoped
 			AL10.alDeleteSources(sourceId);
 			this.sourceId = 0;
 		}
+	}
+	
+	public void finalize() throws Throwable
+	{
+		this.destroy();
+		super.finalize();
 	}
 }

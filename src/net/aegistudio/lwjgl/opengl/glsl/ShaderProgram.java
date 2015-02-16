@@ -2,8 +2,8 @@ package net.aegistudio.lwjgl.opengl.glsl;
 
 import java.util.HashMap;
 
-import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Bindable;
+import net.aegistudio.lwjgl.util.BindingFailureException;
 import net.aegistudio.lwjgl.util.Scoped;
 
 import org.lwjgl.opengl.ARBShaderObjects;
@@ -101,5 +101,11 @@ public class ShaderProgram implements Scoped, Bindable
 			attributeVariables.put(string, attributeVariable);
 		}
 		return attributeVariable;
+	}
+	
+	public void finalize() throws Throwable
+	{
+		this.destroy();
+		super.finalize();
 	}
 }

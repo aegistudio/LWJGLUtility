@@ -58,4 +58,10 @@ public class Listener implements Scoped
 		this.orientation.flip();
 		if(AL.isCreated()) AL10.alListener(AL10.AL_ORIENTATION, this.orientation);
 	}
+	
+	public void finalize() throws Throwable
+	{
+		this.destroy();
+		super.finalize();
+	}
 }

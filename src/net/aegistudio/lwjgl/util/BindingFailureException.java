@@ -1,4 +1,4 @@
-package net.aegistudio.lwjgl.opengl.util;
+package net.aegistudio.lwjgl.util;
 
 @SuppressWarnings("serial")
 public class BindingFailureException extends RuntimeException

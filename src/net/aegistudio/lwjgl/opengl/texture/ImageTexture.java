@@ -7,10 +7,10 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.lwjgl.opengl.image.Image;
-import net.aegistudio.lwjgl.opengl.util.BindingFailureException;
 import net.aegistudio.lwjgl.opengl.util.BufferHelper;
 import net.aegistudio.lwjgl.opengl.util.EnumDataType;
 import net.aegistudio.lwjgl.opengl.util.BufferHelper.BufferProcessor;
+import net.aegistudio.lwjgl.util.BindingFailureException;
 
 public class ImageTexture extends Texture
 {
