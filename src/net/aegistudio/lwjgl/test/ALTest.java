@@ -31,11 +31,49 @@ public class ALTest
 		Display.create();
 		Keyboard.create();
 		
+		float gain = 1.0f;
+		float pitch = 1.0f;
 		while(!Display.isCloseRequested())
 		{
-			while(Keyboard.next())
+			while(Keyboard.next()) if(Keyboard.getEventKeyState())
 			{
 				if(Keyboard.getEventKey() == Keyboard.KEY_SPACE) source.play();
+				if(Keyboard.getEventKey() == Keyboard.KEY_UP)
+				{
+					gain += 0.1f;
+					source.gain(gain);
+					System.out.println("gain: " + gain);
+				}
+				if(Keyboard.getEventKey() == Keyboard.KEY_DOWN)
+				{
+					gain -= 0.1f;
+					source.gain(gain);
+					System.out.println("gain: " + gain);
+				}
+				if(Keyboard.getEventKey() == Keyboard.KEY_RIGHT)
+				{
+					pitch += 0.1f;
+					source.pitch(pitch);
+					System.out.println("pitch: " + pitch);
+				}
+				if(Keyboard.getEventKey() == Keyboard.KEY_LEFT)
+				{
+					pitch -= 0.1f;
+					source.pitch(pitch);
+					System.out.println("pitch: " + pitch);
+				}
+				if(Keyboard.getEventKey() == Keyboard.KEY_P) source.pause();
+				if(Keyboard.getEventKey() == Keyboard.KEY_S) source.stop();
+				if(Keyboard.getEventKey() == Keyboard.KEY_L)
+				{
+					source.looping(true);
+					System.out.println("looping: true");
+				}
+				if(Keyboard.getEventKey() == Keyboard.KEY_K)
+				{
+					source.looping(false);
+					System.out.println("looping: false");
+				}
 			}
 			Display.update();
 			Display.sync(60);

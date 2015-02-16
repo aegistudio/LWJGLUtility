@@ -61,7 +61,7 @@ public class Source implements Scoped
 	
 	public void gain(float gain)
 	{
-		this.gain = 1.0f;
+		this.gain = gain;
 		if(this.sourceId != 0) AL10.alSourcef(this.sourceId, AL10.AL_GAIN, this.gain);
 	}
 	
