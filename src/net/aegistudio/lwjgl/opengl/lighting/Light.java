@@ -18,6 +18,8 @@ public class Light implements Scoped, Bindable
 	{
 		if(!isCreated) throw new BindingFailureException("You should create the light before binding it!");
 		GL11.glEnable(lightParameter);
+		GL11.glLight(lightParameter, GL11.GL_POSITION, this.position_buffer);
+		GL11.glLight(lightParameter, GL11.GL_SPOT_DIRECTION, this.spotlight_buffer);
 	}
 
 	@Override
@@ -57,18 +59,20 @@ public class Light implements Scoped, Bindable
 			}
 			if(!isCreated) throw new BindingFailureException("Unable to create more space for this light!");
 			
-			this.position(x, y, z, w);
 			this.attenuation(constant, linear, quadratic);
 			this.ambient(ambient_r, ambient_g, ambient_b, ambient_alpha);
 			this.diffuse(diffuse_r, diffuse_g, diffuse_b, diffuse_alpha);
 			this.specular(specular_r, specular_g, specular_b, specular_alpha);
-			this.orient(spotlight_x, spotlight_y, spotlight_z);
 			this.spotlight(spotlight_cutoff, spotlight_exponent);
 		}
 		return lightIndex;
 	}
 
-	protected float x = 0.F, y = 0.F, z = 0.F, w = 1.F;
+	protected FloatBuffer position_buffer;
+	{
+		this.position_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
+		this.position_buffer.flip();
+	}
 	
 	/**
 	 * Sets the position of the light, whether the w is 0.F determines that the light is positional
@@ -81,13 +85,9 @@ public class Light implements Scoped, Bindable
 	
 	public void position(float x, float y, float z, float w)
 	{
-		this.x = x; this.y = y; this.z = z; this.w = w;
-		if(isCreated)
-		{
-			FloatBuffer theBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{this.x, this.y, this.z, this.w});
-			theBuffer.flip();
-			GL11.glLight(lightParameter, GL11.GL_POSITION, theBuffer);
-		}
+		this.position_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{x, y, z, w});
+		this.position_buffer.flip();
+		if(isCreated) GL11.glLight(lightParameter, GL11.GL_POSITION, this.position_buffer);
 	}
 	
 	protected float ambient_r = 0.F, ambient_g = 0.F, ambient_b = 0.F, ambient_alpha = 1.F;
@@ -153,7 +153,11 @@ public class Light implements Scoped, Bindable
 		}
 	}
 	
-	protected float spotlight_x = 0.F, spotlight_y = 0.F, spotlight_z = -1.F;
+	protected FloatBuffer spotlight_buffer;
+	{
+		this.spotlight_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, -1.F, 1.F});
+		this.spotlight_buffer.flip();
+	}
 	
 	/**
 	 * Set the spotlight orientation of the light.
@@ -164,13 +168,9 @@ public class Light implements Scoped, Bindable
 	
 	public void orient(float spotlight_x, float spotlight_y, float spotlight_z)
 	{
-		this.spotlight_x = spotlight_x; this.spotlight_y = spotlight_y; this.spotlight_z = spotlight_z;
-		if(isCreated)
-		{
-			FloatBuffer theBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{this.spotlight_x, this.spotlight_y, this.spotlight_z, 1});
-			theBuffer.flip();
-			GL11.glLight(lightParameter, GL11.GL_SPOT_DIRECTION, theBuffer);
-		}
+		this.spotlight_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{spotlight_x, spotlight_y, spotlight_z, 1.F});
+		this.spotlight_buffer.flip();
+		if(isCreated) GL11.glLight(lightParameter, GL11.GL_SPOT_DIRECTION, this.spotlight_buffer);
 	}
 	
 	protected float spotlight_cutoff = 180.F, spotlight_exponent = 0.F;
@@ -236,8 +236,8 @@ public class Light implements Scoped, Bindable
 		stringBuilder.append(", ambient="); stringBuilder.append("(" + this.ambient_r + ", " + this.ambient_g + ", " + this.ambient_b + ", " + this.ambient_alpha + ")");
 		stringBuilder.append(", diffuse="); stringBuilder.append("(" + this.diffuse_r + ", " + this.diffuse_g + ", " + this.diffuse_b + ", " + this.diffuse_alpha + ")");
 		stringBuilder.append(", specular="); stringBuilder.append("(" + this.specular_r + ", " + this.specular_g + ", " + this.specular_b + ", " + this.specular_alpha + ")");
-		stringBuilder.append(", position="); stringBuilder.append("(" + this.x + ", " + this.y + ", " + this.z + ", " + this.w + ")");
-		stringBuilder.append(", orientation="); stringBuilder.append("(" + this.spotlight_x + ", " + this.spotlight_y + ", " + this.spotlight_z + ")");
+		stringBuilder.append(", position="); stringBuilder.append("(" + this.position_buffer.get(0) + ", " + this.position_buffer.get(1) + ", " + this.position_buffer.get(2) + ", " + this.position_buffer.get(3) + ")");
+		stringBuilder.append(", orientation="); stringBuilder.append("(" + this.spotlight_buffer.get(0) + ", " + this.spotlight_buffer.get(1) + ", " + this.spotlight_buffer.get(2) + ")");
 		stringBuilder.append(", spotlight_cutoff="); stringBuilder.append(Float.toString(this.spotlight_cutoff));
 		stringBuilder.append(", spotlight_exponent="); stringBuilder.append(Float.toString(this.spotlight_exponent));
 		stringBuilder.append(", attenuation="); stringBuilder.append("(" + this.constant + ", " + this.linear + ", " + this.quadratic + ")");
