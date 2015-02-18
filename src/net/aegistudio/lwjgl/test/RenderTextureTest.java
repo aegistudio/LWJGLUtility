@@ -24,7 +24,7 @@ public final class RenderTextureTest
 			@Override
 			public void onInit(Container container)
 			{
-				
+
 			}
 
 			@Override
@@ -43,10 +43,10 @@ public final class RenderTextureTest
 				GL11.glRotated(rot, 0, 0, 1);
 				
 				GL11.glBegin(GL11.GL_QUADS);
-					GL11.glVertex2d(0.5, 0.5);
-					GL11.glVertex2d(-0.5, 0.5);
-					GL11.glVertex2d(-0.5, -0.5);
-					GL11.glVertex2d(0.5, -0.5);
+					GL11.glColor3d(1, 0, 0); GL11.glVertex2d(0.5, 0.5);
+					GL11.glColor3d(0, 1, 0); GL11.glVertex2d(-0.5, 0.5);
+					GL11.glColor3d(0, 0, 1); GL11.glVertex2d(-0.5, -0.5);
+					GL11.glColor3d(0, 1, 1); GL11.glVertex2d(0.5, -0.5);
 				GL11.glEnd();
 			}
 
@@ -59,8 +59,8 @@ public final class RenderTextureTest
 		final RenderTexture fboTex = new RenderTexture(theFBO, 200, 200, ARBFramebufferObject.GL_COLOR_ATTACHMENT0);
 		theFBO.setViewport(200, 200);
 		
-		Camera theCamera = new Frustum(600, 480, 0.1, 2);
-		theCamera.translate(0, 0, -0.12);
+		Camera theCamera = new Frustum(600, 480, 0.1, 200);
+		theCamera.translate(0, 0, 100 - 0.12);
 		theCamera.orient(0, 0.0002, 1);
 		Scene theScene = new Scene();
 		theCamera.registerDrawable(theScene);
@@ -78,11 +78,12 @@ public final class RenderTextureTest
 			{
 				fboTex.bind();
 				GL11.glBegin(GL11.GL_QUADS);
-					fboTex.addVertexWithST(100, 100, 1, 1);//GL11.glVertex2d(100, 100);
-					fboTex.addVertexWithST(100, -100, 1, 0);//GL11.glVertex2d(100, -100);
-					fboTex.addVertexWithST(-100, -100, 0, 0);//GL11.glVertex2d(-100, -100);
-					fboTex.addVertexWithST(-100, 100, 0, 1);//GL11.glVertex2d(-100, 100);
+					fboTex.addVertexWithST(100, 100, 100, 1, 1);
+					fboTex.addVertexWithST(100, -100, 100, 1, 0);
+					fboTex.addVertexWithST(-100, -100, 100, 0, 0);
+					fboTex.addVertexWithST(-100, 100, 100, 0, 1);
 				GL11.glEnd();
+				
 				fboTex.unbind();
 			}
 
