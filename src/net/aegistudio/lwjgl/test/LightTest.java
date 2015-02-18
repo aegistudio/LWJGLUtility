@@ -34,7 +34,7 @@ public class LightTest
 					@Override
 					protected void display(int displayIndex)
 					{
-						
+						GL11.glMaterialf(GL11.GL_FRONT_AND_BACK, GL11.GL_SHININESS, 1.0F);
 						GL11.glBegin(GL11.GL_POLYGON);
 						int count = 10;
 						int radium = 100;
@@ -66,12 +66,9 @@ public class LightTest
 		GL11.glLightModeli(GL11.GL_LIGHT_MODEL_LOCAL_VIEWER, GL11.GL_TRUE);
 		
 		System.out.println("Using GL_LIGHT" + theLight.create());
-		theCamera.orient(0, 7, 10000);
-		//theLight.ambient(1, 0, 0, 1);
-		theLight.diffuse(1, 0, 1, 1);
-		//theLight.specular(1, 0, 0, 1);
+		theCamera.orient(0, 0, 10000);
+		theLight.specular(1, 0, 0, 1);
 		theLight.position(0, 0, 1, 0);
-		theLight.orient(0, 0, 1);
 		
 		theCamera.onInit(null);
 		while(!Display.isCloseRequested())

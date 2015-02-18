@@ -136,10 +136,10 @@ public class Light implements Scoped, Bindable
 	
 	/**
 	 * Set the specular color of the light.
-	 * @param specular_r the red of the diffuse color
-	 * @param specular_g the green of the diffuse color
-	 * @param specular_b the blue of the diffuse color
-	 * @param specular_alpha the alpha of the diffuse color
+	 * @param specular_r the red of the specular color
+	 * @param specular_g the green of the specular color
+	 * @param specular_b the blue of the specular color
+	 * @param specular_alpha the alpha of the specular color
 	 */
 	
 	public void specular(float specular_r, float specular_g, float specular_b, float specular_alpha)
@@ -164,6 +164,7 @@ public class Light implements Scoped, Bindable
 	 * @param spotlight_x
 	 * @param spotlight_y
 	 * @param spotlight_z
+	 * @param spotlight_w
 	 */
 	
 	public void orient(float spotlight_x, float spotlight_y, float spotlight_z)
