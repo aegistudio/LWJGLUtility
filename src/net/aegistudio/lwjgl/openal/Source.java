@@ -8,11 +8,22 @@ import org.lwjgl.openal.AL10;
 public class Source implements Scoped
 {
 	private int sourceId;
-	private final Wave wave;
+	private Wave wave;
 	
 	public Source(Wave wave)
 	{
 		this.wave = wave;
+	}
+	
+	public Source()
+	{
+		this(null);
+	}
+	
+	public void wave(Wave wave)
+	{
+		this.wave = wave;
+		AL10.alSourcei(sourceId, AL10.AL_BUFFER, (this.wave == null)? 0 : this.wave.create());
 	}
 	
 	@Override
@@ -23,14 +34,13 @@ public class Source implements Scoped
 			this.sourceId = AL10.alGenSources();
 			if(AL10.alGetError() != AL10.AL_NO_ERROR) throw new BindingFailureException("Error while generating source!");
 			
-			AL10.alSourcei(this.sourceId, AL10.AL_BUFFER, wave.create());
-			AL10.alSource3f(this.sourceId, AL10.AL_POSITION, this.x, this.y, this.z);
-			AL10.alSource3f(sourceId, AL10.AL_VELOCITY, this.velX, this.velY, this.velZ);
+			this.wave(this.wave);
+			this.position(x, y, z);
+			this.velocity(velX, velY, velZ);
 			
-			AL10.alSourcef(this.sourceId, AL10.AL_PITCH, this.pitch);
-			AL10.alSourcef(this.sourceId, AL10.AL_GAIN, this.gain);
-			
-			AL10.alSourcei(this.sourceId, AL10.AL_LOOPING, this.looping);
+			this.pitch(this.pitch);
+			this.gain(this.gain);
+			this.looping(this.looping);
 		}
 		return this.sourceId;
 	}
@@ -66,12 +76,12 @@ public class Source implements Scoped
 		if(this.sourceId != 0) AL10.alSourcef(this.sourceId, AL10.AL_GAIN, this.gain);
 	}
 	
-	private int looping = AL10.AL_FALSE;
+	private boolean looping = false;
 	
 	public void looping(boolean isLooping)
 	{
-		this.looping = (isLooping)? AL10.AL_TRUE : AL10.AL_FALSE;
-		if(this.sourceId != 0) AL10.alSourcei(this.sourceId, AL10.AL_LOOPING, this.looping);
+		this.looping = isLooping;
+		if(this.sourceId != 0) AL10.alSourcei(this.sourceId, AL10.AL_LOOPING, this.looping? AL10.AL_TRUE : AL10.AL_FALSE);
 	}
 	
 	public void play()
