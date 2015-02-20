@@ -42,7 +42,8 @@ public class Model implements Drawable
 		for(ArrayPointerEntry entry : entries) if(entry != null)
 		{
 			if(entry.arrayPointer == EnumArrayPointer.VERTEX) hasVerticesBuffer = true;
-			else if(entry.arrayPointer == EnumArrayPointer.INDEX) this.indexPointer = entry;
+			
+			if(entry.arrayPointer == EnumArrayPointer.INDEX) this.indexPointer = entry;
 			else usingArrayPointerSet.add(entry);
 		}
 		if(!hasVerticesBuffer) throw new IllegalArgumentException("The vertex buffer object of the vertices should be assigned!");
@@ -50,14 +51,19 @@ public class Model implements Drawable
 		this.usingArrayPointer = usingArrayPointerSet.toArray(new ArrayPointerEntry[0]);
 	}
 	
+	public Model(boolean scoping, ArrayPointerEntry... entries)
+	{
+		this(entries, scoping);
+	}
+	
+	public Model(ArrayPointerEntry... entries)
+	{
+		this(entries, false);
+	}
+	
 	public Model(Map<EnumArrayPointer, VertexBufferObject> bufferedModel, int indices_count)
 	{
 		this(bufferedModel, indices_count, false);
-	}
-	
-	public Model(ArrayPointerEntry[] entries)
-	{
-		this(entries, false);
 	}
 	
 	@Override
