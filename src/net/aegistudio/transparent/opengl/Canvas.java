@@ -1,19 +1,21 @@
 package net.aegistudio.transparent.opengl;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public abstract class Canvas implements Container
 {
 	
 	protected final Queue<Drawable> pendingDrawables;
+	protected final Queue<Drawable> removingDrawables;
 	protected final ArrayList<Drawable> drawable;
 	
 	public Canvas()
 	{
 		this.drawable = new ArrayList<Drawable>();
-		this.pendingDrawables = new ArrayDeque<Drawable>();
+		this.pendingDrawables = new LinkedList<Drawable>();
+		this.removingDrawables = new LinkedList<Drawable>();
 	}
 	
 	public synchronized boolean registerSementicDrawable(Object drawable)
@@ -43,8 +45,7 @@ public abstract class Canvas implements Container
 		if(drawable == null) return false;
 		if(this.drawable.contains(drawable))
 		{
-			this.drawable.remove(drawable);
-			drawable.onDestroy(this);
+			this.removingDrawables.add(drawable);
 			return true;
 		}
 		else if(this.pendingDrawables.contains(drawable))
@@ -64,6 +65,12 @@ public abstract class Canvas implements Container
 			drawable.add(pending);
 		}
 		for(Drawable drawable : drawable) drawable.onDraw(this);
+		while(!this.removingDrawables.isEmpty())
+		{
+			Drawable removing = this.removingDrawables.remove();
+			removing.onDestroy(this);
+			this.drawable.remove(removing);
+		}
 	}
 	
 	public synchronized void onDestroy(Container canvas)

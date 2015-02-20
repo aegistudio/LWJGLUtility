@@ -24,12 +24,11 @@ public class WrappedDrawable implements Drawable
 			Drawable.Destroy destroymethod = method.getAnnotation(Drawable.Destroy.class);
 			if(destroymethod != null) onDestroyMethod = method;
 		}
-		
 	}
 	
 	public boolean equals(Object object)
 	{
-		return this.drawableObject == object;
+		return this.drawableObject.equals(object);
 	}
 	
 	@Override

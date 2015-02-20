@@ -52,6 +52,11 @@ public class FrameBufferObject implements Drawable, Scoped
 			this.bufferId = 0;
 		}
 	}
+	
+	public boolean equals(Object obj)
+	{
+		return this.drawable.equals(obj);
+	}
 
 	@Override
 	public void onInit(Container container)

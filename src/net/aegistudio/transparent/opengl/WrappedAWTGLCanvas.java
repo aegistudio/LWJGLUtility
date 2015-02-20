@@ -41,6 +41,11 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 		}
 	};
 	
+	public boolean equals(Object obj)
+	{
+		return this.theContainer.equals(obj);
+	}
+	
 	public void setRefreshInterval(long interval)
 	{
 		if(interval < 0) throw new IllegalArgumentException("The interval should not be less than zero");
