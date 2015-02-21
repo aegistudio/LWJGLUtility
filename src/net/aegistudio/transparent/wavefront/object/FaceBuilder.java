@@ -25,12 +25,16 @@ public class FaceBuilder implements ModelBuilder<List<int[]>>
 
 	protected int[] subsplit(String substring)
 	{
-		String[] indices = substring.split("/", 3);
-		int[] result = new int[indices.length];
-		for(int i = 0; i < indices.length; i ++) if(indices[i].length() == 0) result[i] = -1;
-		else result[i] = Integer.parseInt(indices[i]) - 1;
-		
-		return result;
+		if(substring.matches("[0-9]*/[0-9]*/[0-9]*"))
+		{
+			String[] indices = substring.split("/", 3);
+			int[] result = new int[indices.length];
+			for(int i = 0; i < indices.length; i ++) if(indices[i].length() == 0) result[i] = -1;
+			else result[i] = Integer.parseInt(indices[i]) - 1;
+			
+			return result;
+		}
+		else return new int[] {Integer.parseInt(substring) - 1, -1, -1};
 	}
 	
 	@Override

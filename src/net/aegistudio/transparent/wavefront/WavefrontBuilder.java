@@ -15,6 +15,8 @@ import net.aegistudio.transparent.wavefront.object.VertexBuilder;
 
 public class WavefrontBuilder
 {
+	public boolean modelScoped = false;
+	
 	public Map<String, ModelBuilder<?>> builder = new HashMap<String, ModelBuilder<?>>();
 	{
 		builder.put("#", new CommentBuilder());
@@ -26,9 +28,9 @@ public class WavefrontBuilder
 		builder.put("f", new FaceBuilder());
 	}
 	
-	public WavefrontModel build(InputStream blenderInputStream) throws IOException
+	public WavefrontModel build(InputStream modelInputStream) throws IOException
 	{
-		BufferedReader reader = new BufferedReader(new InputStreamReader(blenderInputStream));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(modelInputStream));
 		String inputLine = null;
 		while((inputLine = reader.readLine())!= null)
 		{

@@ -22,10 +22,4 @@ public class WavefrontModel
 	{
 		return objModels.keySet().toArray(new String[0]);
 	}
-	
-	public static void main(String[] arguments) throws Exception
-	{
-		WavefrontModel model = new WavefrontBuilder().build(new java.io.FileInputStream(new java.io.File("C:\\Users\\admin\\Desktop\\untitled.obj")));
-		for(String str : model.listObjectModelNames()) System.out.println(str);
-	}
 }

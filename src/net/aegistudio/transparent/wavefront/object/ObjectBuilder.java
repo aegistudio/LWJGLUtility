@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.lwjgl.opengl.ARBVertexBufferObject;
+import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.opengl.model.ArrayPointerEntry;
 import net.aegistudio.transparent.opengl.model.EnumArrayPointer;
@@ -92,17 +93,19 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			if(texCoords != null)
 			{
 				VertexBufferObject texCoordVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, texCoords);
-				texCoordPointer = new ArrayPointerEntry(EnumArrayPointer.INDEX, 2, texCoordVBO);
+				texCoordPointer = new ArrayPointerEntry(EnumArrayPointer.TEXTURE, 2, texCoordVBO);
 			}
 			
 			ArrayPointerEntry normalPointer = null; 
 			if(normals != null)
 			{
 				VertexBufferObject normalVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, normals);
-				normalPointer = new ArrayPointerEntry(EnumArrayPointer.INDEX, 3, normalVBO);
+				normalPointer = new ArrayPointerEntry(EnumArrayPointer.NORMAL, 3, normalVBO);
 			}
 			
-			resultMap.put(modelKey, new Model(vertexPointer, indexPointer, texCoordPointer, normalPointer));
+			Model generatedModel = new Model(this.theParent.modelScoped, vertexPointer, indexPointer, texCoordPointer, normalPointer);
+			generatedModel.setMode(GL11.GL_TRIANGLES);
+			resultMap.put(modelKey, generatedModel);
 		}
 		
 		return resultMap;
