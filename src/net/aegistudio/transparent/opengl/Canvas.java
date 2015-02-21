@@ -6,7 +6,6 @@ import java.util.Queue;
 
 public abstract class Canvas implements Container
 {
-	
 	protected final Queue<Drawable> pendingDrawables;
 	protected final Queue<Drawable> removingDrawables;
 	protected final ArrayList<Drawable> drawable;
