@@ -40,7 +40,7 @@ public class WavefrontBuilder
 		}
 		
 		ObjectBuilder objBuilder = (ObjectBuilder)builder.get("o");
-		return new WavefrontModel(objBuilder.getResult(), objBuilder.vertexPool, objBuilder.vboResources);
+		return new WavefrontModel(objBuilder.getResult(), objBuilder.vboResources);
 	}
 	
 	public String[] getComments()

@@ -19,7 +19,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 {
 	protected String theName = null;
 	public WavefrontBuilder theParent = null;
-	protected Map<String, List<int[]>> facesMap = new TreeMap<String, List<int[]>>();
+	protected Map<String, List<int[]>> objectsMap = new TreeMap<String, List<int[]>>();
 	
 	@Override
 	public void build(String[] splittedArguments)
@@ -33,10 +33,9 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 	{
 		if(this.theParent == null) return;
 		if(this.theName != null)
-			this.facesMap.put(theName, ((FaceBuilder)theParent.builder.get("f")).getResult());
+			this.objectsMap.put(theName, ((FaceBuilder)theParent.builder.get("f")).getResult());
 	}
 	
-	public VertexBufferObject vertexPool = null;
 	public Map<String, VertexBufferObject[]> vboResources = new TreeMap<String, VertexBufferObject[]>();
 	
 	@Override
@@ -45,37 +44,40 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 		if(this.theParent == null) return null;
 		this.flush();
 		
-		VertexBuilder vertexBuilder = (VertexBuilder)this.theParent.builder.get("v");
-		this.vertexPool = vertexBuilder.getResult();
-		ArrayPointerEntry vertexPointer = new ArrayPointerEntry(EnumArrayPointer.VERTEX, this.vertexPool);
-		
+		List<float[]> vertexPool = ((VertexBuilder)this.theParent.builder.get("v")).getResult();
 		List<float[]> normalPool = ((NormalBuilder)this.theParent.builder.get("vn")).getResult();
 		List<float[]> texCoordPool = ((TextureMappingBuilder)this.theParent.builder.get("vt")).getResult();
 		
 		Map<String, Model> resultMap = new TreeMap<String, Model>();
 		
-		for(String modelKey : facesMap.keySet())
+		for(String modelKey : objectsMap.keySet())
 		{
 			List<VertexBufferObject> currentVBOs = new ArrayList<VertexBufferObject>();
 			currentVBOs.clear();
 			
-			List<int[]> faces = this.facesMap.get(modelKey);
-			if(faces.size() == 0) continue;
-			int[] frontierElement = faces.get(0);
+			List<int[]> objectTuples = this.objectsMap.get(modelKey);
+			if(objectTuples.size() == 0) continue;
+			int[] frontierElement = objectTuples.get(0);
 			
-			int[] indices = null;
-			if(frontierElement[0] >= 0) indices = new int[faces.size()];
+			float[] vertices = null;
+			if(frontierElement[0] >= 0) vertices = new float[objectTuples.size() * 3];
 
 			float[] texCoords = null;
-			if(frontierElement[1] >= 0) texCoords = new float[faces.size() * 2];
+			if(frontierElement[1] >= 0) texCoords = new float[objectTuples.size() * 2];
 			
 			float[] normals = null;
-			if(frontierElement[2] >= 0) normals = new float[faces.size() * 3];
+			if(frontierElement[2] >= 0) normals = new float[objectTuples.size() * 3];
 			
-			for(int i = 0; i < faces.size(); i ++)
+			for(int i = 0; i < objectTuples.size(); i ++)
 			{
-				int[] tuple = faces.get(i);
-				if(indices != null) indices[i] = tuple[0];
+				int[] tuple = objectTuples.get(i);
+				if(vertices != null)
+				{
+					float[] vertex = vertexPool.get(tuple[0]);
+					vertices[3 * i + 0] = vertex[0];
+					vertices[3 * i + 1] = vertex[1];
+					vertices[3 * i + 2] = vertex[2];
+				}
 				if(texCoords != null)
 				{
 					float[] texCoord = texCoordPool.get(tuple[1]);
@@ -91,12 +93,12 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 				}
 			}
 			
-			ArrayPointerEntry indexPointer = null; 
-			if(indices != null)
+			ArrayPointerEntry vertexPointer = null; 
+			if(vertices != null)
 			{
-				VertexBufferObject indicesVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, indices);
-				currentVBOs.add(indicesVBO);
-				indexPointer = new ArrayPointerEntry(EnumArrayPointer.INDEX, indices.length, indicesVBO);
+				VertexBufferObject vertexVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, vertices);
+				currentVBOs.add(vertexVBO);
+				vertexPointer = new ArrayPointerEntry(EnumArrayPointer.VERTEX, 3, vertexVBO);
 			}
 			
 			ArrayPointerEntry texCoordPointer = null; 
@@ -115,7 +117,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 				normalPointer = new ArrayPointerEntry(EnumArrayPointer.NORMAL, 3, normalVBO);
 			}
 			
-			Model generatedModel = new Model(vertexPointer, indexPointer, texCoordPointer, normalPointer);
+			Model generatedModel = new Model(objectTuples.size(), vertexPointer, texCoordPointer, normalPointer);
 			generatedModel.setMode(GL11.GL_TRIANGLES);
 			resultMap.put(modelKey, generatedModel);
 			vboResources.put(theName, currentVBOs.toArray(new VertexBufferObject[0]));

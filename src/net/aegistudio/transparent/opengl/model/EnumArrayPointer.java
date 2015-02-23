@@ -5,13 +5,6 @@ import org.lwjgl.opengl.GL14;
 
 public enum EnumArrayPointer
 {
-	INDEX(GL11.GL_INDEX_ARRAY, 1)
-	{
-		public void arrayPointer(int size, int type, int stride, long offset)
-		{
-			throw new IllegalArgumentException("The array pointer function of index should never be called!");
-		}
-	},
 	VERTEX(GL11.GL_VERTEX_ARRAY, 3)
 	{
 		public void arrayPointer(int size, int type, int stride, long offset)

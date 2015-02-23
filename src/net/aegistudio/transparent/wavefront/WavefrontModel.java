@@ -20,13 +20,11 @@ import net.aegistudio.transparent.util.Scoped;
 public class WavefrontModel implements Drawable, Scoped
 {
 	protected final Map<String, Model> objModels;
-	protected final VertexBufferObject vertexPool;
 	protected final Map<String, VertexBufferObject[]> vboResources;
 	
-	public WavefrontModel(Map<String, Model> objModels, VertexBufferObject vertexPool, Map<String, VertexBufferObject[]> vboResources)
+	public WavefrontModel(Map<String, Model> objModels, Map<String, VertexBufferObject[]> vboResources)
 	{
 		this.objModels = objModels;
-		this.vertexPool = vertexPool;
 		this.vboResources = vboResources;
 	}
 	
@@ -51,13 +49,12 @@ public class WavefrontModel implements Drawable, Scoped
 	@Override
 	public int create()
 	{
-		return this.vertexPool.create();
+		return 0;
 	}
 	
 	@Override
 	public void destroy()
 	{
-		this.vertexPool.destroy();
 		for(String model : objModels.keySet()) for(VertexBufferObject resource : vboResources.get(model))
 			resource.destroy();
 	}

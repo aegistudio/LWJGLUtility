@@ -8,7 +8,7 @@ import net.aegistudio.transparent.wavefront.ModelBuilder;
 public class FaceBuilder implements ModelBuilder<List<int[]>>
 {
 	protected boolean isFlushed = true;
-	protected ArrayList<int[]> faces = new ArrayList<int[]>();
+	protected ArrayList<int[]> vertices = new ArrayList<int[]>();
 	
 	@Override
 	public void build(String[] splittedArguments)
@@ -17,9 +17,9 @@ public class FaceBuilder implements ModelBuilder<List<int[]>>
 		for(int i = 0; i < splittedArguments.length - 3; i ++)
 		{
 			//Auto triangulate the surface.
-			faces.add(subsplit(splittedArguments[1]));
-			faces.add(subsplit(splittedArguments[i + 2]));
-			faces.add(subsplit(splittedArguments[i + 3]));
+			vertices.add(subsplit(splittedArguments[1]));
+			vertices.add(subsplit(splittedArguments[i + 2]));
+			vertices.add(subsplit(splittedArguments[i + 3]));
 		}
 	}
 
@@ -41,8 +41,8 @@ public class FaceBuilder implements ModelBuilder<List<int[]>>
 	public List<int[]> getResult()
 	{
 		this.isFlushed = true;
-		List<int[]> returnFaces = this.faces;
-		this.faces = new ArrayList<int[]>();
+		List<int[]> returnFaces = this.vertices;
+		this.vertices = new ArrayList<int[]>();
 		return returnFaces;
 	}
 	

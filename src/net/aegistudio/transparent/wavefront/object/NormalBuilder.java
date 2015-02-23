@@ -7,7 +7,6 @@ import net.aegistudio.transparent.wavefront.ModelBuilder;
 
 public class NormalBuilder implements ModelBuilder<List<float[]>>
 {
-	protected boolean isTouched = false;
 	protected ArrayList<float[]> normalsPool = new ArrayList<float[]>();
 	
 	@Override
