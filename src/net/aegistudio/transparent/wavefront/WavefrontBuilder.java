@@ -15,8 +15,6 @@ import net.aegistudio.transparent.wavefront.object.VertexBuilder;
 
 public class WavefrontBuilder
 {
-	public boolean modelScoped = false;
-	
 	public Map<String, ModelBuilder<?>> builder = new HashMap<String, ModelBuilder<?>>();
 	{
 		builder.put("#", new CommentBuilder());
@@ -39,6 +37,7 @@ public class WavefrontBuilder
 			if(callingBuilder != null) callingBuilder.build(splitted);
 		}
 		
-		return new WavefrontModel(((ObjectBuilder)builder.get("o")).getResult());
+		ObjectBuilder objBuilder = (ObjectBuilder)builder.get("o");
+		return new WavefrontModel(objBuilder.getResult(), objBuilder.vertexPool, objBuilder.vboResources);
 	}
 }

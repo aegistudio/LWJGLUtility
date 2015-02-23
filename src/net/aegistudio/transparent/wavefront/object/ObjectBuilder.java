@@ -1,6 +1,6 @@
 package net.aegistudio.transparent.wavefront.object;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,20 +36,29 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			this.facesMap.put(theName, ((FaceBuilder)theParent.builder.get("f")).getResult());
 	}
 	
+	public VertexBufferObject vertexPool = null;
+	public Map<String, VertexBufferObject[]> vboResources = new TreeMap<String, VertexBufferObject[]>();
+	
 	@Override
 	public Map<String, Model> getResult()
 	{
 		if(this.theParent == null) return null;
 		this.flush();
+		
 		VertexBuilder vertexBuilder = (VertexBuilder)this.theParent.builder.get("v");
-		ArrayPointerEntry vertexPointer = new ArrayPointerEntry(EnumArrayPointer.VERTEX, vertexBuilder.getResult());
+		this.vertexPool = vertexBuilder.getResult();
+		ArrayPointerEntry vertexPointer = new ArrayPointerEntry(EnumArrayPointer.VERTEX, this.vertexPool);
 		
 		List<float[]> normalPool = ((NormalBuilder)this.theParent.builder.get("vn")).getResult();
 		List<float[]> texCoordPool = ((TextureMappingBuilder)this.theParent.builder.get("vt")).getResult();
 		
 		Map<String, Model> resultMap = new TreeMap<String, Model>();
+		
 		for(String modelKey : facesMap.keySet())
 		{
+			List<VertexBufferObject> currentVBOs = new ArrayList<VertexBufferObject>();
+			currentVBOs.clear();
+			
 			List<int[]> faces = this.facesMap.get(modelKey);
 			if(faces.size() == 0) continue;
 			int[] frontierElement = faces.get(0);
@@ -86,6 +95,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			if(indices != null)
 			{
 				VertexBufferObject indicesVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, indices);
+				currentVBOs.add(indicesVBO);
 				indexPointer = new ArrayPointerEntry(EnumArrayPointer.INDEX, indices.length, indicesVBO);
 			}
 			
@@ -93,6 +103,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			if(texCoords != null)
 			{
 				VertexBufferObject texCoordVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, texCoords);
+				currentVBOs.add(texCoordVBO);
 				texCoordPointer = new ArrayPointerEntry(EnumArrayPointer.TEXTURE, 2, texCoordVBO);
 			}
 			
@@ -100,12 +111,14 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			if(normals != null)
 			{
 				VertexBufferObject normalVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, normals);
+				currentVBOs.add(normalVBO);
 				normalPointer = new ArrayPointerEntry(EnumArrayPointer.NORMAL, 3, normalVBO);
 			}
 			
-			Model generatedModel = new Model(this.theParent.modelScoped, vertexPointer, indexPointer, texCoordPointer, normalPointer);
+			Model generatedModel = new Model(vertexPointer, indexPointer, texCoordPointer, normalPointer);
 			generatedModel.setMode(GL11.GL_TRIANGLES);
 			resultMap.put(modelKey, generatedModel);
+			vboResources.put(theName, currentVBOs.toArray(new VertexBufferObject[0]));
 		}
 		
 		return resultMap;
