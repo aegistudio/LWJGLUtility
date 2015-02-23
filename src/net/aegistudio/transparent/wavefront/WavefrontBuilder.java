@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.aegistudio.transparent.wavefront.material.MaterialLibBuilder;
 import net.aegistudio.transparent.wavefront.object.FaceBuilder;
 import net.aegistudio.transparent.wavefront.object.NormalBuilder;
 import net.aegistudio.transparent.wavefront.object.ObjectBuilder;
@@ -24,6 +25,7 @@ public class WavefrontBuilder
 		builder.put("vn", new NormalBuilder());
 		builder.put("vt", new TextureMappingBuilder());
 		builder.put("f", new FaceBuilder());
+		builder.put("mtllib", new MaterialLibBuilder());
 	}
 	
 	public WavefrontModel build(InputStream modelInputStream) throws IOException
@@ -39,5 +41,15 @@ public class WavefrontBuilder
 		
 		ObjectBuilder objBuilder = (ObjectBuilder)builder.get("o");
 		return new WavefrontModel(objBuilder.getResult(), objBuilder.vertexPool, objBuilder.vboResources);
+	}
+	
+	public String[] getComments()
+	{
+		return ((CommentBuilder)builder.get("#")).getResult();
+	}
+	
+	public String getMaterialLibrary()
+	{
+		return ((MaterialLibBuilder)builder.get("mtllib")).getResult();
 	}
 }

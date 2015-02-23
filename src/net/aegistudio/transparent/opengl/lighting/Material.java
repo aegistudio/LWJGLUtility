@@ -7,9 +7,9 @@ import net.aegistudio.transparent.util.Scoped;
 
 public class Material implements Scoped, Bindable
 {
-	protected final Face face;
+	protected Face face = Face.BOTH;
 	
-	public Material(Face face)
+	public void setFace(Face face)
 	{
 		this.face = face;
 	}
