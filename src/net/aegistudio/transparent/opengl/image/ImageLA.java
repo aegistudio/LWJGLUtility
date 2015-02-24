@@ -3,9 +3,8 @@ package net.aegistudio.transparent.opengl.image;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
 
+import net.aegistudio.transparent.opengl.util.EnumDataType;
 import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
-
-import org.lwjgl.opengl.GL11;
 
 public class ImageLA implements Image
 {
@@ -90,9 +89,9 @@ public class ImageLA implements Image
 	}
 
 	@Override
-	public int getPixelType()
+	public EnumDataType getPixelType()
 	{
-		return GL11.GL_UNSIGNED_BYTE;
+		return EnumDataType.BYTE;
 	}
 	
 }

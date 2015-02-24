@@ -1,5 +1,6 @@
 package net.aegistudio.transparent.opengl.image;
 
+import net.aegistudio.transparent.opengl.util.EnumDataType;
 import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
 
 public interface Image
@@ -12,5 +13,5 @@ public interface Image
 	
 	public EnumPixelFormat getPixelFormat();
 	
-	public int getPixelType();
+	public EnumDataType getPixelType();
 }

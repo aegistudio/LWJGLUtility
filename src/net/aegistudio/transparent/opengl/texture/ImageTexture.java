@@ -27,12 +27,12 @@ public class ImageTexture extends Texture
 		this(image, GL11.GL_TEXTURE_2D);
 	}
 	
-	public ImageTexture(Object texture, EnumPixelFormat pixelFormat, int pixelType, int width, int height, int texTarget)
+	public ImageTexture(Object texture, EnumPixelFormat pixelFormat, EnumDataType pixelType, int width, int height, int texTarget)
 	{
 		if(texture == null) throw new IllegalArgumentException("Buffer should not be null!");
 		this.texTarget = texTarget;
 		this.pixelFormat = pixelFormat.stateId;
-		this.pixelType = pixelType;
+		this.pixelType = pixelType.inferGLType();
 		this.width = width;
 		this.height = height;
 		
