@@ -5,6 +5,7 @@ import net.aegistudio.transparent.util.BindingFailureException;
 import net.aegistudio.transparent.util.Scoped;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 public abstract class Texture implements Scoped, Bindable
 {
@@ -41,7 +42,7 @@ public abstract class Texture implements Scoped, Bindable
 	
 	protected void settingTextureEnvironments()
 	{
-		GL11.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+		GL11.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
 	}
 	
 	public void bind()
