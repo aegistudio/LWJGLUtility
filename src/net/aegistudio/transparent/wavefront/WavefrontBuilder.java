@@ -34,7 +34,7 @@ public class WavefrontBuilder
 		String inputLine = null;
 		while((inputLine = reader.readLine())!= null)
 		{
-			String[] splitted = inputLine.split(" ");
+			String[] splitted = inputLine.split("[ ]+");
 			ModelBuilder<?> callingBuilder = builder.get(splitted[0]);
 			if(callingBuilder != null) callingBuilder.build(splitted);
 		}
