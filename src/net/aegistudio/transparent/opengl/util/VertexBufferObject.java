@@ -34,11 +34,11 @@ public class VertexBufferObject implements Scoped, Bindable
 	 * @param bufferUsage The usage of this VBO, like GL_STATIC_DRAW, GL_DYNAMIC_COPY, etc.
 	 * @param buffer The target array to buffer, the buffer array type could only be byte, int, float, double, short and their wrapper class.
 	 */
-	public VertexBufferObject(int bufferTarget, int bufferUsage, Object buffer)
+	public VertexBufferObject(EnumBufferTarget bufferTarget, EnumBufferUsage bufferUsage, Object buffer)
 	{
 		if(buffer == null) throw new IllegalArgumentException("Buffer should not be null!");
-		this.bufferTarget = bufferTarget;
-		this.bufferUsage = bufferUsage;
+		this.bufferTarget = bufferTarget.stateId;
+		this.bufferUsage = bufferUsage.stateId;
 		
 		Class<?> clz = buffer.getClass().getComponentType();
 		if(clz == null) throw new IllegalArgumentException("Unable to create buffer for not an array!");

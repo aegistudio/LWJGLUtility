@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.opengl.model.ArrayPointerEntry;
 import net.aegistudio.transparent.opengl.model.EnumArrayPointer;
 import net.aegistudio.transparent.opengl.model.Model;
+import net.aegistudio.transparent.opengl.util.EnumBufferTarget;
+import net.aegistudio.transparent.opengl.util.EnumBufferUsage;
 import net.aegistudio.transparent.opengl.util.VertexBufferObject;
 import net.aegistudio.transparent.wavefront.WavefrontBuilder;
 import net.aegistudio.transparent.wavefront.ModelBuilder;
@@ -96,7 +97,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			ArrayPointerEntry vertexPointer = null; 
 			if(vertices != null)
 			{
-				VertexBufferObject vertexVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, vertices);
+				VertexBufferObject vertexVBO = new VertexBufferObject(EnumBufferTarget.ARRAY, EnumBufferUsage.STATIC_DRAW, vertices);
 				currentVBOs.add(vertexVBO);
 				vertexPointer = new ArrayPointerEntry(EnumArrayPointer.VERTEX, 3, vertexVBO);
 			}
@@ -104,7 +105,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			ArrayPointerEntry texCoordPointer = null; 
 			if(texCoords != null)
 			{
-				VertexBufferObject texCoordVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, texCoords);
+				VertexBufferObject texCoordVBO = new VertexBufferObject(EnumBufferTarget.ARRAY, EnumBufferUsage.STATIC_DRAW, texCoords);
 				currentVBOs.add(texCoordVBO);
 				texCoordPointer = new ArrayPointerEntry(EnumArrayPointer.TEXTURE, 2, texCoordVBO);
 			}
@@ -112,7 +113,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			ArrayPointerEntry normalPointer = null; 
 			if(normals != null)
 			{
-				VertexBufferObject normalVBO = new VertexBufferObject(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, normals);
+				VertexBufferObject normalVBO = new VertexBufferObject(EnumBufferTarget.ARRAY, EnumBufferUsage.STATIC_DRAW, normals);
 				currentVBOs.add(normalVBO);
 				normalPointer = new ArrayPointerEntry(EnumArrayPointer.NORMAL, 3, normalVBO);
 			}

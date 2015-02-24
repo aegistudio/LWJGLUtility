@@ -1,10 +1,10 @@
 package net.aegistudio.transparent.opengl.image;
 
-import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL21;
 
 import net.aegistudio.transparent.opengl.texture.ImageTexture;
+import net.aegistudio.transparent.opengl.util.EnumBufferTarget;
+import net.aegistudio.transparent.opengl.util.EnumBufferUsage;
 import net.aegistudio.transparent.opengl.util.VertexBufferObject;
 
 public final class ImageUtils
@@ -18,6 +18,6 @@ public final class ImageUtils
 	
 	public static VertexBufferObject createImageVBO(Image image)
 	{
-		return new VertexBufferObject(GL21.GL_PIXEL_UNPACK_BUFFER, ARBVertexBufferObject.GL_STATIC_DRAW_ARB, image.getRasterData());
+		return new VertexBufferObject(EnumBufferTarget.PIXEL_UNPACK, EnumBufferUsage.STATIC_DRAW, image.getRasterData());
 	}
 }
