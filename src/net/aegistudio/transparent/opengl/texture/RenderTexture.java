@@ -2,6 +2,7 @@ package net.aegistudio.transparent.opengl.texture;
 
 import java.nio.ByteBuffer;
 
+import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
 import net.aegistudio.transparent.opengl.util.FrameBufferObject;
 import net.aegistudio.transparent.util.BindingFailureException;
 
@@ -19,16 +20,16 @@ public class RenderTexture extends Texture
 	 */
 	public RenderTexture(FrameBufferObject fbo, int width, int height, int... attachments)
 	{
-		this(fbo, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, width, height, GL11.GL_TEXTURE_2D, attachments);
+		this(fbo, EnumPixelFormat.RGBA, GL11.GL_UNSIGNED_BYTE, width, height, GL11.GL_TEXTURE_2D, attachments);
 	}
 	
-	public RenderTexture(FrameBufferObject fbo, int pixelFormat, int pixelType, int width, int height, int texTarget, int... attachments)
+	public RenderTexture(FrameBufferObject fbo, EnumPixelFormat pixelFormat, int pixelType, int width, int height, int texTarget, int... attachments)
 	{
 		if(fbo == null) throw new IllegalArgumentException("The rendering FBO for this texture should not be null!");
 		this.fbo = fbo;
 		
 		this.texTarget = texTarget;
-		this.pixelFormat = pixelFormat;
+		this.pixelFormat = pixelFormat.stateId;
 		this.pixelType = pixelType;
 		this.width = width;
 		this.height = height;

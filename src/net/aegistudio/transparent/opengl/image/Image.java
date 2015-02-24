@@ -1,5 +1,7 @@
 package net.aegistudio.transparent.opengl.image;
 
+import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
+
 public interface Image
 {	
 	public Object getRasterData();
@@ -8,7 +10,7 @@ public interface Image
 	
 	public int getHeight();
 	
-	public int getPixelFormat();
+	public EnumPixelFormat getPixelFormat();
 	
 	public int getPixelType();
 }

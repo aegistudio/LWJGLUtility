@@ -3,6 +3,8 @@ package net.aegistudio.transparent.opengl.image;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
 
+import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
+
 import org.lwjgl.opengl.GL11;
 
 public class ImageRGBA implements Image
@@ -76,9 +78,9 @@ public class ImageRGBA implements Image
 	}
 
 	@Override
-	public int getPixelFormat()
+	public EnumPixelFormat getPixelFormat()
 	{
-		return GL11.GL_RGBA;
+		return EnumPixelFormat.RGBA;
 	}
 
 	@Override

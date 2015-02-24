@@ -10,6 +10,7 @@ import net.aegistudio.transparent.opengl.image.Image;
 import net.aegistudio.transparent.opengl.util.BufferHelper;
 import net.aegistudio.transparent.opengl.util.EnumDataType;
 import net.aegistudio.transparent.opengl.util.BufferHelper.BufferProcessor;
+import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
 import net.aegistudio.transparent.util.BindingFailureException;
 
 public class ImageTexture extends Texture
@@ -26,11 +27,11 @@ public class ImageTexture extends Texture
 		this(image, GL11.GL_TEXTURE_2D);
 	}
 	
-	public ImageTexture(Object texture, int pixelFormat, int pixelType, int width, int height, int texTarget)
+	public ImageTexture(Object texture, EnumPixelFormat pixelFormat, int pixelType, int width, int height, int texTarget)
 	{
 		if(texture == null) throw new IllegalArgumentException("Buffer should not be null!");
 		this.texTarget = texTarget;
-		this.pixelFormat = pixelFormat;
+		this.pixelFormat = pixelFormat.stateId;
 		this.pixelType = pixelType;
 		this.width = width;
 		this.height = height;
