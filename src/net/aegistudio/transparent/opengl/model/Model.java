@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.Drawable;
+import net.aegistudio.transparent.opengl.util.EnumPrimitive;
 import net.aegistudio.transparent.opengl.util.VertexBufferObject;
 
 public class Model implements Drawable
@@ -67,10 +68,10 @@ public class Model implements Drawable
 		if(scoping) for(ArrayPointerEntry entry : usingArrayPointer) entry.vbo.create();
 	}
 
-	protected int mode = GL11.GL_POLYGON;
-	public void setMode(int drawMode)
+	protected int primitiveMode = EnumPrimitive.QUADS.stateId;
+	public void setPrimitive(EnumPrimitive primitive)
 	{
-		this.mode = drawMode;
+		this.primitiveMode = primitive.stateId;
 	}
 	
 	@Override
@@ -84,7 +85,7 @@ public class Model implements Drawable
 			entry.vbo.unbind();
 		}
 		
-		GL11.glDrawArrays(mode, 0, vertices_count);
+		GL11.glDrawArrays(primitiveMode, 0, vertices_count);
 		
 		for(ArrayPointerEntry entry : usingArrayPointer)
 			GL11.glDisableClientState(entry.arrayPointer.stateName);

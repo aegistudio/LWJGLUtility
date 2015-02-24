@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lwjgl.opengl.GL11;
-
 import net.aegistudio.transparent.opengl.model.ArrayPointerEntry;
 import net.aegistudio.transparent.opengl.model.EnumArrayPointer;
 import net.aegistudio.transparent.opengl.model.Model;
 import net.aegistudio.transparent.opengl.util.EnumBufferTarget;
 import net.aegistudio.transparent.opengl.util.EnumBufferUsage;
+import net.aegistudio.transparent.opengl.util.EnumPrimitive;
 import net.aegistudio.transparent.opengl.util.VertexBufferObject;
 import net.aegistudio.transparent.wavefront.WavefrontBuilder;
 import net.aegistudio.transparent.wavefront.ModelBuilder;
@@ -119,7 +118,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			}
 			
 			Model generatedModel = new Model(objectTuples.size(), vertexPointer, texCoordPointer, normalPointer);
-			generatedModel.setMode(GL11.GL_TRIANGLES);
+			generatedModel.setPrimitive(EnumPrimitive.TRIANGLES);
 			resultMap.put(modelKey, generatedModel);
 			vboResources.put(theName, currentVBOs.toArray(new VertexBufferObject[0]));
 		}
