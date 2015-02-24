@@ -120,7 +120,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			Model generatedModel = new Model(objectTuples.size(), vertexPointer, texCoordPointer, normalPointer);
 			generatedModel.setPrimitive(EnumPrimitive.TRIANGLES);
 			resultMap.put(modelKey, generatedModel);
-			vboResources.put(theName, currentVBOs.toArray(new VertexBufferObject[0]));
+			vboResources.put(modelKey, currentVBOs.toArray(new VertexBufferObject[0]));
 		}
 		
 		return resultMap;

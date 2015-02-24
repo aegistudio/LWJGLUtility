@@ -55,8 +55,9 @@ public class WavefrontModel implements Drawable, Scoped
 	@Override
 	public void destroy()
 	{
-		for(String model : objModels.keySet()) for(VertexBufferObject resource : vboResources.get(model))
-			resource.destroy();
+		VertexBufferObject[] resources = null;
+		for(String model : objModels.keySet()) if((resources = vboResources.get(model)) != null)
+			for(VertexBufferObject resource : resources) resource.destroy();
 	}
 
 	@Override
@@ -74,7 +75,9 @@ public class WavefrontModel implements Drawable, Scoped
 			while(iter.hasNext())
 			{
 				String current = iter.next();
-				for(VertexBufferObject resource : vboResources.get(current)) resource.create();
+				VertexBufferObject[] resources = null;
+				if((resources = vboResources.get(current)) != null) 
+					for(VertexBufferObject resource : resources) resource.create();
 				iter.remove();
 			}
 		}

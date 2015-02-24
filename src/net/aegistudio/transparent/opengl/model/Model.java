@@ -16,6 +16,7 @@ public class Model implements Drawable
 	protected final ArrayPointerEntry[] usingArrayPointer;
 	protected final int vertices_count;
 	protected final boolean scoping;
+	protected VertexArrayObject vao = new VertexArrayObject();
 	
 	public Model(Map<EnumArrayPointer, VertexBufferObject> bufferedModel, int vertices_count, boolean scoping)
 	{
@@ -65,7 +66,19 @@ public class Model implements Drawable
 	@Override
 	public void onInit(Container container)
 	{
+		vao.create();
+		vao.bind();
 		if(scoping) for(ArrayPointerEntry entry : usingArrayPointer) entry.vbo.create();
+		for(ArrayPointerEntry entry : usingArrayPointer)
+		{
+			GL11.glEnableClientState(entry.arrayPointer.stateName);
+			entry.vbo.bind();
+			entry.arrayPointer.arrayPointer(entry.size, entry.vbo.getBufferType().inferGLType(), entry.stride, entry.offset);
+			entry.vbo.unbind();
+		}
+		vao.unbind();
+		for(ArrayPointerEntry entry : usingArrayPointer)
+			GL11.glDisableClientState(entry.arrayPointer.stateName);
 	}
 
 	protected int primitiveMode = EnumPrimitive.QUADS.stateId;
@@ -77,23 +90,15 @@ public class Model implements Drawable
 	@Override
 	public void onDraw(Container container)
 	{
-		for(ArrayPointerEntry entry : usingArrayPointer)
-		{
-			GL11.glEnableClientState(entry.arrayPointer.stateName);
-			entry.vbo.bind();
-			entry.arrayPointer.arrayPointer(entry.size, entry.vbo.getBufferType().inferGLType(), entry.stride, entry.offset);
-			entry.vbo.unbind();
-		}
-		
+		vao.bind();
 		GL11.glDrawArrays(primitiveMode, 0, vertices_count);
-		
-		for(ArrayPointerEntry entry : usingArrayPointer)
-			GL11.glDisableClientState(entry.arrayPointer.stateName);
+		vao.unbind();
 	}
 
 	@Override
 	public void onDestroy(Container container)
 	{
+		vao.destroy();
 		if(scoping) for(ArrayPointerEntry entry : usingArrayPointer) entry.vbo.destroy();
 	}
 }
