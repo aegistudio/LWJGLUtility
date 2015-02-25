@@ -30,14 +30,22 @@ public abstract class DisplayList implements Scoped
 	
 	public int create()
 	{
-		if(this.displayListId == 0)
+		return this.create(false, false);
+	}
+	
+	public int create(boolean force_recompile, boolean compile_and_execute)
+	{
+		if((this.displayListId == 0) || force_recompile)
 		{
-			this.displayListId = GL11.glGenLists(displayListRange);
-			if(this.displayListId == 0) throw new BindingFailureException("Unable to allocate display list location!");
+			if(this.displayListId == 0)
+			{
+				this.displayListId = GL11.glGenLists(displayListRange);
+				if(this.displayListId == 0) throw new BindingFailureException("Unable to allocate display list location!");
+			}
 			
 			for(int i = 0; i < this.displayListRange; i ++)
 			{
-				GL11.glNewList(this.displayListId + i, GL11.GL_COMPILE);
+				GL11.glNewList(this.displayListId + i, compile_and_execute? GL11.GL_COMPILE_AND_EXECUTE : GL11.GL_COMPILE);
 				this.display(i);
 				GL11.glEndList();
 			}
