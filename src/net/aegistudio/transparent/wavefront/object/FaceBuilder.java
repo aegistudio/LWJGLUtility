@@ -27,6 +27,7 @@ public class FaceBuilder implements ModelBuilder<List<int[]>>
 	{
 		if(substring.matches("[0-9]*/[0-9]*/[0-9]*"))
 		{
+			//XXX Including iv/it/in and iv//in.
 			String[] indices = substring.split("/", 3);
 			int[] result = new int[indices.length];
 			for(int i = 0; i < indices.length; i ++) if(indices[i].length() == 0) result[i] = -1;
@@ -36,6 +37,7 @@ public class FaceBuilder implements ModelBuilder<List<int[]>>
 		}
 		else if(substring.matches("[0-9]*/[0-9]*"))
 		{
+			//XXX Including iv/it.
 			String[] indices = substring.split("/", 2);
 			int[] result = new int[3];
 			for(int i = 0; i < indices.length; i ++) if(indices[i].length() == 0) result[i] = -1;
@@ -44,7 +46,7 @@ public class FaceBuilder implements ModelBuilder<List<int[]>>
 			
 			return result;
 		}
-		else return new int[] {Integer.parseInt(substring) - 1, -1, -1};
+		else return new int[] {Integer.parseInt(substring) - 1, -1, -1};	//XXX Including iv.
 	}
 	
 	@Override
