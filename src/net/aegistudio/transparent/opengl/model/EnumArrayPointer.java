@@ -3,7 +3,7 @@ package net.aegistudio.transparent.opengl.model;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-public enum EnumArrayPointer
+public enum EnumArrayPointer implements ArrayPointer
 {
 	VERTEX(GL11.GL_VERTEX_ARRAY, 3)
 	{
@@ -55,9 +55,9 @@ public enum EnumArrayPointer
 		}
 	};
 	
-	public final int stateName;
+	private final int stateName;
 	
-	public final int defaultSize;
+	private final int defaultSize;
 	
 	private EnumArrayPointer(int stateName, int defaultSize)
 	{
@@ -66,4 +66,24 @@ public enum EnumArrayPointer
 	}
 	
 	public abstract void arrayPointer(int size, int type, int stride, long offset);
+	
+	public void enable()
+	{
+		GL11.glEnableClientState(stateName);
+	}
+	
+	public void disable()
+	{
+		GL11.glDisableClientState(stateName);
+	}
+	
+	public int identify()
+	{
+		return 0 + this.ordinal();
+	}
+	
+	public int getDefaultSize()
+	{
+		return this.defaultSize;
+	}
 }
