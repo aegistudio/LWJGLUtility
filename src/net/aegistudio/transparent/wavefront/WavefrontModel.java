@@ -2,8 +2,6 @@ package net.aegistudio.transparent.wavefront;
 
 import java.util.Map;
 
-import net.aegistudio.transparent.opengl.Container;
-import net.aegistudio.transparent.opengl.Drawable;
 import net.aegistudio.transparent.opengl.model.Model;
 import net.aegistudio.transparent.opengl.util.VertexBufferObject;
 import net.aegistudio.transparent.util.Scoped;
@@ -14,7 +12,7 @@ import net.aegistudio.transparent.util.Scoped;
  * @author aegistudio.
  */
 
-public class WavefrontModel implements Drawable, Scoped
+public class WavefrontModel implements Scoped
 {
 	protected final Map<String, Model> objModels;
 	protected final Map<String, VertexBufferObject[]> vboResources;
@@ -53,23 +51,5 @@ public class WavefrontModel implements Drawable, Scoped
 		VertexBufferObject[] resources = null;
 		for(String model : objModels.keySet()) if((resources = vboResources.get(model)) != null)
 			for(VertexBufferObject resource : resources) resource.destroy();
-	}
-
-	@Override
-	public void onInit(Container container)
-	{
-		this.create();
-	}
-
-	@Override
-	public void onDraw(Container container)
-	{
-	
-	}
-
-	@Override
-	public void onDestroy(Container container)
-	{
-		this.destroy();
 	}
 }

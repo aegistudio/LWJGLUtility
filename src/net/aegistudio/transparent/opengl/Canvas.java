@@ -74,7 +74,12 @@ public abstract class Canvas implements Container
 	
 	public synchronized void onDestroy(Container canvas)
 	{
-		for(Drawable drawable : drawable) drawable.onDestroy(this);
+		for(Drawable drawable : drawable)
+		{
+			this.pendingDrawables.add(drawable);
+			drawable.onDestroy(this);
+		}
+		drawable.clear();
 	}
 	
 	public void finalize() throws Throwable

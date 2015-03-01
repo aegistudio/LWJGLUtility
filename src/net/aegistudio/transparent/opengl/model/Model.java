@@ -67,7 +67,7 @@ public class Model implements Drawable
 	public void onInit(Container container)
 	{
 		vao.create();
-		vao.bind(); 
+		vao.bind();
 		for(ArrayPointerEntry entry : usingArrayPointer)
 		{
 			entry.vbo.create();
