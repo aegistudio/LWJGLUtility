@@ -48,6 +48,12 @@ import net.aegistudio.transparent.opengl.texture.Texture;
 import net.aegistudio.transparent.opengl.util.FlyweightDrawable;
 import net.aegistudio.transparent.util.ScopedGraphic;
 
+/**
+ * This object viewer is used to visualize wavefront object models.
+ * Please run it by calling it as the main class with JVM.
+ * @author aegistudio
+ */
+
 @SuppressWarnings("serial")
 public class WavefrontObjectViewer extends Frame
 {
