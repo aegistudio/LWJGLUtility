@@ -70,7 +70,7 @@ public class Model implements Drawable
 		vao.bind(); 
 		for(ArrayPointerEntry entry : usingArrayPointer)
 		{
-			if(scoping) entry.vbo.create();
+			entry.vbo.create();
 			entry.arrayPointer.enable();
 			entry.vbo.bind();
 			entry.arrayPointer.arrayPointer(entry.size, entry.vbo.getBufferType().inferGLType(), entry.stride, entry.offset);

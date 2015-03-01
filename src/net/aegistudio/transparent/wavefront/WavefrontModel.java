@@ -1,9 +1,6 @@
 package net.aegistudio.transparent.wavefront;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.Drawable;
@@ -29,15 +26,13 @@ public class WavefrontModel implements Drawable, Scoped
 	}
 	
 	/**
-	 * Get a object model, and initialize its resources by default.
+	 * Get a object model.
 	 * @param objName
-	 * @return the Model whose depending resources are initialized.
+	 * @return the Model which is queried.
 	 */
-	Set<String> getObjectModels = new TreeSet<String>();
 	public Model getObjectModel(String objName)
 	{
 		Model model = objModels.get(objName);
-		if(model != null) this.getObjectModels.add(objName);
 		return model;
 	}
 	
@@ -69,18 +64,7 @@ public class WavefrontModel implements Drawable, Scoped
 	@Override
 	public void onDraw(Container container)
 	{
-		synchronized(this.getObjectModels)
-		{
-			Iterator<String> iter = getObjectModels.iterator();
-			while(iter.hasNext())
-			{
-				String current = iter.next();
-				VertexBufferObject[] resources = null;
-				if((resources = vboResources.get(current)) != null) 
-					for(VertexBufferObject resource : resources) resource.create();
-				iter.remove();
-			}
-		}
+	
 	}
 
 	@Override
