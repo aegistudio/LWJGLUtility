@@ -100,4 +100,9 @@ public class Model implements Drawable
 		vao.destroy();
 		if(scoping) for(ArrayPointerEntry entry : usingArrayPointer) entry.vbo.destroy();
 	}
+	
+	public ArrayPointerEntry[] getArrayPointers()
+	{
+		return this.usingArrayPointer;
+	}
 }
