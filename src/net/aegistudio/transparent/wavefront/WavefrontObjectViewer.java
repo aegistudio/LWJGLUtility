@@ -163,6 +163,7 @@ public class WavefrontObjectViewer extends Frame
 						@Override
 						public boolean accept(File arg0)
 						{
+							if(arg0.isDirectory()) return true;
 							return arg0.getName().endsWith(".obj");
 						}
 	
