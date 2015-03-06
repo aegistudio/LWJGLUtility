@@ -1,9 +1,7 @@
 package net.aegistudio.transparent.opengl.util;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
-import net.aegistudio.transparent.opengl.util.BufferHelper.BufferProcessor;
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
 import net.aegistudio.transparent.util.Scoped;
@@ -45,13 +43,7 @@ public class VertexBufferObject implements Scoped, Bindable
 		this.bufferType = EnumDataType.getDataType(clz);
 		if(this.bufferType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		
-		int arrayLength = Array.getLength(buffer);
-		this.buffer = BufferUtils.createByteBuffer(arrayLength * this.bufferType.getDataTypeSize());
-		
-		BufferProcessor processor = BufferHelper.getBufferProcessor(this.bufferType);
-		for(int i = 0; i < arrayLength; i ++)
-			processor.putBuffer(this.buffer, buffer, i);
-		this.buffer.flip();
+		this.buffer = BufferHelper.getBufferProcessor(bufferType).putBuffer(buffer);
 	}
 	
 	/**

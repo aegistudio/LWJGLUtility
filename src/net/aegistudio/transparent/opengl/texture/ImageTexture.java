@@ -1,15 +1,12 @@
 package net.aegistudio.transparent.opengl.texture;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.opengl.image.Image;
 import net.aegistudio.transparent.opengl.util.BufferHelper;
 import net.aegistudio.transparent.opengl.util.EnumDataType;
-import net.aegistudio.transparent.opengl.util.BufferHelper.BufferProcessor;
 import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
 import net.aegistudio.transparent.util.BindingFailureException;
 
@@ -41,12 +38,7 @@ public class ImageTexture extends Texture
 		EnumDataType dataType = EnumDataType.getDataType(clz);
 		if(dataType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		
-		int arrayLength = Array.getLength(texture);
-		this.buffer = BufferUtils.createByteBuffer(arrayLength * dataType.getDataTypeSize());
-		
-		BufferProcessor processor = BufferHelper.getBufferProcessor(dataType);
-		for(int i = 0; i < arrayLength; i ++) processor.putBuffer(this.buffer, texture, i);
-		this.buffer.flip();
+		this.buffer = BufferHelper.getBufferProcessor(dataType).putBuffer(texture);
 	}
 
 	public int create(int innerFormat, int mipmapLevels)
