@@ -1,12 +1,12 @@
 package net.aegistudio.transparent.opengl.util;
 
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
 import net.aegistudio.transparent.util.Scoped;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GLContext;
 
@@ -43,7 +43,7 @@ public class VertexBufferObject implements Scoped, Bindable
 		this.bufferType = EnumDataType.getDataType(clz);
 		if(this.bufferType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		
-		this.buffer = BufferHelper.getBufferProcessor(bufferType).putBuffer(buffer);
+		this.buffer = BufferHelper.getBufferProcessor(bufferType).makeBuffer(buffer);
 	}
 	
 	/**
@@ -88,22 +88,36 @@ public class VertexBufferObject implements Scoped, Bindable
 	 */
 	public void subst(int position, Object obj)
 	{
-		if(position < 0 || position > (this.buffer.capacity() / this.bufferType.getDataTypeSize()))
-				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
-		
 		if(this.bufferId != 0)
 		{
-			ByteBuffer subbuffer = BufferUtils.createByteBuffer(this.bufferType.getDataTypeSize());
+			int bufferLength = this.buffer.capacity() / this.bufferType.getDataTypeSize();
+			if(position < 0 || position >= bufferLength)
+				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
+		
+			Class<?> clz = obj.getClass();
+			if(clz.isArray()) clz = clz.getComponentType();
+			else
+			{
+				Object objArray = Array.newInstance(clz, 1);
+				Array.set(objArray, 0, obj);
+				obj = objArray;
+			}
 			
-			if((EnumDataType.getDataType(obj.getClass()) == null) || (EnumDataType.getDataType(obj.getClass()).inferGLType() != this.bufferType.inferGLType()))
+			int objectLength = Array.getLength(obj);
+			if(position + objectLength > bufferLength)
+				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
+			
+			EnumDataType dataType = EnumDataType.getDataType(clz);
+			if((dataType == null) || (dataType.inferGLType() != this.bufferType.inferGLType()))
 				throw new IllegalArgumentException("Mismatch between buffer component type and the type of element to change!");
 			
-			BufferHelper.getBufferProcessor(this.bufferType).putSubBuffer(subbuffer, obj);
-			subbuffer.flip();
+			ByteBuffer subbuffer = BufferHelper.getBufferProcessor(dataType).makeBuffer(obj);
+			
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, bufferId);
 			ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * this.bufferType.getDataTypeSize(), subbuffer);
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, 0);
 		}
+		else throw new BindingFailureException("You must create the buffer before subst it!");
 	}
 	
 	/**

@@ -24,12 +24,6 @@ public final class BufferHelper
 			{
 				buffer.put(Array.getByte(bufferArray, index));
 			}
-
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.put((Byte)obj);
-			}
 		});
 		
 		bufferTypeMap.put(EnumDataType.BYTE_WRAPPED, new ArrayBufferProcessor() {
@@ -41,12 +35,6 @@ public final class BufferHelper
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
 				buffer.put((Byte) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.put((Byte) obj);
 			}
 		});
 		
@@ -60,12 +48,6 @@ public final class BufferHelper
 			{
 				buffer.putInt(Array.getInt(bufferArray, index));
 			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putInt((Integer) obj);
-			}
 		});
 		
 		bufferTypeMap.put(EnumDataType.INT_WRAPPED, new ArrayBufferProcessor() {
@@ -77,12 +59,6 @@ public final class BufferHelper
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
 				buffer.putInt((Integer) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putInt((Integer) obj);
 			}
 		});
 		
@@ -96,12 +72,6 @@ public final class BufferHelper
 			{
 				buffer.putDouble(Array.getDouble(bufferArray, index));
 			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putDouble((Double) obj);
-			}
 		});
 		
 		bufferTypeMap.put(EnumDataType.DOUBLE_WRAPPED, new ArrayBufferProcessor() {
@@ -113,12 +83,6 @@ public final class BufferHelper
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
 				buffer.putDouble((Double) Array.get(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putDouble((Double) obj);
 			}
 		});
 		
@@ -132,12 +96,6 @@ public final class BufferHelper
 			{
 				buffer.putFloat(Array.getFloat(bufferArray, index));
 			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putFloat((Float) obj);
-			}
 		});
 		
 		bufferTypeMap.put(EnumDataType.FLOAT_WRAPPED, new ArrayBufferProcessor() {
@@ -149,12 +107,6 @@ public final class BufferHelper
 			{
 				buffer.putFloat((Float) Array.get(bufferArray, index));
 			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putFloat((Float) obj);
-			}
 		});
 		
 		bufferTypeMap.put(EnumDataType.SHORT, new ArrayBufferProcessor() {
@@ -165,12 +117,6 @@ public final class BufferHelper
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
 				buffer.putShort(Array.getShort(bufferArray, index));
-			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putShort((Short) obj);
 			}
 		});
 		
@@ -184,12 +130,6 @@ public final class BufferHelper
 			{
 				buffer.putShort((Short) Array.get(bufferArray, index));
 			}
-			
-			@Override
-			public void putSubBuffer(ByteBuffer subbuffer, Object obj)
-			{
-				subbuffer.putShort((Short) obj);
-			}
 		});
 		
 	}
@@ -201,8 +141,7 @@ public final class BufferHelper
 	
 	public interface BufferProcessor
 	{
-		public ByteBuffer putBuffer(Object bufferArray);
-		public void putSubBuffer(ByteBuffer subbuffer, Object obj);
+		public ByteBuffer makeBuffer(Object bufferArray);
 	}
 }
 
@@ -211,7 +150,7 @@ abstract class ArrayBufferProcessor implements BufferHelper.BufferProcessor
 	protected EnumDataType bufferType;
 	
 	@Override
-	public ByteBuffer putBuffer(Object buffer)
+	public ByteBuffer makeBuffer(Object buffer)
 	{
 		int arrayLength = Array.getLength(buffer);
 		ByteBuffer returnedBuffer = BufferUtils.createByteBuffer(arrayLength * this.bufferType.getDataTypeSize());
@@ -223,8 +162,4 @@ abstract class ArrayBufferProcessor implements BufferHelper.BufferProcessor
 	}
 	
 	protected abstract void putBuffer(ByteBuffer buffer, Object bufferArray, int index);
-	
-	@Override
-	public abstract void putSubBuffer(ByteBuffer subbuffer, Object obj);
-	
 }

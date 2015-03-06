@@ -38,7 +38,7 @@ public class ImageTexture extends Texture
 		EnumDataType dataType = EnumDataType.getDataType(clz);
 		if(dataType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		
-		this.buffer = BufferHelper.getBufferProcessor(dataType).putBuffer(texture);
+		this.buffer = BufferHelper.getBufferProcessor(dataType).makeBuffer(texture);
 	}
 
 	public int create(int innerFormat, int mipmapLevels)
