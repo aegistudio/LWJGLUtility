@@ -1,9 +1,12 @@
 package net.aegistudio.transparent.wavefront.object;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.lwjgl.BufferUtils;
 
 import net.aegistudio.transparent.opengl.model.ArrayPointerEntry;
 import net.aegistudio.transparent.opengl.model.EnumArrayPointer;
@@ -59,14 +62,14 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			if(objectTuples.size() == 0) continue;
 			int[] frontierElement = objectTuples.get(0);
 			
-			float[] vertices = null;
-			if(frontierElement[0] >= 0) vertices = new float[objectTuples.size() * 3];
+			FloatBuffer vertices = null;
+			if(frontierElement[0] >= 0) vertices = BufferUtils.createFloatBuffer(objectTuples.size() * 3);
 
-			float[] texCoords = null;
-			if(frontierElement[1] >= 0) texCoords = new float[objectTuples.size() * 2];
+			FloatBuffer texCoords = null;
+			if(frontierElement[1] >= 0) texCoords = BufferUtils.createFloatBuffer(objectTuples.size() * 2);
 			
-			float[] normals = null;
-			if(frontierElement[2] >= 0) normals = new float[objectTuples.size() * 3];
+			FloatBuffer normals = null;
+			if(frontierElement[2] >= 0) normals = BufferUtils.createFloatBuffer(objectTuples.size() * 3);
 			
 			for(int i = 0; i < objectTuples.size(); i ++)
 			{
@@ -74,28 +77,24 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 				if(vertices != null)
 				{
 					float[] vertex = vertexPool.get(tuple[0]);
-					vertices[3 * i + 0] = vertex[0];
-					vertices[3 * i + 1] = vertex[1];
-					vertices[3 * i + 2] = vertex[2];
+					vertices.put(vertex);
 				}
 				if(texCoords != null)
 				{
 					float[] texCoord = texCoordPool.get(tuple[1]);
-					texCoords[2 * i + 0] = texCoord[0];
-					texCoords[2 * i + 1] = texCoord[1];
+					texCoords.put(texCoord);
 				}
 				if(normals != null)
 				{
 					float[] normal = normalPool.get(tuple[2]);
-					normals[3 * i + 0] = normal[0];
-					normals[3 * i + 1] = normal[1];
-					normals[3 * i + 2] = normal[2];
+					normals.put(normal);
 				}
 			}
 			
 			ArrayPointerEntry vertexPointer = null; 
 			if(vertices != null)
 			{
+				vertices.flip();
 				VertexBufferObject vertexVBO = new VertexBufferObject(EnumBufferTarget.ARRAY, EnumBufferUsage.STATIC_DRAW, vertices);
 				currentVBOs.add(vertexVBO);
 				vertexPointer = new ArrayPointerEntry(EnumArrayPointer.VERTEX, 3, vertexVBO);
@@ -104,6 +103,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			ArrayPointerEntry texCoordPointer = null; 
 			if(texCoords != null)
 			{
+				texCoords.flip();
 				VertexBufferObject texCoordVBO = new VertexBufferObject(EnumBufferTarget.ARRAY, EnumBufferUsage.STATIC_DRAW, texCoords);
 				currentVBOs.add(texCoordVBO);
 				texCoordPointer = new ArrayPointerEntry(EnumArrayPointer.TEXTURE, 2, texCoordVBO);
@@ -112,6 +112,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 			ArrayPointerEntry normalPointer = null; 
 			if(normals != null)
 			{
+				normals.flip();
 				VertexBufferObject normalVBO = new VertexBufferObject(EnumBufferTarget.ARRAY, EnumBufferUsage.STATIC_DRAW, normals);
 				currentVBOs.add(normalVBO);
 				normalPointer = new ArrayPointerEntry(EnumArrayPointer.NORMAL, 3, normalVBO);
