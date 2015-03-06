@@ -1,6 +1,7 @@
 package net.aegistudio.transparent.opengl.util;
 
 import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,6 +133,29 @@ public final class BufferHelper
 			}
 		});
 		
+	}
+	
+	public static Object convertToArrayIfNecessary(Object obj)
+	{
+		if(obj instanceof Buffer) return obj;
+		if(obj.getClass().isArray()) return obj;
+		Object objArray = Array.newInstance(obj.getClass(), 1);
+		Array.set(objArray, 0, obj);
+		return objArray;
+	}
+	
+	public static Class<?> getCertainClass(Object obj)
+	{
+		if(obj instanceof Buffer) return obj.getClass();
+		else if(obj.getClass().isArray()) return obj.getClass().getComponentType();
+		else return null; //Make sure convert to Array if necessary is called.
+	}
+	
+	public static int getLength(Object obj)
+	{
+		if(obj instanceof Buffer) return ((Buffer)obj).capacity();
+		else if(obj.getClass().isArray()) return Array.getLength(obj);
+		else return 1;
 	}
 	
 	public static BufferProcessor getBufferProcessor(EnumDataType dataType)

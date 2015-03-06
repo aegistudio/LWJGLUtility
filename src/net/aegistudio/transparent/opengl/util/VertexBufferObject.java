@@ -1,6 +1,5 @@
 package net.aegistudio.transparent.opengl.util;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 import net.aegistudio.transparent.util.Bindable;
@@ -38,8 +37,9 @@ public class VertexBufferObject implements Scoped, Bindable
 		this.bufferTarget = bufferTarget.stateId;
 		this.bufferUsage = bufferUsage.stateId;
 		
-		Class<?> clz = buffer.getClass().getComponentType();
-		if(clz == null) throw new IllegalArgumentException("Unable to create buffer for not an array!");
+		buffer = BufferHelper.convertToArrayIfNecessary(buffer);
+		Class<?> clz = BufferHelper.getCertainClass(buffer);
+		if(clz == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		this.bufferType = EnumDataType.getDataType(clz);
 		if(this.bufferType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		
@@ -93,19 +93,13 @@ public class VertexBufferObject implements Scoped, Bindable
 			int bufferLength = this.buffer.capacity() / this.bufferType.getDataTypeSize();
 			if(position < 0 || position >= bufferLength)
 				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
-		
-			Class<?> clz = obj.getClass();
-			if(clz.isArray()) clz = clz.getComponentType();
-			else
-			{
-				Object objArray = Array.newInstance(clz, 1);
-				Array.set(objArray, 0, obj);
-				obj = objArray;
-			}
 			
-			int objectLength = Array.getLength(obj);
+			int objectLength = BufferHelper.getLength(obj);
 			if(position + objectLength > bufferLength)
 				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
+			
+			obj = BufferHelper.convertToArrayIfNecessary(obj);
+			Class<?> clz = BufferHelper.getCertainClass(obj);
 			
 			EnumDataType dataType = EnumDataType.getDataType(clz);
 			if((dataType == null) || (dataType.inferGLType() != this.bufferType.inferGLType()))

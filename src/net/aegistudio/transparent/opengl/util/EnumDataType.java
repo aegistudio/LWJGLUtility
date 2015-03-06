@@ -1,5 +1,10 @@
 package net.aegistudio.transparent.opengl.util;
 
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,14 +14,23 @@ public enum EnumDataType
 {
 	BYTE(byte.class, 1, GL11.GL_UNSIGNED_BYTE),
 	BYTE_WRAPPED(Byte.class, 1, GL11.GL_UNSIGNED_BYTE),
+	BYTE_BUFFER(ByteBuffer.class, 1, GL11.GL_UNSIGNED_BYTE),
+	
 	INT(int.class, Integer.SIZE / Byte.SIZE, GL11.GL_UNSIGNED_INT),
 	INT_WRAPPED(Integer.class, Integer.SIZE / Byte.SIZE, GL11.GL_UNSIGNED_INT),
+	INT_BUFFER(IntBuffer.class, Integer.SIZE / Byte.SIZE, GL11.GL_UNSIGNED_INT),
+	
 	DOUBLE(double.class, Double.SIZE / Byte.SIZE, GL11.GL_DOUBLE),
 	DOUBLE_WRAPPED(Double.class, Double.SIZE / Byte.SIZE, GL11.GL_DOUBLE),
+	DOUBLE_BUFFER(DoubleBuffer.class, Integer.SIZE / Byte.SIZE, GL11.GL_DOUBLE),
+	
 	FLOAT(float.class, Float.SIZE / Byte.SIZE, GL11.GL_FLOAT),
 	FLOAT_WRAPPED(Float.class, Float.SIZE / Byte.SIZE, GL11.GL_FLOAT),
+	FLOAT_BUFFER(FloatBuffer.class, Float.SIZE / Byte.SIZE, GL11.GL_FLOAT),
+	
 	SHORT(short.class, Short.SIZE / Byte.SIZE, GL11.GL_SHORT),
-	SHORT_WRAPPED(Short.class, Short.SIZE / Byte.SIZE, GL11.GL_SHORT);
+	SHORT_WRAPPED(Short.class, Short.SIZE / Byte.SIZE, GL11.GL_SHORT),
+	SHORT_BUFFER(ShortBuffer.class, Short.SIZE / Byte.SIZE, GL11.GL_SHORT);
 	
 	private final int datatypeSize;
 	private final int inferGLType;
