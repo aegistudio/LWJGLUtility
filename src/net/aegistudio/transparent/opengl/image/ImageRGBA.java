@@ -1,7 +1,10 @@
 package net.aegistudio.transparent.opengl.image;
 
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 
 import net.aegistudio.transparent.opengl.util.EnumDataType;
 import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
@@ -10,7 +13,7 @@ public class ImageRGBA implements Image
 {
 	private final int height;
 	private final int width;
-	private byte[] imageRGBA;
+	private ByteBuffer imageRGBA;
 	
 	public ImageRGBA(IntBuffer intbuffer, int width, int height)
 	{
@@ -37,7 +40,7 @@ public class ImageRGBA implements Image
 	
 	private void convertImage(int[] pixels)
 	{
-		this.imageRGBA = new byte[(this.height * this.width) << 2];
+		byte[] imageRGBA = new byte[(this.height * this.width) << 2];
 		
 		for(int y = 0, lineFactor = 0; y < this.height; y ++)
 		{
@@ -56,10 +59,14 @@ public class ImageRGBA implements Image
 			}
 			lineFactor += this.width;
 		}
+		
+		
+		this.imageRGBA = BufferUtils.createByteBuffer(imageRGBA.length).put(imageRGBA);
+		this.imageRGBA.flip();
 	}
 	
 	@Override
-	public byte[] getRasterData()
+	public ByteBuffer getRasterData()
 	{
 		return this.imageRGBA;
 	}

@@ -1,7 +1,10 @@
 package net.aegistudio.transparent.opengl.image;
 
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 
 import net.aegistudio.transparent.opengl.util.EnumDataType;
 import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
@@ -10,7 +13,7 @@ public class ImageLA implements Image
 {
 	private final int height;
 	private final int width;
-	private byte[] imageBW;
+	private ByteBuffer imageBW;
 	
 	public ImageLA(IntBuffer intbuffer, int width, int height, float r, float g, float b)
 	{
@@ -38,7 +41,7 @@ public class ImageLA implements Image
 	private void convertImage(int[] pixels, float r, float g, float b)
 	{
 		if(r + g + b == 0) throw new IllegalArgumentException("The sum of r factor, g factor, b factor should not be zero!");
-		this.imageBW = new byte[(this.height * this.width) << 1];
+		byte[] imageBW = new byte[(this.height * this.width) << 1];
 		
 		for(int y = 0, lineFactor = 0; y < this.height; y ++)
 		{
@@ -62,10 +65,12 @@ public class ImageLA implements Image
 			}
 			lineFactor += this.width;
 		}
+		this.imageBW = BufferUtils.createByteBuffer(imageBW.length).put(imageBW);
+		this.imageBW.flip();
 	}
 	
 	@Override
-	public byte[] getRasterData()
+	public ByteBuffer getRasterData()
 	{
 		return this.imageBW;
 	}
