@@ -1,6 +1,6 @@
 package net.aegistudio.transparent.opengl.util;
 
-import java.nio.ByteBuffer;
+import java.nio.Buffer;
 
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
@@ -23,7 +23,7 @@ public class VertexBufferObject implements Scoped, Bindable
 	private final int bufferUsage;
 	
 	private EnumDataType bufferType;
-	private ByteBuffer buffer;
+	private Buffer buffer;
 	
 	/**
 	 * Creates a VBO java object and pre-install some data, not buffer the data in VRAM.
@@ -59,7 +59,7 @@ public class VertexBufferObject implements Scoped, Bindable
 			if(this.bufferId == 0) throw new BindingFailureException("Fail to create space for the vertex buffer object!");
 			
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, bufferId);
-			ARBVertexBufferObject.glBufferDataARB(bufferTarget, buffer, bufferUsage);
+			BufferHelper.getBufferProcessor(bufferType).bufferData(bufferTarget, buffer, bufferUsage);
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, 0);
 		}
 		return this.bufferId;
@@ -105,10 +105,10 @@ public class VertexBufferObject implements Scoped, Bindable
 			if((dataType == null) || (dataType.inferGLType() != this.bufferType.inferGLType()))
 				throw new IllegalArgumentException("Mismatch between buffer component type and the type of element to change!");
 			
-			ByteBuffer subbuffer = BufferHelper.getBufferProcessor(dataType).makeBuffer(obj);
 			
+			Buffer subbuffer = BufferHelper.getBufferProcessor(dataType).makeBuffer(obj);
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, bufferId);
-			ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * this.bufferType.getDataTypeSize(), subbuffer);
+			BufferHelper.getBufferProcessor(dataType).substData(bufferTarget, subbuffer, position);
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, 0);
 		}
 		else throw new BindingFailureException("You must create the buffer before subst it!");

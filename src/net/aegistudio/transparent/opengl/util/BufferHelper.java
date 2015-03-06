@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBVertexBufferObject;
+import org.lwjgl.opengl.GL11;
 
 public final class BufferHelper
 {
@@ -165,10 +167,20 @@ public final class BufferHelper
 	
 	public interface BufferProcessor
 	{
-		public ByteBuffer makeBuffer(Object bufferArray);
+		public Buffer makeBuffer(Object bufferArray);
+		
+		public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage);
+		
+		public void substData(int bufferTarget, Buffer buffer, int position);
+		
+		public void texImage2D(int texTarget, int level, int internalformat, int width, int height, int border, int format, Buffer pixels);
 	}
 }
 
+/**
+ * All primitive or wrapped type arrays will use this processor, which commonly use byte buffer for convenience.
+ * @author aegistudio
+ */
 abstract class ArrayBufferProcessor implements BufferHelper.BufferProcessor
 {
 	protected EnumDataType bufferType;
@@ -186,4 +198,19 @@ abstract class ArrayBufferProcessor implements BufferHelper.BufferProcessor
 	}
 	
 	protected abstract void putBuffer(ByteBuffer buffer, Object bufferArray, int index);
+	
+	public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage)
+	{
+		ARBVertexBufferObject.glBufferDataARB(bufferTarget, (ByteBuffer)buffer, bufferUsage);
+	}
+	
+	public void substData(int bufferTarget, Buffer buffer, int position)
+	{
+		ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * this.bufferType.getDataTypeSize(), (ByteBuffer)buffer);
+	}
+	
+	public void texImage2D(int texTarget, int level, int internalformat, int width, int height, int border, int format, Buffer pixels)
+	{
+		GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, bufferType.inferGLType(), (ByteBuffer)pixels);
+	}
 }

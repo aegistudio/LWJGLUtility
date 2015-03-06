@@ -1,18 +1,20 @@
 package net.aegistudio.transparent.opengl.texture;
 
-import java.nio.ByteBuffer;
+import java.nio.Buffer;
 
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.opengl.image.Image;
 import net.aegistudio.transparent.opengl.util.BufferHelper;
+import net.aegistudio.transparent.opengl.util.BufferHelper.BufferProcessor;
 import net.aegistudio.transparent.opengl.util.EnumDataType;
 import net.aegistudio.transparent.opengl.util.EnumPixelFormat;
 import net.aegistudio.transparent.util.BindingFailureException;
 
 public class ImageTexture extends Texture
 {
-	private ByteBuffer buffer;
+	private Buffer buffer;
+	private BufferProcessor processor;
 	
 	public ImageTexture(Image image, int texTarget)
 	{
@@ -33,12 +35,14 @@ public class ImageTexture extends Texture
 		this.width = width;
 		this.height = height;
 		
-		Class<?> clz = texture.getClass().getComponentType();
+		texture = BufferHelper.convertToArrayIfNecessary(texture);
+		Class<?> clz = BufferHelper.getCertainClass(texture);
 		if(clz == null) throw new IllegalArgumentException("Unable to create buffer for not an array!");
 		EnumDataType dataType = EnumDataType.getDataType(clz);
 		if(dataType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		
-		this.buffer = BufferHelper.getBufferProcessor(dataType).makeBuffer(texture);
+		this.processor = BufferHelper.getBufferProcessor(dataType);
+		this.buffer = processor.makeBuffer(texture);
 	}
 
 	public int create(int innerFormat, int mipmapLevels)
@@ -50,7 +54,7 @@ public class ImageTexture extends Texture
 			
 			GL11.glBindTexture(texTarget, this.textureId);
 			this.settingTextureParameters();
-			GL11.glTexImage2D(texTarget, mipmapLevels, innerFormat, this.width, this.height, 0, this.pixelFormat, this.pixelType, this.buffer);
+			this.processor.texImage2D(texTarget, mipmapLevels, innerFormat, width, height, 0, pixelFormat, buffer);
 			GL11.glBindTexture(texTarget, 0);
 		}
 		return this.textureId;
