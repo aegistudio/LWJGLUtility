@@ -49,14 +49,15 @@ import net.aegistudio.transparent.wavefront.WavefrontBuilder;
 import net.aegistudio.transparent.wavefront.WavefrontModel;
 
 /**
- * This object viewer is used to visualize wavefront object models.
+ * This model viewer is used to visualize wavefront object models.
  * Please run it by calling it as the main class with JVM.
  * @author aegistudio
  */
 
-@SuppressWarnings("serial")
-public class WavefrontObjectViewer extends Frame
+public class ModelViewer extends Canvas
 {
+	Frame thisFrame;
+	
 	WavefrontModel wavefrontModel = null;	ScopedGraphic scoping_wavefrontModel = null;
 	Model renderingModel = null;	FlyweightDrawable fw_renderingModel = null;
 	Scene renderingScene = new Scene();
@@ -67,62 +68,63 @@ public class WavefrontObjectViewer extends Frame
 	
 	Texture texture = null; ScopedGraphic scoping_texture = null;
 	
-	public WavefrontObjectViewer() throws Exception
+	Light light = new Light();
+	
+	@Override
+	public void onInit(Container container)
 	{
-		super();
-		super.setTitle("Wavefront Object Viewer");
-		super.setSize(new Dimension(760, 480));
-		super.setResizable(false);
-		super.setLayout(null);
-		
-		canvas = new WrappedAWTGLCanvas(new Canvas()
+		GL11.glEnable(GL11.GL_LIGHTING);
+		light.diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+		light.create();
+		light.bind();
+	}
+	
+	@Override
+	public void onDraw(Container container)
+	{
+		light.position(0, 0, -1, 0);
+		if(ModelViewer.this.texture != null)
 		{
-			Light light = new Light();
-			
-			@Override
-			public void onInit(Container container)
-			{
-				GL11.glEnable(GL11.GL_LIGHTING);
-				light.diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-				light.create();
-				light.bind();
-			}
-			
-			public void onDraw(Container container)
-			{
-				light.position(0, 0, -1, 0);
-				if(WavefrontObjectViewer.this.texture != null)
-				{
-					WavefrontObjectViewer.this.texture.create();
-					WavefrontObjectViewer.this.texture.bind();
-				}
-				super.onDraw(container);
-				if(WavefrontObjectViewer.this.texture != null) WavefrontObjectViewer.this.texture.unbind();
-			}
-			
-			public void onDestroy(Container container)
-			{
-				super.onDestroy(container);
-				light.destroy();
-			}
-		});
+			ModelViewer.this.texture.create();
+			ModelViewer.this.texture.bind();
+		}
+		super.onDraw(container);
+		if(ModelViewer.this.texture != null) ModelViewer.this.texture.unbind();
+	}
+	
+	@Override
+	public void onDestroy(Container container)
+	{
+		super.onDestroy(container);
+		light.destroy();
+	}
+	
+	public ModelViewer() throws Exception
+	{
+		thisFrame = new Frame();
+		thisFrame.setTitle("Model Viewer");
+		thisFrame.setSize(new Dimension(760, 480));
+		thisFrame.setResizable(false);
+		thisFrame.setLayout(null);
+		
+		canvas = new WrappedAWTGLCanvas(this);
 		
 		canvas.lockedRatio = true;
 		canvas.setSize(600, 480);
 		canvas.setLocation(0, 0);
-		super.add(canvas);
+		thisFrame.add(canvas);
 		
-		super.addWindowListener(new WindowAdapter()
+		thisFrame.addWindowListener(new WindowAdapter()
 		{
 			public void windowClosing(WindowEvent event)
 			{
-				WavefrontObjectViewer.this.setVisible(false);
-				WavefrontObjectViewer.this.dispose();
+				thisFrame.setVisible(false);
+				thisFrame.dispose();
 				System.exit(0);
 			}
 		});
 		
-		super.getToolkit().addAWTEventListener(new AWTEventListener()
+		thisFrame.getToolkit().addAWTEventListener(new AWTEventListener()
 		{
 
 			@Override
@@ -130,8 +132,8 @@ public class WavefrontObjectViewer extends Frame
 			{
 				MouseWheelEvent mw = (MouseWheelEvent)arg0;
 				int units = mw.getUnitsToScroll();
-				if(units > 0) while(units > 0){ units -= 3; WavefrontObjectViewer.this.zoomOut(); }
-				else if(units < 0) while(units < 0){ units += 3; WavefrontObjectViewer.this.zoomIn(); }
+				if(units > 0) while(units > 0){ units -= 3; ModelViewer.this.zoomOut(); }
+				else if(units < 0) while(units < 0){ units += 3; ModelViewer.this.zoomIn(); }
 			}
 		}, MouseEvent.MOUSE_WHEEL_EVENT_MASK);
 		
@@ -146,7 +148,7 @@ public class WavefrontObjectViewer extends Frame
 		JPanel modelPanel = new JPanel();
 		modelPanel.setSize(119, 110);
 		tab.addTab("Model", modelPanel);
-		super.add(tab);
+		thisFrame.add(tab);
 		{
 			Button openModelButton = new Button("Open Model");
 			openModelButton.setPreferredSize(new Dimension(119, 25));
@@ -174,17 +176,17 @@ public class WavefrontObjectViewer extends Frame
 					};
 					openFile.setFileFilter(filter);
 					openFile.setVisible(true);
-					int state = openFile.showOpenDialog(WavefrontObjectViewer.this);
+					int state = openFile.showOpenDialog(thisFrame);
 					if(state == JFileChooser.APPROVE_OPTION)
 					{
 						File file = openFile.getSelectedFile();
 						try
 						{
-							WavefrontObjectViewer.this.open(file);
+							ModelViewer.this.open(file);
 						}
 						catch(Exception e)
 						{
-							WavefrontObjectViewer.this.output("Error while opening obj file: " + file);
+							ModelViewer.this.output("Error while opening obj file: " + file);
 						}
 					}
 				}
@@ -199,11 +201,11 @@ public class WavefrontObjectViewer extends Frame
 				{
 					try
 					{
-						WavefrontObjectViewer.this.loadModel(modelList.getSelectedItem());
+						ModelViewer.this.loadModel(modelList.getSelectedItem());
 					}
 					catch(Exception e)
 					{
-						WavefrontObjectViewer.this.output("Error while loading model: " + modelList.getSelectedItem());
+						ModelViewer.this.output("Error while loading model: " + modelList.getSelectedItem());
 					}
 				}
 			});
@@ -241,18 +243,18 @@ public class WavefrontObjectViewer extends Frame
 					};
 					openFile.setFileFilter(filter);
 					openFile.setVisible(true);
-					int state = openFile.showOpenDialog(WavefrontObjectViewer.this);
+					int state = openFile.showOpenDialog(thisFrame);
 					if(state == JFileChooser.APPROVE_OPTION)
 					{
 						File file = openFile.getSelectedFile();
 						try
 						{
-							WavefrontObjectViewer.this.bindTexture(file);
-							WavefrontObjectViewer.this.unbindTextureButton.setEnabled(true);
+							ModelViewer.this.bindTexture(file);
+							ModelViewer.this.unbindTextureButton.setEnabled(true);
 						}
 						catch(Exception e)
 						{
-							WavefrontObjectViewer.this.output("Error while opening texture: " + file);
+							ModelViewer.this.output("Error while opening texture: " + file);
 						}
 					}
 				}
@@ -267,8 +269,8 @@ public class WavefrontObjectViewer extends Frame
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					WavefrontObjectViewer.this.unbindTexture();
-					WavefrontObjectViewer.this.unbindTextureButton.setEnabled(false);
+					ModelViewer.this.unbindTexture();
+					ModelViewer.this.unbindTextureButton.setEnabled(false);
 				}
 			});
 			texPanel.add(unbindTextureButton);
@@ -290,7 +292,7 @@ public class WavefrontObjectViewer extends Frame
 				public void itemStateChanged(ItemEvent arg0)
 				{
 					if(ItemEvent.SELECTED == arg0.getStateChange())
-						WavefrontObjectViewer.this.setCamera(theOrtho);
+						ModelViewer.this.setCamera(theOrtho);
 				}
 			});
 			ortho.setSelected(true);
@@ -314,7 +316,7 @@ public class WavefrontObjectViewer extends Frame
 				{
 					if(ItemEvent.SELECTED == arg0.getStateChange())
 					{
-						WavefrontObjectViewer.this.setCamera(frustum);
+						ModelViewer.this.setCamera(frustum);
 					}
 				}
 			});
@@ -415,16 +417,21 @@ public class WavefrontObjectViewer extends Frame
 		if(this.renderingModel != null) this.renderingScene.registerDrawable(this.renderingModel);
 	}
 	
+	public Frame getFrame()
+	{
+		return this.thisFrame;
+	}
+	
 	public static void main(String[] arguments) throws Exception
 	{
-		WavefrontObjectViewer theFrame = new WavefrontObjectViewer();
-		theFrame.setVisible(true);
+		ModelViewer theFrame = new ModelViewer();
+		theFrame.getFrame().setVisible(true);
 	}
 }
 
 class CanvasDragger extends MouseAdapter implements MouseMotionListener, MouseListener
 {
-	WavefrontObjectViewer objdisp;
+	ModelViewer objdisp;
 	int X, Y;
 	boolean state = false;
 	@Override
