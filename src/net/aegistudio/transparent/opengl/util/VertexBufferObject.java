@@ -41,7 +41,7 @@ public class VertexBufferObject implements Scoped, Bindable
 		buffer = BufferHelper.convertToArrayIfNecessary(buffer);
 		Class<?> clz = BufferHelper.getCertainClass(buffer);
 		this.bufferSize = BufferHelper.getLength(buffer);
-		
+
 		if(clz == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		this.bufferType = EnumDataType.getDataType(clz);
 		if(this.bufferType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");

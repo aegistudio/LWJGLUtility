@@ -62,6 +62,15 @@ public enum EnumDataType
 	
 	public static EnumDataType getDataType(Class<?> clz)
 	{
-		return mapper.get(clz);
+		EnumDataType registration = mapper.get(clz);
+		if(registration != null) return registration;
+		for(EnumDataType datatype : EnumDataType.values())
+			if(datatype.dataTypeClass.isAssignableFrom(clz))
+		{
+			registration = datatype;
+			mapper.put(clz, datatype);
+			break;
+		}
+		return registration;
 	}
 }
