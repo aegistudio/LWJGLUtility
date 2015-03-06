@@ -4,14 +4,14 @@ import org.lwjgl.opengl.GL11;
 
 public class Scanvager
 {
-	protected int scanvage = EnumBuffer.COLOR.bufferBit | EnumBuffer.DEPTH.bufferBit;
+	protected int scanvage = EnumFrameBuffer.COLOR.bufferBit | EnumFrameBuffer.DEPTH.bufferBit;
 	
-	public void addScanvage(EnumBuffer buffer)
+	public void addScanvage(EnumFrameBuffer buffer)
 	{
 		scanvage = scanvage | buffer.bufferBit;
 	}
 	
-	public void removeScanvage(EnumBuffer buffer)
+	public void removeScanvage(EnumFrameBuffer buffer)
 	{
 		scanvage = scanvage & (0xFFFFFFFF ^ buffer.bufferBit);
 	}
