@@ -18,12 +18,13 @@ public class Model implements Drawable
 	protected final boolean scoping;
 	protected VertexArrayObject vao = new VertexArrayObject();
 	
-	public Model(Map<ArrayPointer, VertexBufferObject> bufferedModel, int vertices_count, boolean scoping)
+	public Model(Map<ArrayPointer, VertexBufferObject> bufferedModel, boolean scoping)
 	{
-		if(bufferedModel.get(EnumArrayPointer.VERTEX) == null) throw new IllegalArgumentException("The vertex buffer object of the vertices should be assigned!");
+		VertexBufferObject vertexArray = bufferedModel.get(EnumArrayPointer.VERTEX);
+		if(vertexArray == null) throw new IllegalArgumentException("The vertex buffer object of the vertices should be assigned!");
 		
 		this.scoping = scoping;
-		this.vertices_count = vertices_count;
+		this.vertices_count = vertexArray.getLength() / EnumArrayPointer.VERTEX.getDefaultSize();
 		
 		Set<ArrayPointerEntry> usingArrayPointerSet = new TreeSet<ArrayPointerEntry>();
 		Set<ArrayPointer> keys = bufferedModel.keySet(); VertexBufferObject vbo;
@@ -33,34 +34,40 @@ public class Model implements Drawable
 		this.usingArrayPointer = usingArrayPointerSet.toArray(new ArrayPointerEntry[0]);
 	}
 	
-	public Model(ArrayPointerEntry[] entries, int vertices_count, boolean scoping)
+	public Model(ArrayPointerEntry[] entries, boolean scoping)
 	{
 		this.scoping = scoping;
-		this.vertices_count = vertices_count;
+		int vertices_count = 0;
+		
 		boolean hasVerticesBuffer = false;
 		Set<ArrayPointerEntry> usingArrayPointerSet = new TreeSet<ArrayPointerEntry>();
 		for(ArrayPointerEntry entry : entries) if(entry != null)
 		{
-			if(entry.arrayPointer == EnumArrayPointer.VERTEX) hasVerticesBuffer = true;
+			if(entry.arrayPointer == EnumArrayPointer.VERTEX)
+			{
+				hasVerticesBuffer = true;
+				vertices_count = entry.vbo.getLength() / entry.size;
+			}
 			usingArrayPointerSet.add(entry);
 		}
 		if(!hasVerticesBuffer) throw new IllegalArgumentException("The vertex buffer object of the vertices should be assigned!"); 
 		this.usingArrayPointer = usingArrayPointerSet.toArray(new ArrayPointerEntry[0]);
+		this.vertices_count = vertices_count;
 	}
 	
-	public Model(int vertices_count, boolean scoping, ArrayPointerEntry... entries)
+	public Model(boolean scoping, ArrayPointerEntry... entries)
 	{
-		this(entries, vertices_count, scoping);
+		this(entries, scoping);
 	}
 	
-	public Model(int vertices_count, ArrayPointerEntry... entries)
+	public Model(ArrayPointerEntry... entries)
 	{
-		this(entries, vertices_count, false);
+		this(entries, false);
 	}
 	
 	public Model(Map<ArrayPointer, VertexBufferObject> bufferedModel, int vertices_count)
 	{
-		this(bufferedModel, vertices_count, false);
+		this(bufferedModel, false);
 	}
 	
 	@Override

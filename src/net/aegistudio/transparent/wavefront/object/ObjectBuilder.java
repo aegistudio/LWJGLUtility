@@ -117,7 +117,7 @@ public class ObjectBuilder implements ModelBuilder<Map<String, Model>>
 				normalPointer = new ArrayPointerEntry(EnumArrayPointer.NORMAL, 3, normalVBO);
 			}
 			
-			Model generatedModel = new Model(objectTuples.size(), vertexPointer, texCoordPointer, normalPointer);
+			Model generatedModel = new Model(vertexPointer, texCoordPointer, normalPointer);
 			generatedModel.setPrimitive(EnumPrimitive.TRIANGLES);
 			resultMap.put(modelKey, generatedModel);
 			vboResources.put(modelKey, currentVBOs.toArray(new VertexBufferObject[0]));
