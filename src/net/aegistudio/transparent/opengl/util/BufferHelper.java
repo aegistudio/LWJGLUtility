@@ -17,11 +17,8 @@ public final class BufferHelper
 	private static final Map<EnumDataType, BufferProcessor> bufferTypeMap = new HashMap<EnumDataType, BufferProcessor>();
 	static
 	{
-		bufferTypeMap.put(EnumDataType.BYTE, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.BYTE;
-			}
-			
+		bufferTypeMap.put(EnumDataType.BYTE, new ArrayBufferProcessor(EnumDataType.BYTE) {
+
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
@@ -29,10 +26,7 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.BYTE_WRAPPED, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.BYTE_WRAPPED;
-			}
+		bufferTypeMap.put(EnumDataType.BYTE_WRAPPED, new ArrayBufferProcessor(EnumDataType.BYTE_WRAPPED) {
 			
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
@@ -41,10 +35,7 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.INT, new ArrayBufferProcessor(){
-			{
-				super.bufferType = EnumDataType.INT;
-			}
+		bufferTypeMap.put(EnumDataType.INT, new ArrayBufferProcessor(EnumDataType.INT){
 			
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
@@ -53,11 +44,8 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.INT_WRAPPED, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.INT_WRAPPED;
-			}
-			
+		bufferTypeMap.put(EnumDataType.INT_WRAPPED, new ArrayBufferProcessor(EnumDataType.INT_WRAPPED) {
+
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
@@ -65,10 +53,7 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.DOUBLE, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.DOUBLE;
-			}
+		bufferTypeMap.put(EnumDataType.DOUBLE, new ArrayBufferProcessor(EnumDataType.DOUBLE) {
 			
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
@@ -77,11 +62,8 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.DOUBLE_WRAPPED, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.DOUBLE_WRAPPED;
-			}
-			
+		bufferTypeMap.put(EnumDataType.DOUBLE_WRAPPED, new ArrayBufferProcessor(EnumDataType.DOUBLE_WRAPPED) {
+
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
@@ -89,11 +71,8 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.FLOAT, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.FLOAT;
-			}
-			
+		bufferTypeMap.put(EnumDataType.FLOAT, new ArrayBufferProcessor(EnumDataType.FLOAT) {
+
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
@@ -101,10 +80,8 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.FLOAT_WRAPPED, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.FLOAT_WRAPPED;
-			}
+		bufferTypeMap.put(EnumDataType.FLOAT_WRAPPED, new ArrayBufferProcessor(EnumDataType.FLOAT_WRAPPED) {
+
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
@@ -112,10 +89,8 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.SHORT, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.SHORT;
-			}
+		bufferTypeMap.put(EnumDataType.SHORT, new ArrayBufferProcessor(EnumDataType.SHORT) {
+
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
@@ -123,10 +98,7 @@ public final class BufferHelper
 			}
 		});
 		
-		bufferTypeMap.put(EnumDataType.SHORT_WRAPPED, new ArrayBufferProcessor() {
-			{
-				super.bufferType = EnumDataType.SHORT_WRAPPED;
-			}
+		bufferTypeMap.put(EnumDataType.SHORT_WRAPPED, new ArrayBufferProcessor(EnumDataType.SHORT_WRAPPED) {
 			
 			@Override
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
@@ -184,6 +156,11 @@ public final class BufferHelper
 abstract class ArrayBufferProcessor implements BufferHelper.BufferProcessor
 {
 	protected EnumDataType bufferType;
+	
+	public ArrayBufferProcessor(EnumDataType bufferType)
+	{
+		this.bufferType = bufferType;
+	}
 	
 	@Override
 	public ByteBuffer makeBuffer(Object buffer)
