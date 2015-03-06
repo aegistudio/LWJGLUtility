@@ -1,4 +1,4 @@
-package net.aegistudio.transparent.wavefront;
+package net.aegistudio.transparent.toolkit;
 
 import java.awt.AWTEvent;
 import java.awt.Button;
@@ -47,6 +47,8 @@ import net.aegistudio.transparent.opengl.texture.ImageTexture;
 import net.aegistudio.transparent.opengl.texture.Texture;
 import net.aegistudio.transparent.opengl.util.FlyweightDrawable;
 import net.aegistudio.transparent.util.ScopedGraphic;
+import net.aegistudio.transparent.wavefront.WavefrontBuilder;
+import net.aegistudio.transparent.wavefront.WavefrontModel;
 
 /**
  * This object viewer is used to visualize wavefront object models.
