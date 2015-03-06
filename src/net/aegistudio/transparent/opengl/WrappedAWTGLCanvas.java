@@ -1,5 +1,7 @@
 package net.aegistudio.transparent.opengl;
 
+import net.aegistudio.transparent.opengl.util.Scanvager;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.AWTGLCanvas;
 import org.lwjgl.opengl.Display;
@@ -9,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 {
 	private final Container theContainer;
+	private Scanvager scanvager;
 	private boolean shouldInitialize;
 	private long refreshInterval = 60;
 	
@@ -64,6 +67,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 		this.theContainer = container;
 		this.shouldInitialize = true;
 		this.refreshThread.start();
+		this.scanvager = new Scanvager();
 	}
 	
 	public WrappedAWTGLCanvas() throws LWJGLException
@@ -140,6 +144,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 	@Override
 	public void onDraw(Container canvas)
 	{
+		if(this.scanvager != null) this.scanvager.scanvage();
 		this.theContainer.onDraw(canvas);
 	}
 
@@ -174,47 +179,13 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 		return theContainer.unregisterSementicDrawable(sementicDrawable);
 	}
 	
-	public static void main(String[] args) throws Exception
-	{	
-		java.awt.Frame frame = new java.awt.Frame();
-		Drawable drawable = new Drawable()
-		{
-			@Override
-			public void onInit(Container canvas)
-			{
-				GL11.glClearColor(1.0f, 0, 0, 1.0f);
-			}
-			
-			public void onDraw(Container canvas)
-			{
-				GL11.glColor3d(0, 1, 0);
-				GL11.glBegin(GL11.GL_QUADS);
-					GL11.glVertex2d(0, 0);
-					GL11.glVertex2d(0, 1);
-					GL11.glVertex2d(1, 1);
-					GL11.glVertex2d(1, 0);
-				GL11.glEnd();
-			}
-
-			@Override
-			public void onDestroy(Container container)
-			{
-			}
-		};
-
-		WrappedAWTGLCanvas canvas = new WrappedAWTGLCanvas();
-		canvas.registerDrawable(drawable);
-		canvas.lockedRatio = true;
-		frame.setSize(600, 480);
-		frame.add(canvas);
-		frame.setVisible(true);
-		
-		frame.addWindowListener(new java.awt.event.WindowAdapter()
-		{
-			public void windowClosing(java.awt.event.WindowEvent event)
-			{
-				System.exit(1);
-			}
-		});
+	public Scanvager getScanvager()
+	{
+		return this.scanvager;
+	}
+	
+	public void setScanvager(Scanvager scanvager)
+	{
+		this.scanvager = scanvager;
 	}
 }

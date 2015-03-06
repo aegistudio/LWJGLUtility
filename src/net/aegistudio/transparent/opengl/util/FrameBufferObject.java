@@ -12,6 +12,7 @@ public class FrameBufferObject implements Drawable, Scoped
 {
 	private int bufferId = 0;
 	private final Drawable drawable;
+	private Scanvager scanvager;
 	
 	private int viewportWidth = 100, viewportHeight = 100;
 	private int savingAttribute = GL11.GL_VIEWPORT_BIT;
@@ -21,6 +22,7 @@ public class FrameBufferObject implements Drawable, Scoped
 		if(drawable == null)
 			throw new IllegalArgumentException("The inner drawable of frame buffer object should not be empty!");
 		this.drawable = drawable;
+		this.scanvager = new Scanvager();
 	}
 	
 	public void setViewport(int width, int height)
@@ -74,6 +76,7 @@ public class FrameBufferObject implements Drawable, Scoped
 		{
 			GL11.glPushAttrib(savingAttribute);
 			GL11.glViewport(0, 0, viewportWidth, viewportHeight);
+			if(this.scanvager != null) this.scanvager.scanvage();
 			this.drawable.onDraw(container);
 			GL11.glPopAttrib();
 		}
@@ -85,5 +88,15 @@ public class FrameBufferObject implements Drawable, Scoped
 	{
 		this.destroy();
 		this.drawable.onDestroy(container);
+	}
+	
+	public Scanvager getScanvager()
+	{
+		return this.scanvager;
+	}
+	
+	public void setScanvager(Scanvager scanvager)
+	{
+		this.scanvager = scanvager;
 	}
 }

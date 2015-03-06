@@ -90,7 +90,6 @@ public class WavefrontObjectViewer extends Frame
 			
 			public void onDraw(Container container)
 			{
-				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 				light.position(0, 0, -1, 0);
 				if(WavefrontObjectViewer.this.texture != null)
 				{
@@ -408,8 +407,10 @@ public class WavefrontObjectViewer extends Frame
 	public void loadModel(String modelName) throws Exception
 	{
 		if(modelName == null) return;
+		Model model = this.wavefrontModel.getObjectModel(modelName);
+		if(model == this.renderingModel) return;
 		if(this.renderingModel != null) this.renderingScene.unregisterDrawable(this.renderingModel);
-		this.renderingModel = this.wavefrontModel.getObjectModel(modelName);
+		this.renderingModel = model;
 		this.fw_renderingModel = new FlyweightDrawable(renderingModel);
 		if(this.renderingModel != null) this.renderingScene.registerDrawable(this.renderingModel);
 	}
