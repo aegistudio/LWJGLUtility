@@ -1,5 +1,11 @@
 package net.aegistudio.transparent.opengl.image;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+
 import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.opengl.texture.ImageTexture;
@@ -19,5 +25,14 @@ public final class ImageUtils
 	public static VertexBufferObject createImageVBO(Image image)
 	{
 		return new VertexBufferObject(EnumBufferTarget.PIXEL_UNPACK, EnumBufferUsage.STATIC_DRAW, image.getRasterData());
+	}
+	
+	public static ImageTexture createImageTexture(InputStream image) throws IOException
+	{
+		BufferedImage bufferedImage = ImageIO.read(image);
+		ImageRGBA img = new ImageRGBA(bufferedImage);
+		ImageTexture imgTex = createImageTexture(img);
+		bufferedImage.flush();
+		return imgTex;
 	}
 }

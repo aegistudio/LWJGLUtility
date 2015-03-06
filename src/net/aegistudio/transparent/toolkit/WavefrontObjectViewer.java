@@ -19,7 +19,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
-import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
 
 import java.io.FileInputStream;
@@ -40,10 +39,9 @@ import net.aegistudio.transparent.opengl.WrappedAWTGLCanvas;
 import net.aegistudio.transparent.opengl.camera.Camera;
 import net.aegistudio.transparent.opengl.camera.Frustum;
 import net.aegistudio.transparent.opengl.camera.Ortho;
-import net.aegistudio.transparent.opengl.image.ImageRGBA;
+import net.aegistudio.transparent.opengl.image.ImageUtils;
 import net.aegistudio.transparent.opengl.lighting.Light;
 import net.aegistudio.transparent.opengl.model.Model;
-import net.aegistudio.transparent.opengl.texture.ImageTexture;
 import net.aegistudio.transparent.opengl.texture.Texture;
 import net.aegistudio.transparent.opengl.util.FlyweightDrawable;
 import net.aegistudio.transparent.util.ScopedGraphic;
@@ -379,7 +377,7 @@ public class WavefrontObjectViewer extends Frame
 	{
 		if(tex == null) return;
 		if(texture != null) canvas.unregisterDrawable(this.scoping_texture);
-		texture = new ImageTexture(new ImageRGBA(ImageIO.read(tex)));
+		texture = ImageUtils.createImageTexture(new FileInputStream(tex));
 		this.scoping_wavefrontModel = new ScopedGraphic(texture);
 		canvas.registerDrawable(scoping_texture);
 	}
