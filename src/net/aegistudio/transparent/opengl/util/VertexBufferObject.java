@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GLContext;
 public class VertexBufferObject implements Scoped, Bindable
 {
 	private int bufferId = 0;
+	private final int bufferSize;
 	
 	private final int bufferTarget;
 	private final int bufferUsage;
@@ -39,6 +40,8 @@ public class VertexBufferObject implements Scoped, Bindable
 		
 		buffer = BufferHelper.convertToArrayIfNecessary(buffer);
 		Class<?> clz = BufferHelper.getCertainClass(buffer);
+		this.bufferSize = BufferHelper.getLength(buffer);
+		
 		if(clz == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
 		this.bufferType = EnumDataType.getDataType(clz);
 		if(this.bufferType == null) throw new IllegalArgumentException("Unable to create buffer for given type!");
@@ -90,12 +93,11 @@ public class VertexBufferObject implements Scoped, Bindable
 	{
 		if(this.bufferId != 0)
 		{
-			int bufferLength = this.buffer.capacity() / this.bufferType.getDataTypeSize();
-			if(position < 0 || position >= bufferLength)
+			if(position < 0 || position >= bufferSize)
 				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
 			
 			int objectLength = BufferHelper.getLength(obj);
-			if(position + objectLength > bufferLength)
+			if(position + objectLength > bufferSize)
 				throw new IllegalArgumentException("The buffer space to change is out of the permitted position!");
 			
 			obj = BufferHelper.convertToArrayIfNecessary(obj);
@@ -133,5 +135,10 @@ public class VertexBufferObject implements Scoped, Bindable
 			ARBVertexBufferObject.glDeleteBuffersARB(bufferId);
 			this.bufferId = 0;
 		}
+	}
+	
+	public int getLength()
+	{
+		return this.bufferSize;
 	}
 }
