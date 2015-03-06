@@ -3,6 +3,10 @@ package net.aegistudio.transparent.opengl.util;
 import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +39,29 @@ public final class BufferHelper
 			}
 		});
 		
+		bufferTypeMap.put(EnumDataType.BYTE_BUFFER, new BufferedBufferProcessor(){
+			
+			@Override
+			public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage)
+			{
+				ARBVertexBufferObject.glBufferDataARB(bufferTarget, (ByteBuffer)buffer, bufferUsage);
+			}
+
+			@Override
+			public void substData(int bufferTarget, Buffer buffer, int position)
+			{
+				ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * EnumDataType.BYTE_BUFFER.getDataTypeSize(), (ByteBuffer)buffer);
+			}
+
+			@Override
+			public void texImage2D(int texTarget, int level,
+					int internalformat, int width, int height, int border,
+					int format, Buffer pixels)
+			{
+				GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, EnumDataType.BYTE_BUFFER.inferGLType(), (ByteBuffer)pixels);
+			}
+		});
+		
 		bufferTypeMap.put(EnumDataType.INT, new ArrayBufferProcessor(EnumDataType.INT){
 			
 			@Override
@@ -50,6 +77,29 @@ public final class BufferHelper
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
 				buffer.putInt((Integer) Array.get(bufferArray, index));
+			}
+		});
+		
+		bufferTypeMap.put(EnumDataType.INT_BUFFER, new BufferedBufferProcessor(){
+			
+			@Override
+			public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage)
+			{
+				ARBVertexBufferObject.glBufferDataARB(bufferTarget, (IntBuffer)buffer, bufferUsage);
+			}
+
+			@Override
+			public void substData(int bufferTarget, Buffer buffer, int position)
+			{
+				ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * EnumDataType.INT_BUFFER.getDataTypeSize(), (IntBuffer)buffer);
+			}
+
+			@Override
+			public void texImage2D(int texTarget, int level,
+					int internalformat, int width, int height, int border,
+					int format, Buffer pixels)
+			{
+				GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, EnumDataType.INT_BUFFER.inferGLType(), (IntBuffer)pixels);
 			}
 		});
 		
@@ -71,6 +121,29 @@ public final class BufferHelper
 			}
 		});
 		
+		bufferTypeMap.put(EnumDataType.DOUBLE_BUFFER, new BufferedBufferProcessor(){
+			
+			@Override
+			public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage)
+			{
+				ARBVertexBufferObject.glBufferDataARB(bufferTarget, (DoubleBuffer)buffer, bufferUsage);
+			}
+
+			@Override
+			public void substData(int bufferTarget, Buffer buffer, int position)
+			{
+				ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * EnumDataType.DOUBLE_BUFFER.getDataTypeSize(), (DoubleBuffer)buffer);
+			}
+
+			@Override
+			public void texImage2D(int texTarget, int level,
+					int internalformat, int width, int height, int border,
+					int format, Buffer pixels)
+			{
+				GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, EnumDataType.DOUBLE_BUFFER.inferGLType(), (DoubleBuffer)pixels);
+			}
+		});
+		
 		bufferTypeMap.put(EnumDataType.FLOAT, new ArrayBufferProcessor(EnumDataType.FLOAT) {
 
 			@Override
@@ -86,6 +159,29 @@ public final class BufferHelper
 			public void putBuffer(ByteBuffer buffer, Object bufferArray, int index)
 			{
 				buffer.putFloat((Float) Array.get(bufferArray, index));
+			}
+		});
+		
+		bufferTypeMap.put(EnumDataType.FLOAT_BUFFER, new BufferedBufferProcessor(){
+			
+			@Override
+			public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage)
+			{
+				ARBVertexBufferObject.glBufferDataARB(bufferTarget, (FloatBuffer)buffer, bufferUsage);
+			}
+
+			@Override
+			public void substData(int bufferTarget, Buffer buffer, int position)
+			{
+				ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * EnumDataType.FLOAT_BUFFER.getDataTypeSize(), (FloatBuffer)buffer);
+			}
+
+			@Override
+			public void texImage2D(int texTarget, int level,
+					int internalformat, int width, int height, int border,
+					int format, Buffer pixels)
+			{
+				GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, EnumDataType.FLOAT_BUFFER.inferGLType(), (FloatBuffer)pixels);
 			}
 		});
 		
@@ -107,6 +203,28 @@ public final class BufferHelper
 			}
 		});
 		
+		bufferTypeMap.put(EnumDataType.SHORT_BUFFER, new BufferedBufferProcessor(){
+			
+			@Override
+			public void bufferData(int bufferTarget, Buffer buffer, int bufferUsage)
+			{
+				ARBVertexBufferObject.glBufferDataARB(bufferTarget, (ShortBuffer)buffer, bufferUsage);
+			}
+
+			@Override
+			public void substData(int bufferTarget, Buffer buffer, int position)
+			{
+				ARBVertexBufferObject.glBufferSubDataARB(bufferTarget, position * EnumDataType.SHORT_BUFFER.getDataTypeSize(), (ShortBuffer)buffer);
+			}
+
+			@Override
+			public void texImage2D(int texTarget, int level,
+					int internalformat, int width, int height, int border,
+					int format, Buffer pixels)
+			{
+				GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, EnumDataType.SHORT_BUFFER.inferGLType(), (ShortBuffer)pixels);
+			}
+		});
 	}
 	
 	public static Object convertToArrayIfNecessary(Object obj)
@@ -189,5 +307,14 @@ abstract class ArrayBufferProcessor implements BufferHelper.BufferProcessor
 	public void texImage2D(int texTarget, int level, int internalformat, int width, int height, int border, int format, Buffer pixels)
 	{
 		GL11.glTexImage2D(texTarget, level, internalformat, width, height, border, format, bufferType.inferGLType(), (ByteBuffer)pixels);
+	}
+}
+
+abstract class BufferedBufferProcessor implements BufferHelper.BufferProcessor
+{
+	@Override
+	public Buffer makeBuffer(Object buffer)
+	{
+		return (Buffer)buffer;
 	}
 }
