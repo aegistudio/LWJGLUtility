@@ -1,10 +1,14 @@
 package net.aegistudio.transparent.toolkit;
 
 import java.awt.AWTEvent;
-import java.awt.Button;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
-import java.awt.List;
+import java.awt.GraphicsEnvironment;
+
+import javax.swing.JList;
+
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,11 +23,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import java.io.FileInputStream;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -63,12 +71,25 @@ public class ModelViewer extends Canvas
 	Scene renderingScene = new Scene();
 	WrappedAWTGLCanvas canvas;
 	Camera camera = null;
-	List modelList = new List();
-	List loggerList = new List();
+	JList<String> modelList = new JList<String>();
+	JList<String> loggerList = new JList<String>();
+	{
+		this.loggerList.setModel(new DefaultListModel<String>());
+	}
 	
 	Texture texture = null; ScopedGraphic scoping_texture = null;
 	
 	Light light = new Light();
+	
+	JTabbedPane tab;
+	JButton openModelButton;
+	JButton bindTextureButton;
+	JButton unbindTextureButton;
+	JRadioButton ortho, frustum;
+	JPanel camPanel;
+	JPanel modelPanel;
+	JPanel texPanel;
+	JPanel logPanel;
 	
 	@Override
 	public void onInit(Container container)
@@ -105,6 +126,7 @@ public class ModelViewer extends Canvas
 		thisFrame.setTitle("Model Viewer");
 		thisFrame.setSize(new Dimension(760, 480));
 		thisFrame.setResizable(false);
+		thisFrame.setBackground(Color.BLACK);
 		thisFrame.setLayout(null);
 		
 		canvas = new WrappedAWTGLCanvas(this);
@@ -142,15 +164,15 @@ public class ModelViewer extends Canvas
 		canvas.addMouseMotionListener(dragger);
 		canvas.addMouseListener(dragger);
 		
-		JTabbedPane tab = new JTabbedPane();
+		tab = new JTabbedPane();
 		tab.setLocation(600 + 3, 25);
 		tab.setSize(140 + 12, 450);
-		JPanel modelPanel = new JPanel();
+		modelPanel = new JPanel();
 		modelPanel.setSize(119, 110);
 		tab.addTab("Model", modelPanel);
 		thisFrame.add(tab);
 		{
-			Button openModelButton = new Button("Open Model");
+			openModelButton = new JButton("Open Model");
 			openModelButton.setPreferredSize(new Dimension(119, 25));
 			openModelButton.addActionListener(new ActionListener()
 			{
@@ -194,32 +216,37 @@ public class ModelViewer extends Canvas
 			modelPanel.add(openModelButton);
 			
 			modelList.setEnabled(false);
-			modelList.addItemListener(new ItemListener()
+			
+			modelList.addListSelectionListener(new ListSelectionListener()
 			{
 				@Override
-				public void itemStateChanged(ItemEvent arg0)
+				public void valueChanged(ListSelectionEvent arg0)
 				{
+					String modelName = null;
 					try
 					{
-						ModelViewer.this.loadModel(modelList.getSelectedItem());
+						DefaultListModel<String> model = (DefaultListModel<String>) modelList.getModel();
+						modelName = model.getElementAt(modelList.getSelectedIndex());
+						ModelViewer.this.loadModel(modelName);
 					}
 					catch(Exception e)
 					{
-						ModelViewer.this.output("Error while loading model: " + modelList.getSelectedItem());
+						ModelViewer.this.output("Error while loading model: " + modelName);
 					}
 				}
 			});
+			
 			JScrollPane modelSPane = new JScrollPane(modelList);
 			modelSPane.setPreferredSize(new Dimension(130, 360));
 			modelPanel.add(modelSPane);
 		}
 		
-		JPanel texPanel = new JPanel();
+		texPanel = new JPanel();
 		texPanel.setSize(119, 110);
 		tab.addTab("Texture", texPanel);
 		{
-			Button bindTextureButton = new Button("Bind Texture");
-			bindTextureButton.setPreferredSize(new Dimension(120 - 1, 25));
+			bindTextureButton = new JButton("Bind Texture");
+			bindTextureButton.setPreferredSize(new Dimension(148 - 1, 25));
 			bindTextureButton.addActionListener(new ActionListener()
 			{
 	
@@ -261,8 +288,8 @@ public class ModelViewer extends Canvas
 			});
 			texPanel.add(bindTextureButton);
 			
-			unbindTextureButton = new Button("Unbind Texture");
-			unbindTextureButton.setPreferredSize(new Dimension(120 - 1, 25));
+			unbindTextureButton = new JButton("Unbind Texture");
+			unbindTextureButton.setPreferredSize(new Dimension(148 - 1, 25));
 			unbindTextureButton.setEnabled(false);
 			unbindTextureButton.addActionListener(new ActionListener()
 			{
@@ -276,13 +303,13 @@ public class ModelViewer extends Canvas
 			texPanel.add(unbindTextureButton);
 		}
 		
-		JPanel camPanel = new JPanel();
+		camPanel = new JPanel();
 		camPanel.setSize(119, 110);
 		tab.addTab("Camera", camPanel);
 		{
 			ButtonGroup camera = new ButtonGroup();
 			
-			JRadioButton ortho = new JRadioButton("Ortho");
+			ortho = new JRadioButton("Ortho");
 			camPanel.add(ortho);
 			camera.add(ortho);
 			ortho.addItemListener(new ItemListener()
@@ -297,7 +324,7 @@ public class ModelViewer extends Canvas
 			});
 			ortho.setSelected(true);
 			
-			JRadioButton frustum = new JRadioButton("Frustum");
+			frustum = new JRadioButton("Frustum");
 			camPanel.add(frustum);
 			camera.add(frustum);
 			frustum.addItemListener(new ItemListener()
@@ -322,7 +349,7 @@ public class ModelViewer extends Canvas
 			});
 		}
 		
-		JPanel logPanel = new JPanel();
+		logPanel = new JPanel();
 		logPanel.setSize(119, 210);
 		tab.addTab("Logger", logPanel);
 		{
@@ -331,8 +358,6 @@ public class ModelViewer extends Canvas
 			logPanel.add(logSPane);
 		}
 	}
-	
-	Button unbindTextureButton = null;
 	
 	public void setCamera(Camera theCamera)
 	{
@@ -364,12 +389,16 @@ public class ModelViewer extends Canvas
 			String[] models = wavefrontModel.listObjectModelNames();
 			modelList.removeAll();
 			modelList.setEnabled(false);
+			
+			DefaultListModel<String> listmodel = new DefaultListModel<String>();
+			
 			for(String modeln : models)
 			{
 				if(!modelList.isEnabled()) modelList.setEnabled(true);
 				output("+ " + modeln);
-				modelList.add(modeln);
+				listmodel.addElement(modeln);
 			}
+			modelList.setModel(listmodel);
 		}
 		this.scoping_wavefrontModel = new ScopedGraphic(wavefrontModel);
 		canvas.registerDrawable(this.scoping_wavefrontModel);
@@ -403,7 +432,7 @@ public class ModelViewer extends Canvas
 	
 	public void output(String registry)
 	{
-		this.loggerList.add(registry);
+		((DefaultListModel<String>)this.loggerList.getModel()).addElement(registry);
 	}
 	
 	public void loadModel(String modelName) throws Exception
@@ -422,10 +451,37 @@ public class ModelViewer extends Canvas
 		return this.thisFrame;
 	}
 	
+	Thread fontGoodizer = new Thread()
+	{
+		public void run()
+		{
+			Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+			for(Font font : fonts) if(font.getName().equals("Courier New"))
+			{
+				font = font.deriveFont(14.0f);
+				loggerList.setFont(font);
+				modelList.setFont(font);
+				tab.setFont(font);
+				openModelButton.setFont(font);
+				bindTextureButton.setFont(font);
+				unbindTextureButton.setFont(font);
+				frustum.setFont(font);
+				ortho.setFont(font);
+				camPanel.setFont(font);
+				modelPanel.setFont(font);
+				logPanel.setFont(font);
+				texPanel.setFont(font);
+				break;
+			}
+			thisFrame.revalidate();
+		}
+	};
+	
 	public static void main(String[] arguments) throws Exception
 	{
 		ModelViewer theFrame = new ModelViewer();
 		theFrame.getFrame().setVisible(true);
+		theFrame.fontGoodizer.start();
 	}
 }
 

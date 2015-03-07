@@ -269,9 +269,10 @@ public class GlslEditor
 	public static void main(String[] arguments) throws Exception
 	{
 		GlslEditor glsleditor = new GlslEditor();
-		glsleditor.modelviewer.getFrame().setVisible(true);
 		glsleditor.editorFrame.setVisible(true);
 		glsleditor.getSystemFontThread.start();
 		glsleditor.getShaderTypeThread.start();
+		glsleditor.modelviewer.getFrame().setVisible(true);
+		glsleditor.modelviewer.fontGoodizer.start();
 	}
 }
