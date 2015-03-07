@@ -16,13 +16,13 @@ import org.lwjgl.opengl.GLContext;
 public class Shader implements Scoped
 {
 	private String glslSource;
-	private int glslShaderType;
+	private EnumShaderType glslShaderType;
 	private int glslShaderId;
 	
 	public Shader(String glslSource, EnumShaderType shaderType)
 	{
 		this.glslSource = glslSource;
-		this.glslShaderType = shaderType.stateId;
+		this.glslShaderType = shaderType;
 		this.glslShaderId = 0;
 	}
 	
@@ -33,7 +33,10 @@ public class Shader implements Scoped
 			if(!GLContext.getCapabilities().GL_ARB_shader_objects)
 				throw new FeatureNotSupportedException("shading languague object");
 			
-			this.glslShaderId = ARBShaderObjects.glCreateShaderObjectARB(glslShaderType);
+			if(!this.glslShaderType.checkCapability())
+				throw new FeatureNotSupportedException(this.glslShaderType.shaderName);
+			
+			this.glslShaderId = ARBShaderObjects.glCreateShaderObjectARB(glslShaderType.stateId);
 			if(this.glslShaderId == 0) throw new BindingFailureException("Unable to allocate space for shader object!");
 			
 			ARBShaderObjects.glShaderSourceARB(glslShaderId, glslSource);
