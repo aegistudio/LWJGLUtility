@@ -19,10 +19,10 @@ public class Shader implements Scoped
 	private int glslShaderType;
 	private int glslShaderId;
 	
-	public Shader(String glslSource, int shaderType)
+	public Shader(String glslSource, EnumShaderType shaderType)
 	{
 		this.glslSource = glslSource;
-		this.glslShaderType = shaderType;
+		this.glslShaderType = shaderType.stateId;
 		this.glslShaderId = 0;
 	}
 	
@@ -71,7 +71,7 @@ public class Shader implements Scoped
 				ARBShaderObjects.glGetObjectParameteriARB(glslObjectId, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
 	}
 	
-	public static Shader createShaderFromSourceFile(File sourceFile, int shaderType) throws Exception
+	public static Shader createShaderFromSourceFile(File sourceFile, EnumShaderType shaderType) throws Exception
 	{
 		if(!sourceFile.exists()) throw new FileNotFoundException();
 		StringBuilder sb = new StringBuilder();
