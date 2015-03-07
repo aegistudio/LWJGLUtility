@@ -39,6 +39,9 @@ public class GlslEditor
 	JButton first, previous, last, next;
 	JTextField currentPage, totalPage; JLabel pageSlashLabel;
 	
+	int totalPageCount = 1;
+	int currentPageIndex = 1;
+	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
 	{
@@ -170,8 +173,8 @@ public class GlslEditor
 				new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants, control})
 		);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
-		editingAreaPane.setSize(390, 300);
-		editingAreaPane.setLocation(5, 50);
+		editingAreaPane.setSize(490, 375);
+		editingAreaPane.setLocation(5, 75);
 		editingAreaPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		editingAreaPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.editorFrame.add(editingAreaPane);
@@ -209,6 +212,7 @@ public class GlslEditor
 		currentPage.setSize((int) (navigator_width * 0.15), navigator_height);
 		currentPage.setLocation((int)(navigator_width * 0.3f), 0);
 		currentPage.setHorizontalAlignment(JTextField.CENTER);
+		currentPage.setText(Integer.toString(currentPageIndex));
 		navigators.add(currentPage);
 		
 		totalPage = new JTextField();
@@ -216,6 +220,7 @@ public class GlslEditor
 		totalPage.setLocation((int)(navigator_width * 0.55f), 0);
 		totalPage.setEditable(false);
 		totalPage.setHorizontalAlignment(JTextField.CENTER);
+		totalPage.setText(Integer.toString(totalPageCount));
 		navigators.add(totalPage);
 		
 		pageSlashLabel = new JLabel("/");
