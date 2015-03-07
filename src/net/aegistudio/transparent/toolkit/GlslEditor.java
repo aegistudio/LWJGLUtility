@@ -1,5 +1,6 @@
 package net.aegistudio.transparent.toolkit;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
@@ -10,7 +11,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.glsl.EnumShaderType;
@@ -27,7 +28,7 @@ public class GlslEditor
 	JComboBox<String> shaderTypeCombo;
 	JComboBox<String> fontCombo;
 	JComboBox<Integer> fontSize;
-	JTextArea editingArea;
+	JTextPane editingArea;
 	
 	public GlslEditor() throws Exception
 	{
@@ -120,9 +121,27 @@ public class GlslEditor
 		});
 		this.editorFrame.add(fontSize);
 		
-		this.editingArea = new JTextArea();
+		this.editingArea = new JTextPane();
+		
+		KeywordScheme type = new KeywordScheme(new String[]{
+		"void", "int", "float", "double", "struct",		//C specification
+		"vec2", "vec3", "vec4", "mat2", "mat3", "mat4",
+		"mat2x2", "mat2x3", "mat2x4",
+		"mat3x2", "mat3x3", "mat3x4",
+		"mat4x2", "mat4x3", "mat4x4",
+		"sampler1D", "sampler2D", "sampler3D",
+		"uniform", "attribute", "varying"			//OpenGL shader scope
+		}, Color.BLUE);
+		
+		KeywordScheme glConstants = new KeywordScheme(new String[]
+		{ "gl_Vertex", "gl_Position", "gl_Color"}, Color.CYAN.darker());
+				
+		
+		this.editingArea.getDocument().addDocumentListener(
+				new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants})
+		);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
-		editingAreaPane.setSize(390, 200);
+		editingAreaPane.setSize(390, 300);
 		editingAreaPane.setLocation(5, 50);
 		editingAreaPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		editingAreaPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -134,9 +153,15 @@ public class GlslEditor
 		public void run()
 		{
 			systemFonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-			for(int i = 0; i < systemFonts.length; i ++) fontCombo.addItem(systemFonts[i].getFontName());
+			int courierNewIndex = 0;
+			for(int i = 0; i < systemFonts.length; i ++)
+			{
+				String theFontName = systemFonts[i].getFontName();
+				if(theFontName.equals("Courier New")) courierNewIndex = i;
+				fontCombo.addItem(theFontName);
+			}
 			fontCombo.revalidate();
-			fontCombo.setSelectedIndex(0);
+			fontCombo.setSelectedIndex(courierNewIndex);
 		}
 	};
 	
