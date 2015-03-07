@@ -238,8 +238,9 @@ public class GlslEditor
 	{
 		if(systemFonts != null)
 		{
-			int item = (Integer)fontSize.getSelectedItem();
-			Font usingFont = systemFonts[fontCombo.getSelectedIndex()].deriveFont((float)item);
+			Integer itemObject = (Integer)fontSize.getSelectedItem();
+			float item = (itemObject == null)? 17.0f: (float)((int)itemObject);
+			Font usingFont = systemFonts[fontCombo.getSelectedIndex()].deriveFont(item);
 			this.editingArea.setFont(usingFont);
 			this.editorFrame.revalidate();
 		}
