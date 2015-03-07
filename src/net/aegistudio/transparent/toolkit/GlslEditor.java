@@ -14,6 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
 import net.aegistudio.transparent.opengl.Container;
@@ -36,6 +37,7 @@ public class GlslEditor
 	JTextPane editingArea;
 	
 	JButton first, previous, last, next;
+	JTextField currentPage, totalPage; JLabel pageSlashLabel;
 	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
@@ -180,25 +182,47 @@ public class GlslEditor
 		navigators.setLocation(5, editingAreaPane.getLocation().y + editingAreaPane.getHeight());
 		this.editorFrame.add(navigators);
 		
+		int navigator_width = navigators.getSize().width;
+		int navigator_height = navigators.getSize().height;
+		
 		first = new JButton("<<");
 		first.setLocation(0, 0);
-		first.setSize(50, 25);
+		first.setSize((int)(navigator_width * 0.15f), navigator_height);
 		navigators.add(first);
 		
 		previous = new JButton("<");
-		previous.setLocation(50, 0);
-		previous.setSize(50, 25);
+		previous.setLocation((int)(navigator_width * 0.15f), 0);
+		previous.setSize((int)(navigator_width * 0.15f), navigator_height);
 		navigators.add(previous);
 		
 		last = new JButton(">>");
-		last.setSize(50, 25);
-		last.setLocation(navigators.getSize().width - last.getWidth(), 0);
+		last.setSize((int) (navigator_width * 0.15f), navigator_height);
+		last.setLocation((int) (0.85f * navigator_width), 0);
 		navigators.add(last);
 		
 		next = new JButton(">");
-		next.setSize(50, 25);
-		next.setLocation(navigators.getSize().width - last.getWidth() - next.getWidth(), 0);
+		next.setSize((int) (navigator_width * 0.15f), navigator_height);
+		next.setLocation((int) (0.7f * navigator_width), 0);
 		navigators.add(next);
+		
+		currentPage = new JTextField();
+		currentPage.setSize((int) (navigator_width * 0.15), navigator_height);
+		currentPage.setLocation((int)(navigator_width * 0.3f), 0);
+		currentPage.setHorizontalAlignment(JTextField.CENTER);
+		navigators.add(currentPage);
+		
+		totalPage = new JTextField();
+		totalPage.setSize((int) (navigator_width * 0.15), navigator_height);
+		totalPage.setLocation((int)(navigator_width * 0.55f), 0);
+		totalPage.setEditable(false);
+		totalPage.setHorizontalAlignment(JTextField.CENTER);
+		navigators.add(totalPage);
+		
+		pageSlashLabel = new JLabel("/");
+		pageSlashLabel.setSize(80, 25);
+		pageSlashLabel.setLocation((navigators.getSize().width - 80) / 2, 0);
+		pageSlashLabel.setHorizontalAlignment(JLabel.CENTER);
+		navigators.add(pageSlashLabel);
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -231,6 +255,8 @@ public class GlslEditor
 		this.previous.setFont(font);
 		this.last.setFont(font);
 		this.next.setFont(font);
+		this.currentPage.setFont(font);
+		this.totalPage.setFont(font);
 		this.editorFrame.revalidate();
 	}
 	
