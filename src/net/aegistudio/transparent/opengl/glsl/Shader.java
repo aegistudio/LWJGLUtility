@@ -77,12 +77,12 @@ public class Shader implements Scoped
 	public static Shader createShaderFromSourceFile(File sourceFile, EnumShaderType shaderType) throws Exception
 	{
 		if(!sourceFile.exists()) throw new FileNotFoundException();
-		StringBuilder sb = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 		BufferedReader buffReader = new BufferedReader(new FileReader(sourceFile));
 		String currentLine = null;
-		while((currentLine = buffReader.readLine()) != null) sb.append(currentLine).append('\n');
+		while((currentLine = buffReader.readLine()) != null) stringBuilder.append(currentLine).append('\n');
 		buffReader.close();
-		return new Shader(new String(sb), shaderType);
+		return new Shader(new String(stringBuilder), shaderType);
 	}
 	
 	public void finalize() throws Throwable
