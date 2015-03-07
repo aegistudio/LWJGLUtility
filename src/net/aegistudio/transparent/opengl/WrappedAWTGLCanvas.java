@@ -37,6 +37,10 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 					Thread.sleep(WrappedAWTGLCanvas.this.refreshInterval);
 				}
 			}
+			catch(RuntimeException runtimeException)
+			{
+				WrappedAWTGLCanvas.this.processRuntimeException(runtimeException);
+			}
 			catch(Exception exception)
 			{
 				WrappedAWTGLCanvas.this.processException(exception);
@@ -133,6 +137,11 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 	protected void processException(Exception exception)
 	{
 		exception.printStackTrace();
+	}
+	
+	protected void processRuntimeException(RuntimeException runtimeException)
+	{
+		runtimeException.printStackTrace();
 	}
 	
 	@Override
