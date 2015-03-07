@@ -1,6 +1,7 @@
 package net.aegistudio.transparent.toolkit;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
@@ -30,6 +31,7 @@ public class GlslEditor
 	JComboBox<Integer> fontSize;
 	JTextPane editingArea;
 	
+	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
 	{
 		modelviewer = new ModelViewer()
@@ -121,7 +123,20 @@ public class GlslEditor
 		});
 		this.editorFrame.add(fontSize);
 		
-		this.editingArea = new JTextPane();
+		this.editingArea = new JTextPane()
+		{
+		    public boolean getScrollableTracksViewportWidth()
+		    {
+		        return false;
+		    }
+		    
+		    public void setSize(Dimension dimension)
+		    {
+		        if (dimension.width < getParent().getSize().width)
+		        		dimension.width = getParent().getSize().width;
+		        super.setSize(dimension);
+		    }
+		};
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
 		"void", "int", "float", "double", "struct",	
@@ -131,11 +146,14 @@ public class GlslEditor
 		"mat3x2", "mat3x3", "mat3x4",
 		"mat4x2", "mat4x3", "mat4x4",
 		"sampler1D", "sampler2D", "sampler3D",
-		"uniform", "attribute", "varying"			//OpenGL shader scope
+		"uniform", "attribute", "varying", "in", "out", "shared"	//OpenGL shader scope
 		}, Color.BLUE);
 		
-		KeywordScheme glConstants = new KeywordScheme(new String[]
-		{ "gl_Vertex", "gl_Position", "gl_Color"}, Color.CYAN.darker());
+		KeywordScheme glConstants = new KeywordScheme(new String[]{
+		"gl_Color", "gl_SecondaryColor", "gl_Normal", "gl_Vertex",
+		"gl_MultiTexCoord0", "gl_MultiTexCoord1", "gl_MultiTexCoord2",
+		"gl_MultiTexCoord3", "gl_MultiTexCoord4", "gl_MultiTexCoord5",
+		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord"}, Color.CYAN.darker());
 		
 		KeywordScheme control = new KeywordScheme(new String[]
 		{ "if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return"}, Color.magenta.darker());
