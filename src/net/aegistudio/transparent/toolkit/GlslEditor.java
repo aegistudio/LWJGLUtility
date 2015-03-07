@@ -124,7 +124,8 @@ public class GlslEditor
 		this.editingArea = new JTextPane();
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
-		"void", "int", "float", "double", "struct",		//C specification
+		"void", "int", "float", "double", "struct",	
+		"bool", "true", "false", //C specification
 		"vec2", "vec3", "vec4", "mat2", "mat3", "mat4",
 		"mat2x2", "mat2x3", "mat2x4",
 		"mat3x2", "mat3x3", "mat3x4",
@@ -135,10 +136,12 @@ public class GlslEditor
 		
 		KeywordScheme glConstants = new KeywordScheme(new String[]
 		{ "gl_Vertex", "gl_Position", "gl_Color"}, Color.CYAN.darker());
-				
+		
+		KeywordScheme control = new KeywordScheme(new String[]
+		{ "if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return"}, Color.magenta.darker());
 		
 		this.editingArea.getDocument().addDocumentListener(
-				new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants})
+				new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants, control})
 		);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
 		editingAreaPane.setSize(390, 300);
