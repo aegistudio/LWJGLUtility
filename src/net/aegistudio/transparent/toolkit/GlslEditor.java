@@ -9,8 +9,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowListener;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
@@ -26,10 +28,14 @@ public class GlslEditor
 	
 	Frame editorFrame;
 	Font[] systemFonts;
+	JLabel shaderTypeLabel;
 	JComboBox<String> shaderTypeCombo;
+	JLabel fontLabel;
 	JComboBox<String> fontCombo;
 	JComboBox<Integer> fontSize;
 	JTextPane editingArea;
+	
+	JButton first, previous, last, next;
 	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
@@ -67,7 +73,7 @@ public class GlslEditor
 		this.editorFrame.setLayout(null);
 		
 		int locator = 0;
-		JLabel shaderTypeLabel = new JLabel();
+		shaderTypeLabel = new JLabel();
 		shaderTypeLabel.setHorizontalAlignment(JLabel.CENTER);
 		shaderTypeLabel.setText("Shader");
 		shaderTypeLabel.setLocation(locator, 25);
@@ -88,7 +94,7 @@ public class GlslEditor
 		});
 		this.editorFrame.add(shaderTypeCombo);
 		
-		JLabel fontLabel = new JLabel();
+		fontLabel = new JLabel();
 		fontLabel.setHorizontalAlignment(JLabel.CENTER);
 		fontLabel.setText("Font");
 		fontLabel.setLocation(locator, 25);
@@ -139,7 +145,7 @@ public class GlslEditor
 		};
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
-		"void", "int", "float", "double", "struct",	
+		"void", "int", "float", "double", "struct",	"const",
 		"bool", "true", "false", //C specification
 		"vec2", "vec3", "vec4", "mat2", "mat3", "mat4",
 		"mat2x2", "mat2x3", "mat2x4",
@@ -167,6 +173,32 @@ public class GlslEditor
 		editingAreaPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		editingAreaPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.editorFrame.add(editingAreaPane);
+		
+		JPanel navigators = new JPanel();
+		navigators.setLayout(null);
+		navigators.setSize(this.editorFrame.getWidth() - 10, 25);
+		navigators.setLocation(5, editingAreaPane.getLocation().y + editingAreaPane.getHeight());
+		this.editorFrame.add(navigators);
+		
+		first = new JButton("<<");
+		first.setLocation(0, 0);
+		first.setSize(50, 25);
+		navigators.add(first);
+		
+		previous = new JButton("<");
+		previous.setLocation(50, 0);
+		previous.setSize(50, 25);
+		navigators.add(previous);
+		
+		last = new JButton(">>");
+		last.setSize(50, 25);
+		last.setLocation(navigators.getSize().width - last.getWidth(), 0);
+		navigators.add(last);
+		
+		next = new JButton(">");
+		next.setSize(50, 25);
+		next.setLocation(navigators.getSize().width - last.getWidth() - next.getWidth(), 0);
+		navigators.add(next);
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -183,8 +215,24 @@ public class GlslEditor
 			}
 			fontCombo.revalidate();
 			fontCombo.setSelectedIndex(courierNewIndex);
+			goodizeFont(systemFonts[courierNewIndex]);
 		}
 	};
+	
+	public void goodizeFont(Font font)
+	{
+		font = font.deriveFont(14.0f);
+		this.fontLabel.setFont(font);
+		this.fontCombo.setFont(font);
+		this.fontSize.setFont(font);
+		this.shaderTypeLabel.setFont(font);
+		this.shaderTypeCombo.setFont(font);
+		this.first.setFont(font);
+		this.previous.setFont(font);
+		this.last.setFont(font);
+		this.next.setFont(font);
+		this.editorFrame.revalidate();
+	}
 	
 	public void changeEditorFont()
 	{
@@ -193,7 +241,7 @@ public class GlslEditor
 			int item = (Integer)fontSize.getSelectedItem();
 			Font usingFont = systemFonts[fontCombo.getSelectedIndex()].deriveFont((float)item);
 			this.editingArea.setFont(usingFont);
-			this.editingArea.revalidate();
+			this.editorFrame.revalidate();
 		}
 	}
 	
@@ -212,6 +260,11 @@ public class GlslEditor
 			fontSize.setSelectedItem(17);
 		}
 	};
+	
+	public void switchToShader(int index)
+	{
+		
+	}
 	
 	public static void main(String[] arguments) throws Exception
 	{
