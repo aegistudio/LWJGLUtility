@@ -35,14 +35,14 @@ public class SyntaxHighlighter implements DocumentListener
 		
 	}
 
-	public void documentEventBus(DocumentEvent arg0)
+	public void keywordHighlight(Document document, int offset)
 	{
 		try
 		{
-			StyledDocument doc = (StyledDocument) arg0.getDocument();
+			StyledDocument doc = (StyledDocument) document;
 			StringBuilder builder = new StringBuilder();
 			
-			int beginPos = arg0.getOffset();
+			int beginPos = offset;
 			for(; beginPos >=0; beginPos --)
 			{
 				String element = doc.getText(beginPos, 1);
@@ -51,7 +51,7 @@ public class SyntaxHighlighter implements DocumentListener
 			}
 			builder.reverse();
 			
-			int endPos = arg0.getOffset() + 1;
+			int endPos = offset + 1;
 			for(; endPos < doc.getLength(); endPos ++)
 			{
 				String element = doc.getText(endPos, 1);
@@ -61,12 +61,17 @@ public class SyntaxHighlighter implements DocumentListener
 			
 			Style theColor = this.keywordSchemes.get(builder.toString());
 			if(theColor == null) theColor = this.normalColor;
-			SwingUtilities.invokeLater(new ColoringTask(arg0.getDocument(), beginPos, endPos - beginPos, theColor));
+			SwingUtilities.invokeLater(new ColoringTask(document, beginPos, endPos - beginPos, theColor));
 		}
 		catch(Exception e)
 		{
 			
 		}
+	}
+	
+	public void documentEventBus(DocumentEvent arg0)
+	{
+		this.keywordHighlight(arg0.getDocument(), arg0.getOffset());
 	}
 	
 	class ColoringTask implements Runnable

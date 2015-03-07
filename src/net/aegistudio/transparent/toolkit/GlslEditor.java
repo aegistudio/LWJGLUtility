@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowListener;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,8 +40,11 @@ public class GlslEditor
 	JButton first, previous, last, next;
 	JTextField currentPage, totalPage; JLabel pageSlashLabel;
 	
-	int totalPageCount = 1;
+	JButton newPage, importPage, exportPage, deletePage, runShade;
+	
 	int currentPageIndex = 1;
+	
+	protected LinkedList<String> shaderPool = new LinkedList<String>();
 	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
@@ -81,13 +85,13 @@ public class GlslEditor
 		shaderTypeLabel = new JLabel();
 		shaderTypeLabel.setHorizontalAlignment(JLabel.CENTER);
 		shaderTypeLabel.setText("Shader");
-		shaderTypeLabel.setLocation(locator, 25);
+		shaderTypeLabel.setLocation(locator, 50);
 		shaderTypeLabel.setSize(55, 25); locator += 55;
 		
 		this.editorFrame.add(shaderTypeLabel);
 		
 		shaderTypeCombo = new JComboBox<String>();
-		shaderTypeCombo.setLocation(locator, 25);
+		shaderTypeCombo.setLocation(locator, 50);
 		shaderTypeCombo.setSize(120, 25); locator += 120;
 		shaderTypeCombo.addItemListener(new ItemListener()
 		{
@@ -102,12 +106,12 @@ public class GlslEditor
 		fontLabel = new JLabel();
 		fontLabel.setHorizontalAlignment(JLabel.CENTER);
 		fontLabel.setText("Font");
-		fontLabel.setLocation(locator, 25);
+		fontLabel.setLocation(locator, 50);
 		fontLabel.setSize(35, 25); locator += 35;
 		this.editorFrame.add(fontLabel);
 		
 		fontCombo = new JComboBox<String>();
-		fontCombo.setLocation(locator, 25);
+		fontCombo.setLocation(locator, 50);
 		fontCombo.setSize(125, 25); locator += 125;
 		fontCombo.addItemListener(new ItemListener()
 		{
@@ -121,7 +125,7 @@ public class GlslEditor
 		this.editorFrame.add(fontCombo);
 		
 		fontSize = new JComboBox<Integer>();
-		fontSize.setLocation(locator, 25);
+		fontSize.setLocation(locator, 50);
 		fontSize.setSize(63, 25); locator += 63;
 		fontSize.addItemListener(new ItemListener()
 		{
@@ -148,6 +152,10 @@ public class GlslEditor
 		        super.setSize(dimension);
 		    }
 		};
+		
+		String demo = "void main(){\n\tgl_Vertex = ftransform();\n}";
+		shaderPool.add(demo);	//demo page 1
+		this.editingArea.setText(demo);
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
 		"void", "int", "float", "double", "struct",	"const",
@@ -178,6 +186,8 @@ public class GlslEditor
 		editingAreaPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		editingAreaPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.editorFrame.add(editingAreaPane);
+		
+		//Adding navigators.
 		
 		JPanel navigators = new JPanel();
 		navigators.setLayout(null);
@@ -212,7 +222,6 @@ public class GlslEditor
 		currentPage.setSize((int) (navigator_width * 0.15), navigator_height);
 		currentPage.setLocation((int)(navigator_width * 0.3f), 0);
 		currentPage.setHorizontalAlignment(JTextField.CENTER);
-		currentPage.setText(Integer.toString(currentPageIndex));
 		navigators.add(currentPage);
 		
 		totalPage = new JTextField();
@@ -220,7 +229,6 @@ public class GlslEditor
 		totalPage.setLocation((int)(navigator_width * 0.55f), 0);
 		totalPage.setEditable(false);
 		totalPage.setHorizontalAlignment(JTextField.CENTER);
-		totalPage.setText(Integer.toString(totalPageCount));
 		navigators.add(totalPage);
 		
 		pageSlashLabel = new JLabel("/");
@@ -228,6 +236,41 @@ public class GlslEditor
 		pageSlashLabel.setLocation((navigators.getSize().width - 80) / 2, 0);
 		pageSlashLabel.setHorizontalAlignment(JLabel.CENTER);
 		navigators.add(pageSlashLabel);
+		
+		//Adding function buttons.
+		
+		JPanel functionPanel = new JPanel();
+		functionPanel.setSize(390, 25);
+		functionPanel.setLocation(5, 25);
+		functionPanel.setLayout(null);
+		this.editorFrame.add(functionPanel);
+		
+		this.newPage = new JButton("New");
+		this.newPage.setSize(70, 25);
+		this.newPage.setLocation(0, 0);
+		functionPanel.add(this.newPage);
+		
+		this.importPage = new JButton("Import");
+		this.importPage.setSize(85, 25);
+		this.importPage.setLocation(70, 0);
+		functionPanel.add(this.importPage);
+		
+		this.exportPage = new JButton("Export");
+		this.exportPage.setSize(85, 25);
+		this.exportPage.setLocation(155, 0);
+		functionPanel.add(this.exportPage);
+		
+		this.deletePage = new JButton("Delete");
+		this.deletePage.setSize(85, 25);
+		this.deletePage.setLocation(240, 0);
+		functionPanel.add(this.deletePage);
+		
+		this.runShade = new JButton("Run");
+		this.runShade.setSize(65, 25);
+		this.runShade.setLocation(325, 0);
+		functionPanel.add(this.runShade);
+		
+		this.switchToShader(1);
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -262,6 +305,13 @@ public class GlslEditor
 		this.next.setFont(font);
 		this.currentPage.setFont(font);
 		this.totalPage.setFont(font);
+		
+		this.newPage.setFont(font);
+		this.importPage.setFont(font);
+		this.exportPage.setFont(font);
+		this.deletePage.setFont(font);
+		this.runShade.setFont(font);
+		
 		this.editorFrame.revalidate();
 	}
 	
@@ -293,9 +343,18 @@ public class GlslEditor
 		}
 	};
 	
-	public void switchToShader(int index)
+	public void switchToShader(int page)
 	{
+		shaderPool.set(this.currentPageIndex - 1, this.editingArea.getText());
+		this.editingArea.setText(this.shaderPool.get(page - 1));
+		this.currentPageIndex = page;
+		this.currentPage.setText(Integer.toString(currentPageIndex));
+		this.totalPage.setText(Integer.toString(this.shaderPool.size()));
 		
+		this.previous.setEnabled(this.currentPageIndex > 1);
+		this.first.setEnabled(this.currentPageIndex > 1);
+		this.next.setEnabled(this.currentPageIndex < this.shaderPool.size());
+		this.last.setEnabled(this.currentPageIndex < this.shaderPool.size());
 	}
 	
 	public static void main(String[] arguments) throws Exception
