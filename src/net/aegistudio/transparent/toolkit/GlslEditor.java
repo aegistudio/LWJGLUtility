@@ -311,6 +311,29 @@ public class GlslEditor
 		this.deletePage = new JButton("Delete");
 		this.deletePage.setSize(85, 25);
 		this.deletePage.setLocation(240, 0);
+		this.deletePage.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				int pageToDelete = currentPageIndex;
+				if(pageToDelete > 1)
+				{
+					switchToShader(currentPageIndex - 1);
+					shaderPool.remove(pageToDelete - 1);
+					shaderType.remove(pageToDelete - 1);
+					synchronizeState();
+				}
+				else
+				{
+					switchToShader(2);
+					shaderPool.remove(0);
+					shaderType.remove(0);
+					currentPageIndex = 1;
+					synchronizeState();
+				}
+			}
+		});
 		functionPanel.add(this.deletePage);
 		
 		this.runShade = new JButton("Run");
@@ -361,6 +384,18 @@ public class GlslEditor
 		this.editorFrame.revalidate();
 	}
 	
+	public void synchronizeState()
+	{
+		this.currentPage.setText(Integer.toString(currentPageIndex));
+		this.totalPage.setText(Integer.toString(this.shaderPool.size()));
+		this.deletePage.setEnabled(this.shaderPool.size() > 1);
+		
+		this.previous.setEnabled(this.currentPageIndex > 1);
+		this.first.setEnabled(this.currentPageIndex > 1);
+		this.next.setEnabled(this.currentPageIndex < this.shaderPool.size());
+		this.last.setEnabled(this.currentPageIndex < this.shaderPool.size());
+	}
+	
 	public void changeEditorFont()
 	{
 		if(systemFonts != null)
@@ -397,15 +432,9 @@ public class GlslEditor
 		this.editingArea.setText(this.shaderPool.get(page - 1));
 		this.shaderTypeCombo.setSelectedIndex(this.shaderType.get(page - 1));
 		this.currentPageIndex = page;
-		this.currentPage.setText(Integer.toString(currentPageIndex));
-		this.totalPage.setText(Integer.toString(this.shaderPool.size()));
-		this.deletePage.setEnabled(this.shaderPool.size() > 1);
+
 		this.syntaxhighlighter.fullSyntaxHighlight(this.editingArea.getDocument());
-		
-		this.previous.setEnabled(this.currentPageIndex > 1);
-		this.first.setEnabled(this.currentPageIndex > 1);
-		this.next.setEnabled(this.currentPageIndex < this.shaderPool.size());
-		this.last.setEnabled(this.currentPageIndex < this.shaderPool.size());
+		this.synchronizeState();
 	}
 	
 	public void createDisplay()
