@@ -45,7 +45,7 @@ public class GlslEditor
 	
 	int currentPageIndex = 1;
 	
-	protected LinkedList<String> shaderPool = new LinkedList<String>();
+	protected LinkedList<String> shaderPool;
 	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
@@ -154,6 +154,7 @@ public class GlslEditor
 		    }
 		};
 		
+		shaderPool = new LinkedList<String>();
 		String demo = "void main(){\n\tgl_Vertex = ftransform();\n}";
 		shaderPool.add(demo);	//demo page 1
 		this.editingArea.setText(demo);
