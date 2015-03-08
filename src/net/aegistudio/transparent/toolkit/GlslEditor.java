@@ -7,18 +7,23 @@ import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.PrintStream;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -276,6 +281,24 @@ public class GlslEditor
 		currentPage.setSize((int) (navigator_width * 0.15), navigator_height);
 		currentPage.setLocation((int)(navigator_width * 0.3f), 0);
 		currentPage.setHorizontalAlignment(JTextField.CENTER);
+		currentPage.addFocusListener(new FocusAdapter()
+		{
+			public void focusLost(FocusEvent e)
+			{
+				try
+				{
+					int targetPage = Integer.parseInt(currentPage.getText());
+					if(targetPage < 1) targetPage = 1;
+					if(targetPage > shaderPool.size()) targetPage = shaderPool.size();
+					if(targetPage != currentPageIndex) switchToShader(targetPage);
+					else currentPage.setText(Integer.toString(currentPageIndex));
+				}
+				catch(Exception exception)
+				{
+					currentPage.setText(Integer.toString(currentPageIndex));
+				}
+			}
+		});
 		navigators.add(currentPage);
 		
 		totalPage = new JTextField();
@@ -340,7 +363,7 @@ public class GlslEditor
 					}					
 				};
 				openFile.setFileFilter(filter);
-				openFile.setVisible(true);
+				
 				int state = openFile.showOpenDialog(editorFrame);
 				if(state == JFileChooser.APPROVE_OPTION)
 				{
@@ -388,6 +411,60 @@ public class GlslEditor
 		this.exportPage = new JButton("Export");
 		this.exportPage.setSize(85, 25);
 		this.exportPage.setLocation(155, 0);
+		this.exportPage.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				editorFrame.setEnabled(false);
+				JFileChooser saveFile = new JFileChooser();
+				FileFilter filter = new FileFilter()
+				{
+					@Override
+					public boolean accept(File arg0)
+					{
+						return true;
+					}
+
+					@Override
+					public String getDescription()
+					{
+						return "Shader";
+					}					
+				};
+				saveFile.setFileFilter(filter);
+				
+				while(true)
+				{
+					int state = saveFile.showSaveDialog(editorFrame);
+					if(state == JFileChooser.APPROVE_OPTION)
+					{
+						File file = saveFile.getSelectedFile();
+						if(file.exists())
+						{
+							int overwriteState = JOptionPane.showConfirmDialog(saveFile, "File \"" + file.getName() + "\" already exists, should overwrite?");
+							if(overwriteState != JOptionPane.OK_OPTION) continue;
+						}
+						
+						try
+						{
+							if(!file.exists()) file.createNewFile();
+							PrintStream bw = new PrintStream(new FileOutputStream(file));
+							bw.print(editingArea.getText());
+							bw.close();
+						}
+						catch(Exception exception)
+						{
+							
+						}
+						break;
+					}
+					else break;
+				}
+				
+				editorFrame.setEnabled(true);
+			}
+		});
 		functionPanel.add(this.exportPage);
 		
 		this.deletePage = new JButton("Delete");
