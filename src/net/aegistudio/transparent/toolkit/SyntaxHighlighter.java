@@ -133,15 +133,35 @@ public class SyntaxHighlighter implements DocumentListener
 				|| '_' == current;
 	}
 	
+	int partialUpdateCounter = 0;
+	
 	@Override
 	public void insertUpdate(DocumentEvent arg0)
 	{
-		this.keywordHighlight(arg0.getDocument(), arg0.getOffset());
+		if(partialUpdateCounter < 10)
+		{
+			this.keywordHighlight(arg0.getDocument(), arg0.getOffset());
+			partialUpdateCounter ++;
+		}
+		else
+		{
+			this.fullSyntaxHighlight(arg0.getDocument());
+			partialUpdateCounter = 0;
+		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent arg0)
 	{
-		this.keywordHighlight(arg0.getDocument(), arg0.getOffset() - 1);
+		if(partialUpdateCounter < 10)
+		{
+			this.keywordHighlight(arg0.getDocument(), arg0.getOffset() - 1);
+			partialUpdateCounter ++;
+		}
+		else
+		{
+			this.fullSyntaxHighlight(arg0.getDocument());
+			partialUpdateCounter = 0;
+		}
 	}
 }
