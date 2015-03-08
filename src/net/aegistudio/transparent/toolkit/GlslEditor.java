@@ -41,6 +41,7 @@ public class GlslEditor
 	JTextField currentPage, totalPage; JLabel pageSlashLabel;
 	
 	JButton newPage, importPage, exportPage, deletePage, runShade;
+	SyntaxHighlighter syntaxhighlighter;
 	
 	int currentPageIndex = 1;
 	
@@ -177,9 +178,8 @@ public class GlslEditor
 		KeywordScheme control = new KeywordScheme(new String[]
 		{ "if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return"}, Color.magenta.darker());
 		
-		this.editingArea.getDocument().addDocumentListener(
-				new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants, control})
-		);
+		syntaxhighlighter = new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants, control});
+		this.editingArea.getDocument().addDocumentListener(syntaxhighlighter);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
 		editingAreaPane.setSize(490, 375);
 		editingAreaPane.setLocation(5, 75);
@@ -269,8 +269,6 @@ public class GlslEditor
 		this.runShade.setSize(65, 25);
 		this.runShade.setLocation(325, 0);
 		functionPanel.add(this.runShade);
-		
-		this.switchToShader(1);
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -350,6 +348,7 @@ public class GlslEditor
 		this.currentPageIndex = page;
 		this.currentPage.setText(Integer.toString(currentPageIndex));
 		this.totalPage.setText(Integer.toString(this.shaderPool.size()));
+		this.syntaxhighlighter.fullSyntaxHighlight(this.editingArea.getDocument());
 		
 		this.previous.setEnabled(this.currentPageIndex > 1);
 		this.first.setEnabled(this.currentPageIndex > 1);
@@ -357,13 +356,19 @@ public class GlslEditor
 		this.last.setEnabled(this.currentPageIndex < this.shaderPool.size());
 	}
 	
+	public void createDisplay()
+	{
+		editorFrame.setVisible(true);
+		getSystemFontThread.start();
+		getShaderTypeThread.start();
+		modelviewer.getFrame().setVisible(true);
+		modelviewer.fontGoodizer.start();
+		this.switchToShader(1);
+	}
+	
 	public static void main(String[] arguments) throws Exception
 	{
 		GlslEditor glsleditor = new GlslEditor();
-		glsleditor.editorFrame.setVisible(true);
-		glsleditor.getSystemFontThread.start();
-		glsleditor.getShaderTypeThread.start();
-		glsleditor.modelviewer.getFrame().setVisible(true);
-		glsleditor.modelviewer.fontGoodizer.start();
+		glsleditor.createDisplay();
 	}
 }

@@ -1,6 +1,7 @@
 package net.aegistudio.transparent.toolkit;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import javax.swing.SwingUtilities;
@@ -45,8 +46,8 @@ public class SyntaxHighlighter implements DocumentListener
 			int beginPos = offset;
 			for(; beginPos >=0; beginPos --)
 			{
-				String element = doc.getText(beginPos, 1);
-				if(element.matches("[A-Za-z0-9|_]")) builder.append(element);
+				char element = doc.getText(beginPos, 1).charAt(0);
+				if(isAvailableChar(element)) builder.append(element);
 				else break;
 			}
 			builder.reverse();
@@ -54,12 +55,12 @@ public class SyntaxHighlighter implements DocumentListener
 			int endPos = offset + 1;
 			for(; endPos < doc.getLength(); endPos ++)
 			{
-				String element = doc.getText(endPos, 1);
-				if(element.matches("[A-Za-z0-9|_]")) builder.append(element);
+				char element = doc.getText(endPos, 1).charAt(0);
+				if(isAvailableChar(element)) builder.append(element);
 				else break;
 			}
 			
-			Style theColor = this.keywordSchemes.get(builder.toString());
+			Style theColor = this.keywordSchemes.get(new String(builder));
 			if(theColor == null) theColor = this.normalColor;
 			SwingUtilities.invokeLater(new ColoringTask(document, beginPos, endPos - beginPos, theColor));
 		}
@@ -67,11 +68,6 @@ public class SyntaxHighlighter implements DocumentListener
 		{
 			
 		}
-	}
-	
-	public void documentEventBus(DocumentEvent arg0)
-	{
-		this.keywordHighlight(arg0.getDocument(), arg0.getOffset());
 	}
 	
 	class ColoringTask implements Runnable
@@ -93,15 +89,59 @@ public class SyntaxHighlighter implements DocumentListener
 		}
 	}
 	
+	public void fullSyntaxHighlight(Document document)
+	{
+		try
+		{
+			String content = document.getText(0, document.getLength());
+			char[] contentArray = content.toCharArray();
+			boolean shouldMark = true;
+			ArrayList<Integer> tokens = new ArrayList<Integer>();
+			
+			for(int i = 0; i < contentArray.length; i ++)
+			{
+				if(shouldMark)
+				{
+					if(this.isAvailableChar(contentArray[i]))
+					{
+						shouldMark = false;
+						tokens.add(i);
+					}
+					else continue;
+				}
+				else
+				{
+					if(!this.isAvailableChar(contentArray[i]))
+						shouldMark = true;
+					else continue;
+				}
+			}
+			for(Integer token : tokens)
+				keywordHighlight(document, token);
+		}
+		catch(Exception exception)
+		{
+			
+		}
+	}
+	
+	public boolean isAvailableChar(char current)
+	{
+		return 	  ('a' <= current && current <= 'z')
+				||('A' <= current && current <= 'Z')
+				||('0' <= current && current <= '9')
+				|| '_' == current;
+	}
+	
 	@Override
 	public void insertUpdate(DocumentEvent arg0)
 	{
-		this.documentEventBus(arg0);
+		this.keywordHighlight(arg0.getDocument(), arg0.getOffset());
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent arg0)
 	{
-		this.documentEventBus(arg0);
+		this.keywordHighlight(arg0.getDocument(), arg0.getOffset() - 1);
 	}
 }
