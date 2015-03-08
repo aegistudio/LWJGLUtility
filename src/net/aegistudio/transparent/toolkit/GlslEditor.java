@@ -92,12 +92,12 @@ public class GlslEditor
 		
 		this.editorFrame.setLayout(null);
 		
-		int locator = 0;
+		int locator = 5;
 		shaderTypeLabel = new JLabel();
 		shaderTypeLabel.setHorizontalAlignment(JLabel.CENTER);
 		shaderTypeLabel.setText("Shader");
 		shaderTypeLabel.setLocation(locator, 50);
-		shaderTypeLabel.setSize(55, 25); locator += 55;
+		shaderTypeLabel.setSize(50, 25); locator += 50;
 		
 		this.editorFrame.add(shaderTypeLabel);
 		
@@ -137,7 +137,7 @@ public class GlslEditor
 		
 		fontSize = new JComboBox<Integer>();
 		fontSize.setLocation(locator, 50);
-		fontSize.setSize(63, 25); locator += 63;
+		fontSize.setSize(63 - 4, 25); locator += 63 - 4;
 		fontSize.addItemListener(new ItemListener()
 		{
 			@Override
@@ -421,7 +421,7 @@ public class GlslEditor
 		functionPanel.add(this.deletePage);
 		
 		this.runShade = new JButton("Run");
-		this.runShade.setSize(65, 25);
+		this.runShade.setSize(64, 25);
 		this.runShade.setLocation(325, 0);
 		functionPanel.add(this.runShade);
 	}
