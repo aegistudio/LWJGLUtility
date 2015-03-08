@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -41,13 +42,15 @@ import javax.swing.table.TableCellRenderer;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.glsl.EnumShaderType;
+import net.aegistudio.transparent.opengl.glsl.Shader;
 import net.aegistudio.transparent.opengl.glsl.ShaderProgram;
 
 public class GlslEditor
 {
 	ModelViewer modelviewer;
-	ShaderProgram shaderProgram = null;
-	boolean shouldInit = false; boolean shouldDestroy = false;
+	Shader[] shaders = null, legacyShaders = null;
+	ShaderProgram shaderProgram = null, legacyShaderProgram = null;
+	boolean flushCurrentShader = false;
 	
 	Frame editorFrame;
 	Font[] systemFonts;
@@ -82,23 +85,41 @@ public class GlslEditor
 	{
 		modelviewer = new ModelViewer()
 		{
-			public void onDraw(Container container)
+			public synchronized void onDraw(Container container)
 			{
-				if(shaderProgram != null)
+				if(shaderProgram != null || flushCurrentShader)
 				{
-					if(shouldInit) shaderProgram.create();
-					shaderProgram.bind();
-				}
-				super.onDraw(container);
-				if(shaderProgram != null)
-				{
-					shaderProgram.unbind();
-					if(shouldDestroy)
+					if(legacyShaderProgram != null)
 					{
-						shaderProgram.destroy();
+						legacyShaderProgram.unbind();
+						legacyShaderProgram.destroy();
+						
+						for(Shader shader : legacyShaders) shader.destroy();
+					}
+					
+					if(shaderProgram != null) try
+					{
+						shaderProgram.create();
+						legacyShaderProgram = shaderProgram;
 						shaderProgram = null;
+						legacyShaders = shaders;
+						shaders = null;
+					}
+					catch(Exception e)
+					{
+						shaders = null;
+						shaderProgram = null;
+						legacyShaderProgram = null;
+						legacyShaders = null;
+						JOptionPane.showConfirmDialog(null, "Error while creating shader, caused by: \n" + e.getMessage(), "Shader Creation Failure!", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
 					}
 				}
+				
+				if(legacyShaderProgram != null)
+					legacyShaderProgram.bind();
+				super.onDraw(container);
+				if(legacyShaderProgram != null)
+					legacyShaderProgram.unbind();
 			}
 		};
 		
@@ -643,6 +664,28 @@ public class GlslEditor
 		});
 		this.assembler.add(this.selectDeselectAll);
 		this.assembleList.setDoubleBuffered(true);
+		
+		this.execute = new JButton();
+		this.execute.setText("Execute");
+		this.execute.setSize(120, 25);
+		this.execute.setLocation(this.assembler.getWidth() - 6 - 120, listPanel.getLocation().y + listPanel.getHeight() - 1);
+		this.execute.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				ArrayList<Shader> shaders = new ArrayList<Shader>();
+				EnumShaderType[] shaderTypes = EnumShaderType.values();
+				for(int i = 0; i < shaderPool.size(); i ++) if(shaderSelect.get(i) != null)
+				{
+					Shader shader = new Shader(shaderPool.get(i), shaderTypes[shaderType.get(i)]);
+					shaders.add(shader);
+				}
+				GlslEditor.this.shaders = shaders.toArray(new Shader[0]);
+				shaderProgram = new ShaderProgram(GlslEditor.this.shaders);
+			}
+		});
+		this.assembler.add(this.execute);
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -686,6 +729,7 @@ public class GlslEditor
 		this.runShade.setFont(font);
 		
 		this.selectDeselectAll.setFont(font);
+		this.execute.setFont(font);
 		
 		this.assembleList.getTableHeader().setFont(font);
 		this.assembleList.setFont(font);
