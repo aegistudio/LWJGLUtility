@@ -10,15 +10,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.filechooser.FileFilter;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.glsl.EnumShaderType;
@@ -37,6 +42,7 @@ public class GlslEditor
 	JLabel fontLabel;
 	JComboBox<String> fontCombo;
 	JComboBox<Integer> fontSize;
+	JTextField title;
 	JTextPane editingArea;
 	
 	JButton first, previous, last, next;
@@ -48,6 +54,7 @@ public class GlslEditor
 	int currentPageIndex = 1;
 	
 	protected LinkedList<String> shaderPool;
+	protected LinkedList<String> shaderTitle;
 	protected LinkedList<Integer> shaderType;
 	
 	@SuppressWarnings("serial")
@@ -159,10 +166,19 @@ public class GlslEditor
 		
 		shaderPool = new LinkedList<String>();
 		shaderType = new LinkedList<Integer>();
+		shaderTitle = new LinkedList<String>();
 		String demo = "void main(){\n\tgl_Vertex = ftransform();\n}";
 		shaderPool.add(demo);	//demo page 1
 		shaderType.add(EnumShaderType.VERTEX.ordinal());
+		String demoTitle = "Untitled";
+		shaderTitle.add(demoTitle);
 		this.editingArea.setText(demo);
+		
+		title = new JTextField();
+		title.setText(demoTitle);
+		title.setSize(390, 25);
+		title.setLocation(5, 75);
+		this.editorFrame.add(title);
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
 		"void", "int", "float", "double", "struct",	"const",
@@ -187,8 +203,8 @@ public class GlslEditor
 		syntaxhighlighter = new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants, control});
 		this.editingArea.getDocument().addDocumentListener(syntaxhighlighter);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
-		editingAreaPane.setSize(490, 375);
-		editingAreaPane.setLocation(5, 75);
+		editingAreaPane.setSize(390, 350);
+		editingAreaPane.setLocation(5, 100);
 		editingAreaPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		editingAreaPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.editorFrame.add(editingAreaPane);
@@ -291,6 +307,7 @@ public class GlslEditor
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				shaderTitle.add("Untitled");
 				shaderPool.add(currentPageIndex + 1 - 1, "");
 				shaderType.add(currentPageIndex + 1 - 1, 0);
 				switchToShader(currentPageIndex + 1);
@@ -301,6 +318,71 @@ public class GlslEditor
 		this.importPage = new JButton("Import");
 		this.importPage.setSize(85, 25);
 		this.importPage.setLocation(70, 0);
+		this.importPage.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				editorFrame.setEnabled(false);
+				JFileChooser openFile = new JFileChooser();
+				FileFilter filter = new FileFilter()
+				{
+					@Override
+					public boolean accept(File arg0)
+					{
+						return true;
+					}
+
+					@Override
+					public String getDescription()
+					{
+						return "Shader";
+					}					
+				};
+				openFile.setFileFilter(filter);
+				openFile.setVisible(true);
+				int state = openFile.showOpenDialog(editorFrame);
+				if(state == JFileChooser.APPROVE_OPTION)
+				{
+					File file = openFile.getSelectedFile();
+					try
+					{
+						BufferedReader br = new BufferedReader(new FileReader(file));
+						StringBuilder input = new StringBuilder();
+						String scanner = null;
+						boolean isFirstLine = true;
+						while((scanner = br.readLine()) != null)
+						{
+							if(!isFirstLine) input.append('\n');
+							else isFirstLine = false;
+							input.append(scanner);
+						}
+						br.close();
+						
+						String filename = file.getName();
+						EnumShaderType shaderType = EnumShaderType.VERTEX;
+						if(filename.endsWith("vert") || filename.endsWith("vsd")) shaderType = EnumShaderType.VERTEX;
+						if(filename.endsWith("frag") || filename.endsWith("fsd")) shaderType = EnumShaderType.FRAGMENT;
+						if(filename.endsWith("geom") || filename.endsWith("gsd")) shaderType = EnumShaderType.GEOMETRY;
+						if(filename.endsWith("tcon") || filename.endsWith("tcsd")) shaderType = EnumShaderType.TESSELLATION_CONTROL;
+						if(filename.endsWith("tevl") || filename.endsWith("tvsd")) shaderType = EnumShaderType.TESSELLATION_EVALUATION;
+						
+						GlslEditor.this.shaderTitle.add(currentPageIndex + 1 - 1, filename);
+						GlslEditor.this.shaderType.add(currentPageIndex + 1 - 1, shaderType.ordinal());
+						GlslEditor.this.shaderPool.add(currentPageIndex + 1 - 1, new String(input));
+						switchToShader(currentPageIndex + 1);
+					}
+					catch(Exception exception)
+					{
+						GlslEditor.this.shaderType.add(0);
+						GlslEditor.this.shaderPool.add(currentPageIndex + 1 - 1, exception.getMessage());
+						GlslEditor.this.shaderTitle.add(currentPageIndex + 1 - 1, "Invalid");
+						switchToShader(currentPageIndex + 1);
+					}
+				}
+				editorFrame.setEnabled(true);
+			}
+		});
 		functionPanel.add(this.importPage);
 		
 		this.exportPage = new JButton("Export");
@@ -320,6 +402,7 @@ public class GlslEditor
 				if(pageToDelete > 1)
 				{
 					switchToShader(currentPageIndex - 1);
+					shaderTitle.remove(pageToDelete - 1);
 					shaderPool.remove(pageToDelete - 1);
 					shaderType.remove(pageToDelete - 1);
 					synchronizeState();
@@ -327,6 +410,7 @@ public class GlslEditor
 				else
 				{
 					switchToShader(2);
+					shaderTitle.remove(0);
 					shaderPool.remove(0);
 					shaderType.remove(0);
 					currentPageIndex = 1;
@@ -366,6 +450,7 @@ public class GlslEditor
 		this.fontLabel.setFont(font);
 		this.fontCombo.setFont(font);
 		this.fontSize.setFont(font);
+		this.title.setFont(font);
 		this.shaderTypeLabel.setFont(font);
 		this.shaderTypeCombo.setFont(font);
 		this.first.setFont(font);
@@ -428,8 +513,10 @@ public class GlslEditor
 	{
 		shaderPool.set(this.currentPageIndex - 1, this.editingArea.getText());
 		shaderType.set(this.currentPageIndex - 1, this.shaderTypeCombo.getSelectedIndex());
+		shaderTitle.set(this.currentPageIndex - 1, this.title.getText());
 		
 		this.editingArea.setText(this.shaderPool.get(page - 1));
+		this.title.setText(this.shaderTitle.get(page - 1));
 		this.shaderTypeCombo.setSelectedIndex(this.shaderType.get(page - 1));
 		this.currentPageIndex = page;
 
