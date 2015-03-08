@@ -75,6 +75,8 @@ public class GlslEditor
 	Frame assembler;
 	JTable assembleList = new JTable();
 	
+	JButton selectDeselectAll, execute;
+	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
 	{
@@ -185,11 +187,13 @@ public class GlslEditor
 		shaderPool = new LinkedList<String>();
 		shaderType = new LinkedList<Integer>();
 		shaderTitle = new LinkedList<String>();
+		shaderSelect = new LinkedList<Object>();
 		String demo = "void main(){\n\tgl_Vertex = ftransform();\n}";
 		shaderPool.add(demo);	//demo page 1
 		shaderType.add(EnumShaderType.VERTEX.ordinal());
 		String demoTitle = "Untitled";
 		shaderTitle.add(demoTitle);
+		shaderSelect.add(new Object());
 		this.editingArea.setText(demo);
 		
 		title = new JTextField();
@@ -346,6 +350,7 @@ public class GlslEditor
 				shaderTitle.add("Untitled");
 				shaderPool.add(currentPageIndex + 1 - 1, "");
 				shaderType.add(currentPageIndex + 1 - 1, 0);
+				shaderSelect.add(currentPageIndex + 1 - 1, new Object());
 				switchToShader(currentPageIndex + 1);
 			}
 		});
@@ -406,6 +411,7 @@ public class GlslEditor
 						GlslEditor.this.shaderTitle.add(currentPageIndex + 1 - 1, filename);
 						GlslEditor.this.shaderType.add(currentPageIndex + 1 - 1, shaderType.ordinal());
 						GlslEditor.this.shaderPool.add(currentPageIndex + 1 - 1, new String(input));
+						GlslEditor.this.shaderSelect.add(currentPageIndex + 1 - 1, new Object());
 						switchToShader(currentPageIndex + 1);
 					}
 					catch(Exception exception)
@@ -413,6 +419,7 @@ public class GlslEditor
 						GlslEditor.this.shaderType.add(0);
 						GlslEditor.this.shaderPool.add(currentPageIndex + 1 - 1, exception.getMessage());
 						GlslEditor.this.shaderTitle.add(currentPageIndex + 1 - 1, "Invalid");
+						GlslEditor.this.shaderSelect.add(currentPageIndex + 1 - 1, null);
 						switchToShader(currentPageIndex + 1);
 					}
 				}
@@ -495,6 +502,7 @@ public class GlslEditor
 					shaderTitle.remove(pageToDelete - 1);
 					shaderPool.remove(pageToDelete - 1);
 					shaderType.remove(pageToDelete - 1);
+					shaderSelect.remove(pageToDelete - 1);
 					synchronizeState();
 				}
 				else
@@ -503,6 +511,7 @@ public class GlslEditor
 					shaderTitle.remove(0);
 					shaderPool.remove(0);
 					shaderType.remove(0);
+					shaderSelect.remove(0);
 					currentPageIndex = 1;
 					synchronizeState();
 				}
@@ -535,7 +544,7 @@ public class GlslEditor
 				model.addColumn("Type");
 				
 				for(int i = 0; i < shaderPool.size(); i ++)
-					model.addRow(new Object[]{null, i + 1, shaderTitle.get(i), shaderTypeCombo.getItemAt(shaderType.get(i))});
+					model.addRow(new Object[]{shaderSelect.get(i), i + 1, shaderTitle.get(i), shaderTypeCombo.getItemAt(shaderType.get(i))});
 				assembleList.setModel(model);
 				
 				assembleList.getColumnModel().getColumn(0).setPreferredWidth(25);
@@ -599,11 +608,41 @@ public class GlslEditor
 			{
 				if(assembleList.columnAtPoint(me.getPoint()) == 0)
 				{
-					Object o = assembleList.getModel().getValueAt(assembleList.rowAtPoint(me.getPoint()), 0);
-					assembleList.getModel().setValueAt(o == null? new Object() : null, assembleList.rowAtPoint(me.getPoint()), 0);
+					int row = assembleList.rowAtPoint(me.getPoint());
+					Object select = shaderSelect.get(row);
+					shaderSelect.set(row, select == null? new Object() : null);
+					assembleList.setValueAt(shaderSelect.get(row), row, 0);
 				}
 			}
 		});
+		
+		this.selectDeselectAll = new JButton();
+		this.selectDeselectAll.setText("All / None");
+		this.selectDeselectAll.setSize(120, 25);
+		this.selectDeselectAll.setLocation(5, listPanel.getLocation().y + listPanel.getHeight() - 1);
+		this.selectDeselectAll.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				boolean allSelected = true;
+				for(Object selected : shaderSelect) if(selected == null)
+				{
+					allSelected = false;
+					break;
+				}
+				
+				for(int i = 0; i < shaderSelect.size(); i ++)
+				{
+					if(allSelected) shaderSelect.set(i, null);	//De-select All
+					else shaderSelect.set(i, new Object());	//Select All
+					
+					assembleList.setValueAt(shaderSelect.get(i), i, 0);
+				}
+			}
+		});
+		this.assembler.add(this.selectDeselectAll);
+		this.assembleList.setDoubleBuffered(true);
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -645,6 +684,8 @@ public class GlslEditor
 		this.exportPage.setFont(font);
 		this.deletePage.setFont(font);
 		this.runShade.setFont(font);
+		
+		this.selectDeselectAll.setFont(font);
 		
 		this.assembleList.getTableHeader().setFont(font);
 		this.assembleList.setFont(font);
