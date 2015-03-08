@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowListener;
@@ -205,21 +207,53 @@ public class GlslEditor
 		first = new JButton("<<");
 		first.setLocation(0, 0);
 		first.setSize((int)(navigator_width * 0.15f), navigator_height);
+		first.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				switchToShader(1);
+			}
+		});
 		navigators.add(first);
 		
 		previous = new JButton("<");
 		previous.setLocation((int)(navigator_width * 0.15f), 0);
 		previous.setSize((int)(navigator_width * 0.15f), navigator_height);
+		previous.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				switchToShader(currentPageIndex - 1);
+			}
+		});
 		navigators.add(previous);
 		
 		last = new JButton(">>");
 		last.setSize((int) (navigator_width * 0.15f), navigator_height);
 		last.setLocation((int) (0.85f * navigator_width), 0);
+		last.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				switchToShader(shaderPool.size());
+			}
+		});
 		navigators.add(last);
 		
 		next = new JButton(">");
 		next.setSize((int) (navigator_width * 0.15f), navigator_height);
 		next.setLocation((int) (0.7f * navigator_width), 0);
+		next.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				switchToShader(currentPageIndex + 1);
+			}
+		});
 		navigators.add(next);
 		
 		currentPage = new JTextField();
@@ -252,6 +286,16 @@ public class GlslEditor
 		this.newPage = new JButton("New");
 		this.newPage.setSize(70, 25);
 		this.newPage.setLocation(0, 0);
+		this.newPage.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				shaderPool.add(currentPageIndex + 1 - 1, "");
+				shaderType.add(currentPageIndex + 1 - 1, 0);
+				switchToShader(currentPageIndex + 1);
+			}
+		});
 		functionPanel.add(this.newPage);
 		
 		this.importPage = new JButton("Import");
@@ -355,6 +399,7 @@ public class GlslEditor
 		this.currentPageIndex = page;
 		this.currentPage.setText(Integer.toString(currentPageIndex));
 		this.totalPage.setText(Integer.toString(this.shaderPool.size()));
+		this.deletePage.setEnabled(this.shaderPool.size() > 1);
 		this.syntaxhighlighter.fullSyntaxHighlight(this.editingArea.getDocument());
 		
 		this.previous.setEnabled(this.currentPageIndex > 1);
