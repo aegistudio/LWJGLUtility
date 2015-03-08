@@ -46,6 +46,7 @@ public class GlslEditor
 	int currentPageIndex = 1;
 	
 	protected LinkedList<String> shaderPool;
+	protected LinkedList<Integer> shaderType;
 	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
@@ -155,8 +156,10 @@ public class GlslEditor
 		};
 		
 		shaderPool = new LinkedList<String>();
+		shaderType = new LinkedList<Integer>();
 		String demo = "void main(){\n\tgl_Vertex = ftransform();\n}";
 		shaderPool.add(demo);	//demo page 1
+		shaderType.add(EnumShaderType.VERTEX.ordinal());
 		this.editingArea.setText(demo);
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
@@ -345,7 +348,10 @@ public class GlslEditor
 	public void switchToShader(int page)
 	{
 		shaderPool.set(this.currentPageIndex - 1, this.editingArea.getText());
+		shaderType.set(this.currentPageIndex - 1, this.shaderTypeCombo.getSelectedIndex());
+		
 		this.editingArea.setText(this.shaderPool.get(page - 1));
+		this.shaderTypeCombo.setSelectedIndex(this.shaderType.get(page - 1));
 		this.currentPageIndex = page;
 		this.currentPage.setText(Integer.toString(currentPageIndex));
 		this.totalPage.setText(Integer.toString(this.shaderPool.size()));
