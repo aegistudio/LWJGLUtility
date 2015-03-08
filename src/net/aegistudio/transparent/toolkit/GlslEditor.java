@@ -1,6 +1,7 @@
 package net.aegistudio.transparent.toolkit;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -11,6 +12,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,15 +25,19 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.glsl.EnumShaderType;
@@ -61,6 +70,10 @@ public class GlslEditor
 	protected LinkedList<String> shaderPool;
 	protected LinkedList<String> shaderTitle;
 	protected LinkedList<Integer> shaderType;
+	protected LinkedList<Object> shaderSelect;
+	
+	Frame assembler;
+	JTable assembleList = new JTable();
 	
 	@SuppressWarnings("serial")
 	public GlslEditor() throws Exception
@@ -500,7 +513,97 @@ public class GlslEditor
 		this.runShade = new JButton("Run");
 		this.runShade.setSize(64, 25);
 		this.runShade.setLocation(325, 0);
+		this.runShade.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				switchToShader(currentPageIndex);
+				
+				DefaultTableModel model = new DefaultTableModel()
+				{
+					@Override
+					public boolean isCellEditable(int row, int column)
+					{
+						return false;
+					}
+				};
+				
+				model.addColumn(" ");
+				model.addColumn("Page");
+				model.addColumn("Title");
+				model.addColumn("Type");
+				
+				for(int i = 0; i < shaderPool.size(); i ++)
+					model.addRow(new Object[]{null, i + 1, shaderTitle.get(i), shaderTypeCombo.getItemAt(shaderType.get(i))});
+				assembleList.setModel(model);
+				
+				assembleList.getColumnModel().getColumn(0).setPreferredWidth(25);
+				assembleList.getColumnModel().getColumn(1).setPreferredWidth(65);
+				assembleList.getColumnModel().getColumn(2).setPreferredWidth(205);
+				assembleList.getColumnModel().getColumn(3).setPreferredWidth(65);
+				
+				assembler.setVisible(true);
+			}
+		});
 		functionPanel.add(this.runShade);
+		
+		this.assembler = new Frame()
+		{
+			public void setVisible(boolean v)
+			{
+				super.setVisible(v);
+				editorFrame.setEnabled(!v);
+			}
+		};
+		this.assembler.setSize(400, 480);
+		this.assembler.setTitle("Assembler");
+		this.assembler.setLocation(this.editorFrame.getLocation().x, this.editorFrame.getLocation().y);
+		this.assembler.setResizable(false);
+		this.assembler.setLayout(null);
+		this.assembler.addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent we)
+			{
+				assembler.setVisible(false);
+			}
+		});
+		
+		JScrollPane listPanel = new JScrollPane(this.assembleList);
+		listPanel.setSize(390, 430);
+		listPanel.setLocation(5, 25);
+		this.assembler.add(listPanel);
+		
+		this.assembleList.setDefaultRenderer(Object.class, new TableCellRenderer()
+		{
+			TableCellRenderer parent = assembleList.getDefaultRenderer(Object.class);
+			
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+			{
+				if(column > 0) return parent.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				else
+				{
+					JCheckBox chk = new JCheckBox();
+					chk.setSelected(value != null);
+					return chk;
+				}
+			}
+		});
+		
+		this.assembleList.getTableHeader().setReorderingAllowed(false);
+		this.assembleList.getTableHeader().setResizingAllowed(false);
+		this.assembleList.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent me)
+			{
+				if(assembleList.columnAtPoint(me.getPoint()) == 0)
+				{
+					Object o = assembleList.getModel().getValueAt(assembleList.rowAtPoint(me.getPoint()), 0);
+					assembleList.getModel().setValueAt(o == null? new Object() : null, assembleList.rowAtPoint(me.getPoint()), 0);
+				}
+			}
+		});
 	}
 	
 	protected Thread getSystemFontThread = new Thread()
@@ -542,6 +645,9 @@ public class GlslEditor
 		this.exportPage.setFont(font);
 		this.deletePage.setFont(font);
 		this.runShade.setFont(font);
+		
+		this.assembleList.getTableHeader().setFont(font);
+		this.assembleList.setFont(font);
 		
 		this.editorFrame.revalidate();
 	}
