@@ -234,7 +234,8 @@ public class GlslEditor
 		"mat4x2", "mat4x3", "mat4x4",
 		"sampler1D", "sampler2D", "sampler3D",
 		"samplerCube", "sampler1DShadow", "sampler2DShadow",				//OpenGL specifications
-		"uniform", "attribute", "varying", "in", "out", "inout", "shared"	//OpenGL shader scope
+		"uniform", "attribute", "varying", "in", "out", "inout", "shared",	//OpenGL shader scope
+		"gl_DepthRangeParameters", "gl_PointParameters", "gl_MaterialParameters", "gl_LightSourceParameters",
 		}, Color.BLUE);
 		
 		KeywordScheme glConstants = new KeywordScheme(new String[]{
@@ -244,7 +245,9 @@ public class GlslEditor
 		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord",
 		"gl_Position", "gl_PointSize", "gl_ClipVertex", "gl_TexCoord", "gl_FogFragCoord",
 		"gl_FrontColor", "gl_BackColor", "gl_FrontSecondaryColor", "gl_BackSecondaryColor",		//Vertex shader keywords.
-		"gl_FragCoord", "gl_FrontFacing", "gl_FragColor", "gl_FragDepth"						//Fragment shader keywords.
+		"gl_FragCoord", "gl_FrontFacing", "gl_FragColor", "gl_FragDepth",						//Fragment shader keywords.
+		"gl_ModelViewMatrix", "gl_ProjectionMatrix", "gl_ModelViewProjectionMatrix", "gl_NormalMatrix", "gl_TextureMatrix",
+		"gl_NormalScale", "gl_DepthRange", "gl_ClipPlane", "gl_Point", "gl_FrontMaterial", "gl_BackMaterial", "gl_LightSource"//Shared state.
 		}, Color.CYAN.darker());
 		
 		KeywordScheme marcos = new KeywordScheme(new String[]
