@@ -30,13 +30,13 @@ public class MultilineCommentHighlight implements SyntaxHighlightAlgorithm
 			}
 			if(beginPos < 0) return;
 			
-			int endPos = offset + 1;
+			int endPos = beginPos;
 			for(; endPos < doc.getLength(); endPos ++)
 			{
 				if(doc.getText(endPos, 2).equals("*/")) break;
 			}
 			
-			highlight.createHighlight(document, beginPos, endPos + 1, this.theStyle);
+			highlight.createHighlight(document, beginPos, endPos + 2, this.theStyle);
 		}
 		catch(Exception e)
 		{
