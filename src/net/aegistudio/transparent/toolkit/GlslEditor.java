@@ -238,15 +238,20 @@ public class GlslEditor
 		}, Color.BLUE);
 		
 		KeywordScheme glConstants = new KeywordScheme(new String[]{
-		"gl_Color", "gl_SecondaryColor", "gl_Normal", "gl_Vertex",
+		"gl_Color", "gl_SecondaryColor", "gl_Normal", "gl_Vertex", "gl_MaxTextureCoords",
 		"gl_MultiTexCoord0", "gl_MultiTexCoord1", "gl_MultiTexCoord2",
 		"gl_MultiTexCoord3", "gl_MultiTexCoord4", "gl_MultiTexCoord5",
-		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord"				//Vertex shader keywords.
+		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord",
+		"gl_Position", "gl_PointSize", "gl_ClipVertex", "gl_TexCoord", "gl_FogFragCoord",
+		"gl_FrontColor", "gl_BackColor", "gl_FrontSecondaryColor", "gl_BackSecondaryColor",		//Vertex shader keywords.
+		"gl_FragCoord", "gl_FrontFacing", "gl_FragColor", "gl_FragDepth"						//Fragment shader keywords.
 		}, Color.CYAN.darker());
 		
 		KeywordScheme marcos = new KeywordScheme(new String[]
 		{
-				"#version"
+				"#define", "#undef", "#ifdef", "#ifndef",
+				"#if", "#elif", "#else", "#endif",
+				"#line", "#pragma", "#version"
 		}, Color.RED.darker());
 		
 		KeywordScheme control = new KeywordScheme(new String[]{
