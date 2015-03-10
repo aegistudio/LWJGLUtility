@@ -244,9 +244,10 @@ public class GlslEditor
 		{ "if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return"}, Color.magenta.darker());
 		
 		KeywordHighlight kw = new KeywordHighlight(this.editingArea.getDocument(), new KeywordScheme[]{type, glConstants, control});
-		LineCommentHighlight lcm = new LineCommentHighlight(this.editingArea.getDocument(), Color.GREEN);
+		LineCommentHighlight lcm = new LineCommentHighlight(this.editingArea.getDocument(), Color.GREEN.darker());
+		MultilineCommentHighlight mlcm = new MultilineCommentHighlight(this.editingArea.getDocument(), Color.GRAY);
 		
-		syntaxhighlighter = new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new SyntaxHighlightAlgorithm[]{kw, lcm});
+		syntaxhighlighter = new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new SyntaxHighlightAlgorithm[]{kw, lcm, mlcm});
 		this.editingArea.getDocument().addDocumentListener(syntaxhighlighter);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
 		editingAreaPane.setSize(390, 350);

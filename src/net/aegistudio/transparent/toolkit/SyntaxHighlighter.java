@@ -64,6 +64,7 @@ public class SyntaxHighlighter implements DocumentListener
 	
 	public void fullSyntaxHighlight(Document document)
 	{
+		this.createHighlight(document, 0, document.getLength(), this.normalColor);
 		for(SyntaxHighlightAlgorithm algorithm : algorithms) algorithm.highlightThroughout(this, document);
 	}
 	
