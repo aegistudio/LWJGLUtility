@@ -50,7 +50,7 @@ public class KeywordHighlight implements SyntaxHighlightAlgorithm
 			
 			Style theColor = this.keywordSchemes.get(new String(builder));
 			if(theColor == null) theColor = highlight.getNormalStyle();
-			highlight.createHighlight(document, beginPos, endPos, theColor);
+			highlight.createHighlight(document, beginPos + 1, endPos, theColor);
 		}
 		catch(Exception e)
 		{

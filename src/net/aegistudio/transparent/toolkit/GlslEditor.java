@@ -226,13 +226,15 @@ public class GlslEditor
 		KeywordScheme type = new KeywordScheme(new String[]{
 		"void", "int", "float", "double", "struct",	"const",
 		"bool", "true", "false", //C specifications
-		"vec2", "vec3", "vec4", "mat2", "mat3", "mat4",
-		"dvec2", "dvec3", "dvec4", "ivec2", "ivec3", "ivec4", 
+		"vec2", "vec3", "vec4", "bvec2", "bvec3", "bvec4",
+		"dvec2", "dvec3", "dvec4", "ivec2", "ivec3", "ivec4",
+		"mat2", "mat3", "mat4",
 		"mat2x2", "mat2x3", "mat2x4",
 		"mat3x2", "mat3x3", "mat3x4",
 		"mat4x2", "mat4x3", "mat4x4",
-		"sampler1D", "sampler2D", "sampler3D",						//OpenGL specifications
-		"uniform", "attribute", "varying", "in", "out", "shared"	//OpenGL shader scope
+		"sampler1D", "sampler2D", "sampler3D",
+		"samplerCube", "sampler1DShadow", "sampler2DShadow",				//OpenGL specifications
+		"uniform", "attribute", "varying", "in", "out", "inout", "shared"	//OpenGL shader scope
 		}, Color.BLUE);
 		
 		KeywordScheme glConstants = new KeywordScheme(new String[]{
