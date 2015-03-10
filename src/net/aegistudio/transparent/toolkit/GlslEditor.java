@@ -243,7 +243,9 @@ public class GlslEditor
 		KeywordScheme control = new KeywordScheme(new String[]
 		{ "if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return"}, Color.magenta.darker());
 		
-		syntaxhighlighter = new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new KeywordScheme[]{type, glConstants, control});
+		KeywordHighlight kw = new KeywordHighlight(this.editingArea.getDocument(), new KeywordScheme[]{type, glConstants, control});
+		
+		syntaxhighlighter = new SyntaxHighlighter(this.editingArea.getDocument(), Color.BLACK, new SyntaxHighlightAlgorithm[]{kw});
 		this.editingArea.getDocument().addDocumentListener(syntaxhighlighter);
 		JScrollPane editingAreaPane = new JScrollPane(this.editingArea);
 		editingAreaPane.setSize(390, 350);

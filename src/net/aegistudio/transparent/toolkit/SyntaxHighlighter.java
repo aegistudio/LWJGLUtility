@@ -1,8 +1,6 @@
 package net.aegistudio.transparent.toolkit;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.TreeMap;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -14,20 +12,14 @@ import javax.swing.text.StyledDocument;
 
 public class SyntaxHighlighter implements DocumentListener
 {
-	TreeMap<String, Style> keywordSchemes = new TreeMap<String, Style>();
 	Style normalColor;
+	SyntaxHighlightAlgorithm[] algorithms;
 	
-	public SyntaxHighlighter(Document theDocument, Color normalColor, KeywordScheme[] schemes)
+	public SyntaxHighlighter(Document theDocument, Color normalColor, SyntaxHighlightAlgorithm[] algorithms)
 	{
 		this.normalColor = ((StyledDocument)theDocument).addStyle("Keyword_Style", null);
 		StyleConstants.setForeground(this.normalColor, normalColor);
-		for(KeywordScheme scheme : schemes)
-		{
-			Style theStyle = ((StyledDocument)theDocument).addStyle("Keyword_Style", null);
-			StyleConstants.setForeground(theStyle, scheme.keywordColor);
-			for(String keyword : scheme.keywords)
-				keywordSchemes.put(keyword, theStyle);
-		}
+		this.algorithms = algorithms;
 	}
 	
 	@Override
@@ -35,39 +27,15 @@ public class SyntaxHighlighter implements DocumentListener
 	{
 		
 	}
-
-	public void keywordHighlight(Document document, int offset)
+	
+	public Style getNormalStyle()
 	{
-		try
-		{
-			StyledDocument doc = (StyledDocument) document;
-			StringBuilder builder = new StringBuilder();
-			
-			int beginPos = offset;
-			for(; beginPos >=0; beginPos --)
-			{
-				char element = doc.getText(beginPos, 1).charAt(0);
-				if(isAvailableChar(element)) builder.append(element);
-				else break;
-			}
-			builder.reverse();
-			
-			int endPos = offset + 1;
-			for(; endPos < doc.getLength(); endPos ++)
-			{
-				char element = doc.getText(endPos, 1).charAt(0);
-				if(isAvailableChar(element)) builder.append(element);
-				else break;
-			}
-			
-			Style theColor = this.keywordSchemes.get(new String(builder));
-			if(theColor == null) theColor = this.normalColor;
-			SwingUtilities.invokeLater(new ColoringTask(document, beginPos, endPos - beginPos, theColor));
-		}
-		catch(Exception e)
-		{
-			
-		}
+		return this.normalColor;
+	}
+	
+	public void createHighlight(Document document, int beginPos, int endPos, Style style)
+	{
+		SwingUtilities.invokeLater(new ColoringTask(document, beginPos, endPos - beginPos, style));
 	}
 	
 	class ColoringTask implements Runnable
@@ -89,48 +57,14 @@ public class SyntaxHighlighter implements DocumentListener
 		}
 	}
 	
-	public void fullSyntaxHighlight(Document document)
+	public void syntaxHighlight(Document document, int offset)
 	{
-		try
-		{
-			String content = document.getText(0, document.getLength());
-			char[] contentArray = content.toCharArray();
-			boolean shouldMark = true;
-			ArrayList<Integer> tokens = new ArrayList<Integer>();
-			
-			for(int i = 0; i < contentArray.length; i ++)
-			{
-				if(shouldMark)
-				{
-					if(this.isAvailableChar(contentArray[i]))
-					{
-						shouldMark = false;
-						tokens.add(i);
-					}
-					else continue;
-				}
-				else
-				{
-					if(!this.isAvailableChar(contentArray[i]))
-						shouldMark = true;
-					else continue;
-				}
-			}
-			for(Integer token : tokens)
-				keywordHighlight(document, token);
-		}
-		catch(Exception exception)
-		{
-			
-		}
+		for(SyntaxHighlightAlgorithm algorithm : algorithms) algorithm.highlightActivate(this, document, offset);
 	}
 	
-	public boolean isAvailableChar(char current)
+	public void fullSyntaxHighlight(Document document)
 	{
-		return 	  ('a' <= current && current <= 'z')
-				||('A' <= current && current <= 'Z')
-				||('0' <= current && current <= '9')
-				|| '_' == current;
+		for(SyntaxHighlightAlgorithm algorithm : algorithms) algorithm.highlightThroughout(this, document);
 	}
 	
 	int partialUpdateCounter = 0;
@@ -140,7 +74,7 @@ public class SyntaxHighlighter implements DocumentListener
 	{
 		if(partialUpdateCounter < 10)
 		{
-			this.keywordHighlight(arg0.getDocument(), arg0.getOffset());
+			this.syntaxHighlight(arg0.getDocument(), arg0.getOffset());
 			partialUpdateCounter ++;
 		}
 		else
@@ -149,13 +83,13 @@ public class SyntaxHighlighter implements DocumentListener
 			partialUpdateCounter = 0;
 		}
 	}
-
+	
 	@Override
 	public void removeUpdate(DocumentEvent arg0)
 	{
 		if(partialUpdateCounter < 10)
 		{
-			this.keywordHighlight(arg0.getDocument(), arg0.getOffset() - 1);
+			this.syntaxHighlight(arg0.getDocument(), arg0.getOffset() - 1);
 			partialUpdateCounter ++;
 		}
 		else
