@@ -227,6 +227,7 @@ public class GlslEditor
 		"void", "int", "float", "double", "struct",	"const",
 		"bool", "true", "false", //C specifications
 		"vec2", "vec3", "vec4", "mat2", "mat3", "mat4",
+		"dvec2", "dvec3", "dvec4", "ivec2", "ivec3", "ivec4", 
 		"mat2x2", "mat2x3", "mat2x4",
 		"mat3x2", "mat3x3", "mat3x4",
 		"mat4x2", "mat4x3", "mat4x4",
@@ -239,15 +240,19 @@ public class GlslEditor
 		"gl_MultiTexCoord0", "gl_MultiTexCoord1", "gl_MultiTexCoord2",
 		"gl_MultiTexCoord3", "gl_MultiTexCoord4", "gl_MultiTexCoord5",
 		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord"				//Vertex shader keywords.
-		
 		}, Color.CYAN.darker());
+		
+		KeywordScheme marcos = new KeywordScheme(new String[]
+		{
+				"#version"
+		}, Color.RED.darker());
 		
 		KeywordScheme control = new KeywordScheme(new String[]{
 		"if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return",		//Controls.
 		"sin", "cos", "dot", "ftransform"		//GL shader builtins.
 		}, Color.magenta.darker());
 		
-		KeywordHighlight kw = new KeywordHighlight(this.editingArea.getDocument(), new KeywordScheme[]{type, glConstants, control});
+		KeywordHighlight kw = new KeywordHighlight(this.editingArea.getDocument(), new KeywordScheme[]{type, glConstants, control, marcos});
 		LineCommentHighlight lcm = new LineCommentHighlight(this.editingArea.getDocument(), Color.GREEN.darker());
 		MultilineCommentHighlight mlcm = new MultilineCommentHighlight(this.editingArea.getDocument(), Color.GRAY);
 		

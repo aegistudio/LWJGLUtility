@@ -63,7 +63,7 @@ public class KeywordHighlight implements SyntaxHighlightAlgorithm
 		return 	  ('a' <= current && current <= 'z')
 				||('A' <= current && current <= 'Z')
 				||('0' <= current && current <= '9')
-				|| '_' == current;
+				|| '_' == current || '#' == current;
 	}
 	
 	@Override
