@@ -225,12 +225,12 @@ public class GlslEditor
 		
 		KeywordScheme type = new KeywordScheme(new String[]{
 		"void", "int", "float", "double", "struct",	"const",
-		"bool", "true", "false", //C specification
+		"bool", "true", "false", //C specifications
 		"vec2", "vec3", "vec4", "mat2", "mat3", "mat4",
 		"mat2x2", "mat2x3", "mat2x4",
 		"mat3x2", "mat3x3", "mat3x4",
 		"mat4x2", "mat4x3", "mat4x4",
-		"sampler1D", "sampler2D", "sampler3D",
+		"sampler1D", "sampler2D", "sampler3D",						//OpenGL specifications
 		"uniform", "attribute", "varying", "in", "out", "shared"	//OpenGL shader scope
 		}, Color.BLUE);
 		
@@ -238,10 +238,14 @@ public class GlslEditor
 		"gl_Color", "gl_SecondaryColor", "gl_Normal", "gl_Vertex",
 		"gl_MultiTexCoord0", "gl_MultiTexCoord1", "gl_MultiTexCoord2",
 		"gl_MultiTexCoord3", "gl_MultiTexCoord4", "gl_MultiTexCoord5",
-		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord"}, Color.CYAN.darker());
+		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord"				//Vertex shader keywords.
 		
-		KeywordScheme control = new KeywordScheme(new String[]
-		{ "if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return"}, Color.magenta.darker());
+		}, Color.CYAN.darker());
+		
+		KeywordScheme control = new KeywordScheme(new String[]{
+		"if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return",		//Controls.
+		"sin", "cos", "dot", "ftransform"		//GL shader builtins.
+		}, Color.magenta.darker());
 		
 		KeywordHighlight kw = new KeywordHighlight(this.editingArea.getDocument(), new KeywordScheme[]{type, glConstants, control});
 		LineCommentHighlight lcm = new LineCommentHighlight(this.editingArea.getDocument(), Color.GREEN.darker());

@@ -148,14 +148,16 @@ public class ModelViewer extends Canvas
 		
 		thisFrame.getToolkit().addAWTEventListener(new AWTEventListener()
 		{
-
 			@Override
 			public void eventDispatched(AWTEvent arg0)
 			{
-				MouseWheelEvent mw = (MouseWheelEvent)arg0;
-				int units = mw.getUnitsToScroll();
-				if(units > 0) while(units > 0){ units -= 3; ModelViewer.this.zoomOut(); }
-				else if(units < 0) while(units < 0){ units += 3; ModelViewer.this.zoomIn(); }
+				if(ModelViewer.this.thisFrame.isFocused())
+				{
+					MouseWheelEvent mw = (MouseWheelEvent)arg0;
+					int units = mw.getUnitsToScroll();
+					if(units > 0) while(units > 0){ units -= 3; ModelViewer.this.zoomOut(); }
+					else if(units < 0) while(units < 0){ units += 3; ModelViewer.this.zoomIn(); }
+				}
 			}
 		}, MouseEvent.MOUSE_WHEEL_EVENT_MASK);
 		
