@@ -56,7 +56,6 @@ public class KeywordHighlight implements SyntaxHighlightAlgorithm
 		{
 			
 		}
-		
 	}
 
 	public boolean isAvailableChar(char current)
@@ -100,5 +99,4 @@ public class KeywordHighlight implements SyntaxHighlightAlgorithm
 			
 		}
 	}
-	
 }
