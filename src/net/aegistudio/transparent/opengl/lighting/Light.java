@@ -14,6 +14,15 @@ public class Light implements Scoped, Bindable
 	private static boolean[] allocated = null;
 	protected boolean isColorDirty = true;
 	
+	public Light()
+	{
+		this.position(0.F, 0.F, 0.F, 1.F);
+		this.ambient(0.F, 0.F, 0.F, 1.F);
+		this.diffuse(0.F, 0.F, 0.F, 1.F);
+		this.specular(0.F, 0.F, 0.F, 1.F);
+		this.orient(0, 0, -1);
+	}
+	
 	@Override
 	public void bind()
 	{
@@ -80,10 +89,6 @@ public class Light implements Scoped, Bindable
 	}
 
 	protected FloatBuffer position_buffer;
-	{
-		this.position_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
-		this.position_buffer.flip();
-	}
 	
 	/**
 	 * Sets the position of the light, whether the w is 0.F determines that the light is positional
@@ -101,10 +106,6 @@ public class Light implements Scoped, Bindable
 	}
 	
 	protected FloatBuffer ambientBuffer;
-	{
-		ambientBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
-		ambientBuffer.flip();
-	}
 	
 	/**
 	 * Set the ambient color of the light.
@@ -122,10 +123,6 @@ public class Light implements Scoped, Bindable
 	}
 	
 	protected FloatBuffer diffuseBuffer;
-	{
-		diffuseBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
-		diffuseBuffer.flip();
-	}
 	
 	/**
 	 * Set the diffuse color of the light.
@@ -143,10 +140,6 @@ public class Light implements Scoped, Bindable
 	}
 	
 	protected FloatBuffer specularBuffer;
-	{
-		specularBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
-		specularBuffer.flip();
-	}
 	
 	/**
 	 * Set the specular color of the light.
@@ -164,10 +157,6 @@ public class Light implements Scoped, Bindable
 	}
 	
 	protected FloatBuffer spotlight_buffer;
-	{
-		this.spotlight_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, -1.F, 1.F});
-		this.spotlight_buffer.flip();
-	}
 	
 	/**
 	 * Set the spotlight orientation of the light.
