@@ -12,6 +12,7 @@ import net.aegistudio.transparent.util.Scoped;
 public class Light implements Scoped, Bindable
 {
 	private static boolean[] allocated = null;
+	protected boolean isColorDirty = true;
 	
 	@Override
 	public void bind()
@@ -20,8 +21,24 @@ public class Light implements Scoped, Bindable
 		GL11.glEnable(lightParameter);
 		GL11.glLight(lightParameter, GL11.GL_POSITION, this.position_buffer);
 		GL11.glLight(lightParameter, GL11.GL_SPOT_DIRECTION, this.spotlight_buffer);
+		if(this.isColorDirty)
+		{
+			GL11.glLight(lightParameter, GL11.GL_AMBIENT, this.ambientBuffer);
+			GL11.glLight(lightParameter, GL11.GL_DIFFUSE, this.diffuseBuffer);
+			GL11.glLight(lightParameter, GL11.GL_SPECULAR, this.specularBuffer);
+			isColorDirty = false;
+		}
+		if(this.isSpotlightDirty)
+		{
+			GL11.glLightf(lightParameter, GL11.GL_SPOT_CUTOFF, this.spotlight_cutoff);
+			GL11.glLightf(lightParameter, GL11.GL_SPOT_EXPONENT, this.spotlight_exponent);
+			GL11.glLightf(lightParameter, GL11.GL_QUADRATIC_ATTENUATION, this.quadratic);
+			GL11.glLightf(lightParameter, GL11.GL_LINEAR_ATTENUATION, this.linear);
+			GL11.glLightf(lightParameter, GL11.GL_CONSTANT_ATTENUATION, this.constant);
+			isSpotlightDirty = false;
+		}
 	}
-
+	
 	@Override
 	public void unbind()
 	{
@@ -58,12 +75,6 @@ public class Light implements Scoped, Bindable
 				break;
 			}
 			if(!isCreated) throw new BindingFailureException("Unable to create more space for this light!");
-			
-			this.attenuation(constant, linear, quadratic);
-			this.ambient(ambient_r, ambient_g, ambient_b, ambient_alpha);
-			this.diffuse(diffuse_r, diffuse_g, diffuse_b, diffuse_alpha);
-			this.specular(specular_r, specular_g, specular_b, specular_alpha);
-			this.spotlight(spotlight_cutoff, spotlight_exponent);
 		}
 		return lightIndex;
 	}
@@ -87,10 +98,13 @@ public class Light implements Scoped, Bindable
 	{
 		this.position_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{x, y, z, w});
 		this.position_buffer.flip();
-		if(isCreated) GL11.glLight(lightParameter, GL11.GL_POSITION, this.position_buffer);
 	}
 	
-	protected float ambient_r = 0.F, ambient_g = 0.F, ambient_b = 0.F, ambient_alpha = 1.F;
+	protected FloatBuffer ambientBuffer;
+	{
+		ambientBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
+		ambientBuffer.flip();
+	}
 	
 	/**
 	 * Set the ambient color of the light.
@@ -102,16 +116,16 @@ public class Light implements Scoped, Bindable
 	
 	public void ambient(float ambient_r, float ambient_g, float ambient_b, float ambient_alpha)
 	{
-		this.ambient_r = ambient_r; this.ambient_g = ambient_g; this.ambient_b = ambient_b; this.ambient_alpha = ambient_alpha;
-		if(isCreated)
-		{
-			FloatBuffer theBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{this.ambient_r, this.ambient_g, this.ambient_b, this.ambient_alpha});
-			theBuffer.flip();
-			GL11.glLight(lightParameter, GL11.GL_AMBIENT, theBuffer);
-		}
+		ambientBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{ambient_r, ambient_g, ambient_b, ambient_alpha});
+		ambientBuffer.flip();
+		isColorDirty = true;
 	}
 	
-	protected float diffuse_r = 0.F, diffuse_g = 0.F, diffuse_b = 0.F, diffuse_alpha = 1.F;
+	protected FloatBuffer diffuseBuffer;
+	{
+		diffuseBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
+		diffuseBuffer.flip();
+	}
 	
 	/**
 	 * Set the diffuse color of the light.
@@ -123,16 +137,16 @@ public class Light implements Scoped, Bindable
 	
 	public void diffuse(float diffuse_r, float diffuse_g, float diffuse_b, float diffuse_alpha)
 	{
-		this.diffuse_r = diffuse_r; this.diffuse_g = diffuse_g; this.diffuse_b = diffuse_b; this.diffuse_alpha = diffuse_alpha;
-		if(isCreated)
-		{
-			FloatBuffer theBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{this.diffuse_r, this.diffuse_g, this.diffuse_b, this.diffuse_alpha});
-			theBuffer.flip();
-			GL11.glLight(lightParameter, GL11.GL_DIFFUSE, theBuffer);
-		}
+		diffuseBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{diffuse_r, diffuse_g, diffuse_b, diffuse_alpha});
+		diffuseBuffer.flip();
+		isColorDirty = true;
 	}
 	
-	protected float specular_r = 0.F, specular_g = 0.F, specular_b = 0.F, specular_alpha = 1.F;
+	protected FloatBuffer specularBuffer;
+	{
+		specularBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{0.F, 0.F, 0.F, 1.F});
+		specularBuffer.flip();
+	}
 	
 	/**
 	 * Set the specular color of the light.
@@ -144,13 +158,9 @@ public class Light implements Scoped, Bindable
 	
 	public void specular(float specular_r, float specular_g, float specular_b, float specular_alpha)
 	{
-		this.specular_r = specular_r; this.specular_g = specular_g; this.specular_b = specular_b; this.specular_alpha = specular_alpha;
-		if(isCreated)
-		{
-			FloatBuffer theBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{this.specular_r, this.specular_g, this.specular_b, this.specular_alpha});
-			theBuffer.flip();
-			GL11.glLight(lightParameter, GL11.GL_SPECULAR, theBuffer);
-		}
+		specularBuffer = BufferUtils.createFloatBuffer(4).put(new float[]{specular_r, specular_g, specular_b, specular_alpha});
+		specularBuffer.flip();
+		isColorDirty = true;
 	}
 	
 	protected FloatBuffer spotlight_buffer;
@@ -171,8 +181,9 @@ public class Light implements Scoped, Bindable
 	{
 		this.spotlight_buffer = BufferUtils.createFloatBuffer(4).put(new float[]{spotlight_x, spotlight_y, spotlight_z, 1.F});
 		this.spotlight_buffer.flip();
-		if(isCreated) GL11.glLight(lightParameter, GL11.GL_SPOT_DIRECTION, this.spotlight_buffer);
 	}
+	
+	protected boolean isSpotlightDirty = true;
 	
 	protected float spotlight_cutoff = 180.F, spotlight_exponent = 0.F;
 	
@@ -184,11 +195,7 @@ public class Light implements Scoped, Bindable
 	public void spotlight(float spotlight_cutoff, float spotlight_exponent)
 	{
 		this.spotlight_cutoff = spotlight_cutoff; this.spotlight_exponent = spotlight_exponent;
-		if(isCreated)
-		{
-			GL11.glLightf(lightParameter, GL11.GL_SPOT_CUTOFF, this.spotlight_cutoff);
-			GL11.glLightf(lightParameter, GL11.GL_SPOT_EXPONENT, this.spotlight_exponent);
-		}
+		this.isSpotlightDirty = true;
 	}
 	
 	protected float constant = 1.F, linear = 0.F, quadratic = 0.F;
@@ -204,12 +211,7 @@ public class Light implements Scoped, Bindable
 	public void attenuation(float constant, float linear, float quadratic)
 	{
 		this.constant = constant; this.linear = linear; this.quadratic = quadratic;
-		if(isCreated)
-		{
-			GL11.glLightf(lightParameter, GL11.GL_QUADRATIC_ATTENUATION, this.quadratic);
-			GL11.glLightf(lightParameter, GL11.GL_LINEAR_ATTENUATION, this.linear);
-			GL11.glLightf(lightParameter, GL11.GL_CONSTANT_ATTENUATION, this.constant);
-		}
+		this.isSpotlightDirty = true;
 	}
 	
 	@Override

@@ -97,13 +97,13 @@ public class ModelViewer extends Canvas
 		GL11.glEnable(GL11.GL_LIGHTING);
 		light.diffuse(1.0f, 1.0f, 1.0f, 1.0f);
 		light.create();
-		light.bind();
 	}
 	
 	@Override
 	public void onDraw(Container container)
 	{
 		light.position(0, 0, -1, 0);
+		light.bind();
 		if(ModelViewer.this.texture != null)
 		{
 			ModelViewer.this.texture.create();
