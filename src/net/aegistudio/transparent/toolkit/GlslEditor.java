@@ -209,7 +209,13 @@ public class GlslEditor
 		shaderType = new LinkedList<Integer>();
 		shaderTitle = new LinkedList<String>();
 		shaderSelect = new LinkedList<Object>();
-		String demo = "void main(){\n\tgl_Position = ftransform();\n\tgl_FrontColor = gl_Color;\n\tgl_FrontSecondaryColor = gl_SecondaryColor;\n}";
+		String demo =
+				"void main(){\n"
+				+ "\tgl_Position = ftransform();\n"
+				+ "\tgl_FrontColor = gl_Color;\n"
+				+ "\tgl_FrontSecondaryColor = gl_SecondaryColor;\n"
+				+ "\tgl_TexCoord[0] = gl_MultiTexCoord0;\n"
+				+ "}";
 		shaderPool.add(demo);	//demo page 1
 		shaderType.add(EnumShaderType.VERTEX.ordinal());
 		String demoTitle = "Untitled";
