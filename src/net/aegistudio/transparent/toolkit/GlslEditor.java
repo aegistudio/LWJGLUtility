@@ -124,7 +124,7 @@ public class GlslEditor
 		};
 		
 		this.editorFrame = new Frame();
-		this.editorFrame.setTitle("GL Shader Language Editor");
+		this.editorFrame.setTitle("GL Shader Editor");
 		this.editorFrame.setLocationRelativeTo(modelviewer.getFrame());
 		this.editorFrame.setSize(400, modelviewer.getFrame().getHeight());
 		this.editorFrame.setLocation(this.modelviewer.getFrame().getWidth(), 0);
@@ -209,7 +209,7 @@ public class GlslEditor
 		shaderType = new LinkedList<Integer>();
 		shaderTitle = new LinkedList<String>();
 		shaderSelect = new LinkedList<Object>();
-		String demo = "void main(){\n\tgl_Vertex = ftransform();\n}";
+		String demo = "void main(){\n\tgl_Position = ftransform();\n\tgl_FrontColor = gl_Color;\n\tgl_FrontSecondaryColor = gl_SecondaryColor;\n}";
 		shaderPool.add(demo);	//demo page 1
 		shaderType.add(EnumShaderType.VERTEX.ordinal());
 		String demoTitle = "Untitled";
@@ -236,10 +236,11 @@ public class GlslEditor
 		"samplerCube", "sampler1DShadow", "sampler2DShadow",				//OpenGL specifications
 		"uniform", "attribute", "varying", "in", "out", "inout", "shared",	//OpenGL shader scope
 		"gl_DepthRangeParameters", "gl_PointParameters", "gl_MaterialParameters", "gl_LightSourceParameters",
+		"gl_LightModelParameters", "gl_LightModelProducts", "gl_LightProducts", "gl_FogParameters"
 		}, Color.BLUE);
 		
 		KeywordScheme glConstants = new KeywordScheme(new String[]{
-		"gl_Color", "gl_SecondaryColor", "gl_Normal", "gl_Vertex", "gl_MaxTextureCoords",
+		"gl_Color", "gl_SecondaryColor", "gl_Normal", "gl_Vertex", "gl_MaxTextureCoords", "gl_MaxLights",
 		"gl_MultiTexCoord0", "gl_MultiTexCoord1", "gl_MultiTexCoord2",
 		"gl_MultiTexCoord3", "gl_MultiTexCoord4", "gl_MultiTexCoord5",
 		"gl_MultiTexCoord6", "gl_MultiTexCoord7", "gl_FogCoord",
@@ -247,7 +248,11 @@ public class GlslEditor
 		"gl_FrontColor", "gl_BackColor", "gl_FrontSecondaryColor", "gl_BackSecondaryColor",		//Vertex shader keywords.
 		"gl_FragCoord", "gl_FrontFacing", "gl_FragColor", "gl_FragDepth",						//Fragment shader keywords.
 		"gl_ModelViewMatrix", "gl_ProjectionMatrix", "gl_ModelViewProjectionMatrix", "gl_NormalMatrix", "gl_TextureMatrix",
-		"gl_NormalScale", "gl_DepthRange", "gl_ClipPlane", "gl_Point", "gl_FrontMaterial", "gl_BackMaterial", "gl_LightSource"//Shared state.
+		"gl_NormalScale", "gl_DepthRange", "gl_ClipPlane", "gl_Point", "gl_FrontMaterial", "gl_BackMaterial", "gl_LightSource",
+		"gl_LightModel", "gl_FrontLightModelProduct", "gl_BackLightModelProduct",
+		"gl_FrontLightProduct", "gl_BackLightProduct", "gl_Fog",
+		"gl_TextureEnvColor", "gl_EyePlaneS", "gl_EyePlaneT", "gl_EyePlaneR", "gl_EyePlaneQ",
+		"gl_ObjectPlaneS", "gl_ObjectPlaneT", "gl_ObjectPlaneR", "gl_ObjectPlaneQ"//Shared state.
 		}, Color.CYAN.darker());
 		
 		KeywordScheme marcos = new KeywordScheme(new String[]
@@ -259,7 +264,20 @@ public class GlslEditor
 		
 		KeywordScheme control = new KeywordScheme(new String[]{
 		"if", "else", "while", "for", "switch", "case", "default", "do", "continue", "return",		//Controls.
-		"sin", "cos", "dot", "ftransform"		//GL shader builtins.
+		"radians", "degrees", "sin", "cos", "tan", "asin", "acos", "atan",  	//Flow controls.
+		"pow", "exp2", "log2", "sqrt", "inversesqrt", "abs", "sign",  
+		"floor", "ceil", "fract", "mod", "min", "max", "clamp", "mix", "step", "smoothstep",
+		"length", "distance", "dot", "cross", "normalize", "ftransform", "faceforward", "reflect",
+		"matrixcompmult", "lessThan", "lessThanEqual", "greaterThan", "greaterThanEqual",
+		"equal", "notEqual", "any", "all", "not",			//GL shader builtins.
+		"texture1D", "texture1DProj", "texture1DLod", "texture1DProjLod",
+		"shadow1D", "shadow1DProj", "shadow1DLod", "shadow1DProjLod", 
+		"texture2D", "texture2DProj", "texture2DLod", "texture2DProjLod",
+		"shadow2D", "shadow2DProj", "shadow2DLod", "shadow2DProjLod",
+		"texture3D", "texture3DProj", "texture3DLod", "texture3DProjLod",
+		"textureCube", "textureCubeLod", //GL texture access.
+		"dFdx", "dFdy", "fwidth",	//GL fragment shader differentials.
+		"noise1", "noise2", "noise3", "noise4"	//Perlin noises
 		}, Color.magenta.darker());
 		
 		KeywordHighlight kw = new KeywordHighlight(this.editingArea.getDocument(), new KeywordScheme[]{type, glConstants, control, marcos});
