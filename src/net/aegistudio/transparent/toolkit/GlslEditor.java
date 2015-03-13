@@ -40,6 +40,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import org.lwjgl.opengl.ARBShaderObjects;
+
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.glsl.EnumShaderType;
 import net.aegistudio.transparent.opengl.glsl.Shader;
@@ -95,6 +97,9 @@ public class GlslEditor
 						legacyShaderProgram.destroy();
 						
 						for(Shader shader : legacyShaders) shader.destroy();
+						
+						legacyShaderProgram = null;
+						legacyShaders = null;
 					}
 					
 					if(shaderProgram != null) try
@@ -113,10 +118,19 @@ public class GlslEditor
 						legacyShaders = null;
 						JOptionPane.showConfirmDialog(null, "Error while creating shader, caused by: \n" + e.getMessage(), "Shader Creation Failure!", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
 					}
+					flushCurrentShader = false;
 				}
 				
 				if(legacyShaderProgram != null)
+				{
 					legacyShaderProgram.bind();
+					if(this.texture != null)
+					{
+						int uniformShaderPos = legacyShaderProgram.getUniformVariable("sampler");
+						if(uniformShaderPos >= 0) ARBShaderObjects.glUniform1iARB(uniformShaderPos, 0);
+					}
+				}
+				
 				super.onDraw(container);
 				if(legacyShaderProgram != null)
 					legacyShaderProgram.unbind();
@@ -728,8 +742,12 @@ public class GlslEditor
 					Shader shader = new Shader(shaderPool.get(i), shaderTypes[shaderType.get(i)]);
 					shaders.add(shader);
 				}
-				GlslEditor.this.shaders = shaders.toArray(new Shader[0]);
-				shaderProgram = new ShaderProgram(GlslEditor.this.shaders);
+				if(shaders.size() <= 0) flushCurrentShader = true;
+				else
+				{
+					GlslEditor.this.shaders = shaders.toArray(new Shader[0]);
+					shaderProgram = new ShaderProgram(GlslEditor.this.shaders);
+				}
 			}
 		});
 		this.assembler.add(this.execute);

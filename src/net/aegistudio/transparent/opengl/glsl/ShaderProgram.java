@@ -108,4 +108,9 @@ public class ShaderProgram implements Scoped, Bindable
 		this.destroy();
 		super.finalize();
 	}
+	
+	public int getShaderProgramId()
+	{
+		return this.shaderProgramId;
+	}
 }
