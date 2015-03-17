@@ -1,7 +1,7 @@
 package net.aegistudio.transparent.opengl.util;
 
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.GL11;
 
@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
  * @author aegistudio
  */
 
-public abstract class DisplayList implements Scoped
+public abstract class DisplayList implements Resource
 {
 	private int displayListId = 0;
 	private final int displayListRange;
@@ -28,12 +28,12 @@ public abstract class DisplayList implements Scoped
 		this(1);
 	}
 	
-	public int create()
+	public void create()
 	{
-		return this.create(false, false);
+		this.create(false, false);
 	}
 	
-	public int create(boolean force_recompile, boolean compile_and_execute)
+	public void create(boolean force_recompile, boolean compile_and_execute)
 	{
 		if((this.displayListId == 0) || force_recompile)
 		{
@@ -50,6 +50,10 @@ public abstract class DisplayList implements Scoped
 				GL11.glEndList();
 			}
 		}
+	}
+	
+	public int getDisplayListId()
+	{
 		return this.displayListId;
 	}
 	

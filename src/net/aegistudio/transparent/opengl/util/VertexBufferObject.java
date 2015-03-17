@@ -4,7 +4,7 @@ import java.nio.Buffer;
 
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GLContext;
@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GLContext;
  * @author aegistudio
  */
 
-public class VertexBufferObject implements Scoped, Bindable
+public class VertexBufferObject implements Resource, Bindable
 {
 	private int bufferId = 0;
 	private final int bufferSize;
@@ -53,7 +53,7 @@ public class VertexBufferObject implements Scoped, Bindable
 	 * Creates a vertex buffer object in the VRAM and returns the created id.
 	 * @return the created VBO indentity.
 	 */
-	public int create()
+	public void create()
 	{
 		if(this.bufferId == 0)
 		{
@@ -65,6 +65,10 @@ public class VertexBufferObject implements Scoped, Bindable
 			BufferHelper.getBufferProcessor(bufferType).bufferData(bufferTarget, buffer, bufferUsage);
 			ARBVertexBufferObject.glBindBufferARB(bufferTarget, 0);
 		}
+	}
+	
+	public int getBufferObjectId()
+	{
 		return this.bufferId;
 	}
 	

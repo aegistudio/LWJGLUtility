@@ -2,13 +2,13 @@ package net.aegistudio.transparent.opengl.util;
 
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.Drawable;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-public class FrameBufferObject implements Drawable, Scoped
+public class FrameBufferObject implements Drawable, Resource
 {
 	private int bufferId = 0;
 	private final Drawable drawable;
@@ -36,14 +36,13 @@ public class FrameBufferObject implements Drawable, Scoped
 		this.savingAttribute = attributeBit;
 	}
 	
-	public int create()
+	public void create()
 	{
 		if(this.bufferId == 0)
 		{
 			if(!GLContext.getCapabilities().GL_ARB_framebuffer_object) throw new FeatureNotSupportedException("frame buffer object");
 			this.bufferId = ARBFramebufferObject.glGenFramebuffers();
 		}
-		return this.bufferId;
 	}
 	
 	public void destroy()
@@ -63,10 +62,16 @@ public class FrameBufferObject implements Drawable, Scoped
 	@Override
 	public void onInit(Container container)
 	{
-		if(this.create() == 0) throw new RuntimeException("Could not create the corresponding FBO object!");
+		this.create();
+		if(this.bufferId == 0) throw new RuntimeException("Could not create the corresponding FBO object!");
 		this.drawable.onInit(container);
 	}
 
+	public int getBufferObjectId()
+	{
+		return this.bufferId;
+	}
+	
 	@Override
 	public void onDraw(Container container)
 	{

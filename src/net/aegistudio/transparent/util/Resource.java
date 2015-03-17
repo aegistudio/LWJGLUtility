@@ -1,8 +1,8 @@
 package net.aegistudio.transparent.util;
 
-public interface Scoped
+public interface Resource
 {
-	public int create();
+	public void create();
 	
 	public void destroy();
 }

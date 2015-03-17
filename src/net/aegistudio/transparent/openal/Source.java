@@ -1,11 +1,11 @@
 package net.aegistudio.transparent.openal;
 
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.openal.AL10;
 
-public class Source implements Scoped
+public class Source implements Resource
 {
 	private int sourceId;
 	private Wave wave;
@@ -23,11 +23,11 @@ public class Source implements Scoped
 	public void wave(Wave wave)
 	{
 		this.wave = wave;
-		AL10.alSourcei(sourceId, AL10.AL_BUFFER, (this.wave == null)? 0 : this.wave.create());
+		AL10.alSourcei(sourceId, AL10.AL_BUFFER, (this.wave == null)? 0 : this.wave.getBufferId());
 	}
 	
 	@Override
-	public int create()
+	public void create()
 	{
 		if(this.sourceId == 0)
 		{
@@ -42,9 +42,13 @@ public class Source implements Scoped
 			this.gain(this.gain);
 			this.looping(this.looping);
 		}
-		return this.sourceId;
 	}
 
+	public int getSourceId()
+	{
+		return this.sourceId;
+	}
+	
 	private float x = 0, y = 0, z = 0;
 	
 	public void position(float x, float y, float z)

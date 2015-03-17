@@ -6,9 +6,10 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.BindingFailureException;
+import net.aegistudio.transparent.util.Resource;
 
-public class Listener implements Scoped
+public class Listener implements Resource
 {
 	
 	public Listener()
@@ -17,13 +18,12 @@ public class Listener implements Scoped
 	}
 	
 	@Override
-	public int create()
+	public void create()
 	{
-		if(!AL.isCreated()) return AL10.AL_FALSE;
+		if(!AL.isCreated()) throw new BindingFailureException("The OpenAL must be created before creating listener!");
 		AL10.alListener3f(AL10.AL_POSITION, x, y, z);
 		AL10.alListener3f(AL10.AL_VELOCITY, velX, velY, velZ);
 		AL10.alListener(AL10.AL_ORIENTATION, this.orientation);
-		return AL10.AL_TRUE;
 	}
 	
 	@Override

@@ -2,13 +2,13 @@ package net.aegistudio.transparent.opengl.texture;
 
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.ARBMultitexture;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-public abstract class Texture implements Scoped, Bindable
+public abstract class Texture implements Resource, Bindable
 {
 	protected int textureId = 0;
 	protected int pixelFormat;
@@ -17,11 +17,11 @@ public abstract class Texture implements Scoped, Bindable
 	protected int height;
 	protected int texTarget;
 	
-	public abstract int create(int innerFormat, int mipmapLevels);
+	public abstract void create(int innerFormat, int mipmapLevels);
 	
-	public int create()
+	public void create()
 	{
-		return this.create(this.pixelFormat, 0);
+		this.create(this.pixelFormat, 0);
 	}
 	
 	protected void settingTextureParameters()
@@ -87,12 +87,6 @@ public abstract class Texture implements Scoped, Bindable
 	{
 		ARBMultitexture.glMultiTexCoord4dARB(ARBMultitexture.GL_TEXTURE0_ARB + textureBias, s, t, r, q);
 		GL11.glVertex3d(x, y, z);
-	}
-	
-	public void finalize() throws Throwable
-	{
-		this.destroy();
-		super.finalize();
 	}
 	
 	protected int textureBias = -1;

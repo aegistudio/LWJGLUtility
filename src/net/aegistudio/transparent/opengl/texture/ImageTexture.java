@@ -45,7 +45,7 @@ public class ImageTexture extends Texture
 		this.buffer = processor.makeBuffer(texture);
 	}
 
-	public int create(int innerFormat, int mipmapLevels)
+	public void create(int innerFormat, int mipmapLevels)
 	{
 		if(this.textureId == 0)
 		{
@@ -57,6 +57,5 @@ public class ImageTexture extends Texture
 			this.processor.texImage2D(texTarget, mipmapLevels, innerFormat, width, height, 0, pixelFormat, buffer);
 			GL11.glBindTexture(texTarget, 0);
 		}
-		return this.textureId;
 	}
 }

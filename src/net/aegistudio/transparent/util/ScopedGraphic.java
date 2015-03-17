@@ -5,9 +5,9 @@ import net.aegistudio.transparent.opengl.Drawable;
 
 public class ScopedGraphic implements Drawable
 {
-	protected final Scoped scopedGraphic;
+	protected final Resource scopedGraphic;
 	
-	public ScopedGraphic(Scoped scopedGraphic)
+	public ScopedGraphic(Resource scopedGraphic)
 	{
 		this.scopedGraphic = scopedGraphic;
 	}

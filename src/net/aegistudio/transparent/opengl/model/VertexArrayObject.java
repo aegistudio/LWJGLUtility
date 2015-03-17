@@ -6,13 +6,13 @@ import org.lwjgl.opengl.GLContext;
 import net.aegistudio.transparent.opengl.util.FeatureNotSupportedException;
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
-public class VertexArrayObject implements Scoped, Bindable
+public class VertexArrayObject implements Resource, Bindable
 {
 	protected int arrayObjectId = 0;
 	
-	public int create()
+	public void create()
 	{
 		if(this.arrayObjectId == 0)
 		{
@@ -20,6 +20,10 @@ public class VertexArrayObject implements Scoped, Bindable
 			this.arrayObjectId = ARBVertexArrayObject.glGenVertexArrays();
 			if(this.arrayObjectId == 0) throw new BindingFailureException("Fail to create space for the vertex array object!");
 		}
+	}
+	
+	public int getArrayObjectId()
+	{
 		return this.arrayObjectId;
 	}
 	

@@ -4,13 +4,13 @@ import java.util.HashMap;
 
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-public class ShaderProgram implements Scoped, Bindable
+public class ShaderProgram implements Resource, Bindable
 {
 	private Shader[] shaders;
 	private int shaderProgramId = 0;
@@ -23,7 +23,7 @@ public class ShaderProgram implements Scoped, Bindable
 		this.shaders = shaders;
 	}
 	
-	public int create()
+	public void create()
 	{
 		if(this.shaderProgramId == 0)
 		{
@@ -58,9 +58,7 @@ public class ShaderProgram implements Scoped, Bindable
 				throw re;
 			}
 		}
-		return shaderProgramId;
 	}
-	
 	public void bind()
 	{
 		if(this.shaderProgramId == 0) throw new RuntimeException("You must create the shader program object before binding it!");

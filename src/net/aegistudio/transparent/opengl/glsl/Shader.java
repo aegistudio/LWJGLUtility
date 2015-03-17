@@ -7,13 +7,13 @@ import java.io.FileReader;
 
 import net.aegistudio.transparent.opengl.util.FeatureNotSupportedException;
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-public class Shader implements Scoped
+public class Shader implements Resource
 {
 	private String glslSource;
 	private EnumShaderType glslShaderType;
@@ -26,7 +26,7 @@ public class Shader implements Scoped
 		this.glslShaderId = 0;
 	}
 	
-	public int create()
+	public void create()
 	{
 		if(this.glslShaderId == 0)
 		{
@@ -51,7 +51,6 @@ public class Shader implements Scoped
 				throw compileFailureException;
 			}
 		}
-		return this.glslShaderId;
 	}
 	
 	public void destroy()

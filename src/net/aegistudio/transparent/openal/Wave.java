@@ -7,12 +7,12 @@ import java.net.URL;
 import javax.sound.sampled.AudioSystem;
 
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
 
-public class Wave implements Scoped
+public class Wave implements Resource
 {
 	private final WaveData waveData;
 	
@@ -33,7 +33,7 @@ public class Wave implements Scoped
 	
 	private int bufferId = 0;
 	
-	public int create()
+	public void create()
 	{
 		if(this.waveData == null) throw new BindingFailureException("The wave data to be buffered is invalid!");
 		if(this.bufferId == 0)
@@ -44,9 +44,13 @@ public class Wave implements Scoped
 			AL10.alBufferData(this.bufferId, this.waveData.format, this.waveData.data, this.waveData.samplerate);
 			this.waveData.dispose();
 		}
-		return this.bufferId;
 	}
 
+	public int getBufferId()
+	{
+		return this.bufferId;
+	}
+	
 	@Override
 	public void destroy()
 	{

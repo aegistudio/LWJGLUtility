@@ -37,7 +37,7 @@ public class RenderTexture extends Texture
 		this.attachments = attachments;
 	}
 	
-	public int create(int innerFormat, int mipmapLevels)
+	public void create(int innerFormat, int mipmapLevels)
 	{
 		if(this.textureId == 0)
 		{
@@ -49,11 +49,11 @@ public class RenderTexture extends Texture
 			GL11.glTexImage2D(texTarget, mipmapLevels, innerFormat, this.width, this.height, 0, this.pixelFormat, this.pixelType, (ByteBuffer)null);
 			GL11.glBindTexture(texTarget, 0);
 			
-			int fboId = this.fbo.create();
+			this.fbo.create();
+			int fboId = this.fbo.getBufferObjectId();
 			ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, fboId);
 			for(int attachment : this.attachments) ARBFramebufferObject.glFramebufferTexture2D(ARBFramebufferObject.GL_FRAMEBUFFER, attachment, texTarget, textureId, mipmapLevels);
 			ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, 0);
 		}
-		return this.textureId;
 	}
 }

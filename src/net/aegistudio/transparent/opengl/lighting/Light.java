@@ -7,9 +7,9 @@ import org.lwjgl.opengl.GL11;
 
 import net.aegistudio.transparent.util.Bindable;
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
-public class Light implements Scoped, Bindable
+public class Light implements Resource, Bindable
 {
 	private static boolean[] allocated = null;
 	protected boolean isColorDirty = true;
@@ -70,7 +70,7 @@ public class Light implements Scoped, Bindable
 	}
 	
 	@Override
-	public int create()
+	public void create()
 	{
 		if(!isCreated)
 		{
@@ -85,6 +85,10 @@ public class Light implements Scoped, Bindable
 			}
 			if(!isCreated) throw new BindingFailureException("Unable to create more space for this light!");
 		}
+	}
+	
+	public int getLightIndex()
+	{
 		return lightIndex;
 	}
 

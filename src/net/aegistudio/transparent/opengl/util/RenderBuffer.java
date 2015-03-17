@@ -1,12 +1,12 @@
 package net.aegistudio.transparent.opengl.util;
 
 import net.aegistudio.transparent.util.BindingFailureException;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.GL11;
 
-public class RenderBuffer implements Scoped
+public class RenderBuffer implements Resource
 {
 	private final FrameBufferObject fbo;
 	private final int internalFormat;
@@ -32,7 +32,7 @@ public class RenderBuffer implements Scoped
 		this(fbo, GL11.GL_RGBA, width, height, attachments);
 	}
 	
-	public int create(int samples)
+	public void create(int samples)
 	{
 		if(this.rboId == 0)
 		{
@@ -43,17 +43,22 @@ public class RenderBuffer implements Scoped
 			if(samples <= 0) ARBFramebufferObject.glRenderbufferStorage(ARBFramebufferObject.GL_RENDERBUFFER, internalFormat, width, height);
 			else ARBFramebufferObject.glRenderbufferStorageMultisample(ARBFramebufferObject.GL_RENDERBUFFER, samples, internalFormat, width, height);
 			
-			int fboId = this.fbo.create();
+			this.fbo.create();
+			int fboId = this.fbo.getBufferObjectId();
 			ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, fboId);
 			for(int attachment : this.attachments) ARBFramebufferObject.glFramebufferRenderbuffer(ARBFramebufferObject.GL_FRAMEBUFFER, attachment, ARBFramebufferObject.GL_RENDERBUFFER, rboId);
 			ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, 0);
 		}
+	}
+	
+	public int getBufferObjectId()
+	{
 		return this.rboId;
 	}
 	
-	public int create()
+	public void create()
 	{
-		return this.create(0);
+		this.create(0);
 	}
 	
 	public void destroy()

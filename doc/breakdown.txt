@@ -78,23 +78,58 @@ containing elements. It would be another container, or just an end graphic objec
 the structure, we could see the top level container (provided by the rendering context) as the 
 root, the end graphic elements as leaves, and containers as branches.
 
-	                                             <<instance_of>> +-------------------------+
-	+-------------+       +-------------+           +----------|>|        Drawable         |
-	|  Context    |<|-----|   context   |           |            +=========================+
-	+-------------+       +------+------+           |                         ^
-	                             |<<call>>          |                         +  <<extend>>
-	                             v                  |        +-------------------------------------+
-	                  +---------------------+ <<generalize>> |           <<interface>>             |
-		              | top level container | ------+-----|> |             Container               |
-	                  +---------------------+       |        +=====================================+
-	               <<call>>|    ...    |            |        |+ register(drawable: Drawable):void  |
-	                       v           v            |        |+ unregister(drawable: Drawable):void|
-	                 +---------+    /---------/     |        +-------------------------------------+
-	                 |container|   / graphic / -----+
-	                 +---------+  /---------/       |
-	                      |<<call>>                 |
-	                      v                         |
-	                 /-------/                      |
-	                /graphic/  .... ----------------+
-	               /-------/
+	                                          <<instance_of>> +-------------------------+
+	+----------+       +-------------+           +----------|>|        Drawable         |
+	| Context  |<|-----|   context   |           |            +=========================+
+	+----------+       +------+------+           |                         ^
+	                          |<<call>>          |                         +  <<extend>>
+	                          v                  |        +-------------------------------------+
+	               +---------------------+ <<generalize>> |           <<interface>>             |
+	               | top level container | ------+-----|> |             Container               |
+	               +---------------------+       |        +=====================================+
+	            <<call>>|    ...    |            |        |+ register(drawable: Drawable):void  |
+	                    v           v            |        |+ unregister(drawable: Drawable):void|
+	              +---------+    /---------/     |        +-------------------------------------+
+	              |container|   / graphic / -----+
+	              +---------+  /---------/       |
+	                   |<<call>>                 |
+	                   v                         |
+	              /-------/                      |
+	             /graphic/  .... ----------------+
+	            /-------/
+	(The actual method of registering and unregistering drawables will vary from different container
+implementation, and different container may provide more functions.)
+ 
+	When a drawable element is added to the container, it will be initialized once being attached 
+to the context and being controlled by its container element or context. And its de-constructor
+method will be called once being detached from its parent.
+ 
+	A drawable could be attached again once removed, which means controlling graphics as modules 
+will be possible. For example, a game may have different scenes, inside each scene the things to 
+draw will be the same, so you could put a scene into a container, and switch between them through 
+attach-detach methods.
 
+4. Resource Management
+----------------------
+
+	Though Java provides garbage collector which simplifies the design of object-oriented program, 
+resources still need to be managed. The greatest problem for resource management comes from the
+thread save usage of contexts. Many resources could only be created and destroyed under contexts,
+and garbage collector could not recycle these resources, and may cause resource leak.
+
+	Management of resources will be hard as the scope of a resource and its owner object may be 
+different. For example, you might use the same character model in the game to draw many NPCs of
+the same kind. The model may have its own vertices, normals, texture coordinates, textures, etc.
+These will always be stored in the VRAM and it would not be recycled until program request the
+recycle of resource, or the context is destroyed. Though not recycling resources will not do 
+harm to your computer (or your users), it might burn out of precious VRAM spaces and cause
+misbehaviors of your program.
+
+	There's another simplest model for resource management, which is called "resource pack". A 
+resource pack will be a container as we introduced previously, so it could manage the birth and 
+death of the resources. We call it a "pack" since we would like to create and remove a set of 
+resources in a time. These resources should have some linkages, like they are all data of a scene,
+so they could be removed together with their scene.
+
+	Users of our library could manage the resource by themselves, since we can't figure out the 
+best way of controlling resources.

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import net.aegistudio.transparent.opengl.model.Model;
 import net.aegistudio.transparent.opengl.util.VertexBufferObject;
-import net.aegistudio.transparent.util.Scoped;
+import net.aegistudio.transparent.util.Resource;
 
 /**
  * Please register this wavefront Model under the GL context so that 
@@ -12,7 +12,7 @@ import net.aegistudio.transparent.util.Scoped;
  * @author aegistudio.
  */
 
-public class WavefrontModel implements Scoped
+public class WavefrontModel implements Resource
 {
 	protected final Map<String, Model> objModels;
 	protected final Map<String, VertexBufferObject[]> vboResources;
@@ -40,9 +40,8 @@ public class WavefrontModel implements Scoped
 	}
 
 	@Override
-	public int create()
+	public void create()
 	{
-		return 0;
 	}
 	
 	@Override
