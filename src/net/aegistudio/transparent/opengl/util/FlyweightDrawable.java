@@ -27,9 +27,9 @@ public class FlyweightDrawable implements Drawable
 	}
 
 	@Override
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
-		this.flyweight.onDraw(container);
+		this.flyweight.onUpdate(container);
 	}
 
 	@Override

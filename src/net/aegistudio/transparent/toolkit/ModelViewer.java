@@ -52,7 +52,7 @@ import net.aegistudio.transparent.opengl.lighting.Light;
 import net.aegistudio.transparent.opengl.model.Model;
 import net.aegistudio.transparent.opengl.texture.Texture;
 import net.aegistudio.transparent.opengl.util.FlyweightDrawable;
-import net.aegistudio.transparent.util.ScopedGraphic;
+import net.aegistudio.transparent.util.GraphicResource;
 import net.aegistudio.transparent.wavefront.WavefrontBuilder;
 import net.aegistudio.transparent.wavefront.WavefrontModel;
 
@@ -66,7 +66,7 @@ public class ModelViewer extends Canvas
 {
 	Frame thisFrame;
 	
-	WavefrontModel wavefrontModel = null;	ScopedGraphic scoping_wavefrontModel = null;
+	WavefrontModel wavefrontModel = null;	GraphicResource scoping_wavefrontModel = null;
 	Model renderingModel = null;	FlyweightDrawable fw_renderingModel = null;
 	Scene renderingScene = new Scene();
 	WrappedAWTGLCanvas canvas;
@@ -77,7 +77,7 @@ public class ModelViewer extends Canvas
 		this.loggerList.setModel(new DefaultListModel<String>());
 	}
 	
-	Texture texture = null; ScopedGraphic scoping_texture = null;
+	Texture texture = null; GraphicResource scoping_texture = null;
 	
 	Light light = new Light();
 	
@@ -100,7 +100,7 @@ public class ModelViewer extends Canvas
 	}
 	
 	@Override
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
 		light.position(0, 0, -1, 0);
 		light.bind();
@@ -109,7 +109,7 @@ public class ModelViewer extends Canvas
 			ModelViewer.this.texture.create();
 			ModelViewer.this.texture.bind();
 		}
-		super.onDraw(container);
+		super.onUpdate(container);
 		if(ModelViewer.this.texture != null) ModelViewer.this.texture.unbind();
 	}
 	
@@ -402,7 +402,7 @@ public class ModelViewer extends Canvas
 			}
 			modelList.setModel(listmodel);
 		}
-		this.scoping_wavefrontModel = new ScopedGraphic(wavefrontModel);
+		this.scoping_wavefrontModel = new GraphicResource(wavefrontModel);
 		canvas.registerDrawable(this.scoping_wavefrontModel);
 	}
 	
@@ -411,7 +411,7 @@ public class ModelViewer extends Canvas
 		if(tex == null) return;
 		if(texture != null) canvas.unregisterDrawable(this.scoping_texture);
 		texture = ImageUtils.createImageTexture(new FileInputStream(tex));
-		this.scoping_wavefrontModel = new ScopedGraphic(texture);
+		this.scoping_wavefrontModel = new GraphicResource(texture);
 		canvas.registerDrawable(scoping_texture);
 	}
 	

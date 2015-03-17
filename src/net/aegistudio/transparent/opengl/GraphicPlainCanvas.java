@@ -44,10 +44,10 @@ public class GraphicPlainCanvas extends Canvas
 	}
 	
 	@Override
-	public void onDraw(Container canvas)
+	public void onUpdate(Container canvas)
 	{
 		this.graphicPlainCanvasCallback.call(0);
-		super.onDraw(canvas);
+		super.onUpdate(canvas);
 	}
 	
 	@Override

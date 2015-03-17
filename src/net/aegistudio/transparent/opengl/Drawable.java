@@ -15,9 +15,9 @@ public interface Drawable
 	
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Draw{}
+	public @interface Update{}
 	
-	public void onDraw(Container container);
+	public void onUpdate(Container container);
 	
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)

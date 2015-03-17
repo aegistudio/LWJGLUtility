@@ -49,7 +49,7 @@ context, so a de-constructor will be needed, or Drawable.onDestroy in our librar
 		|             Drawable               |   <<call>>      |        Context         |
 		+====================================+ <---------------+========================+
 		|+ onInit(parent: Container): void   |                 |+ initContext(): void   |
-		|+ onDraw(parent: Container): void   |                 |+ update(): void        |
+		|+ onUpdate(parent: Container): void |                 |+ update(): void        |
 		|+ onDestroy(parent: Container): void|                 |+ releaseContext(): void|
 		+------------------------------------+                 +------------------------+
 	(The context interface does not actually exists in our library, but is provided by its 

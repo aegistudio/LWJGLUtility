@@ -55,7 +55,7 @@ public abstract class Canvas implements Container
 		else return false;
 	}
 	
-	public synchronized void onDraw(Container canvas)
+	public synchronized void onUpdate(Container canvas)
 	{
 		while(!this.pendingDrawables.isEmpty())
 		{
@@ -63,7 +63,7 @@ public abstract class Canvas implements Container
 			pending.onInit(this);
 			drawable.add(pending);
 		}
-		for(Drawable drawable : drawable) drawable.onDraw(this);
+		for(Drawable drawable : drawable) drawable.onUpdate(this);
 		while(!this.removingDrawables.isEmpty())
 		{
 			Drawable removing = this.removingDrawables.remove();

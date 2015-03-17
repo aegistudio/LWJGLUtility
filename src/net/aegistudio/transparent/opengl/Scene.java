@@ -14,7 +14,7 @@ public class Scene extends LocatedContainer
 		super(container);
 	}
 	
-	public void onDraw(Container canvas)
+	public void onUpdate(Container canvas)
 	{
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
@@ -23,7 +23,7 @@ public class Scene extends LocatedContainer
 		GL11.glRotated(roty, 0, 1, 0);
 		GL11.glRotated(rotz, 0, 0, 1);
 		GL11.glScaled(scalex, scaley, scalez);
-		theContainer.onDraw(canvas);
+		theContainer.onUpdate(canvas);
 		GL11.glPopMatrix();
 	}
 }

@@ -94,7 +94,7 @@ public class Model implements Drawable
 	}
 	
 	@Override
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
 		vao.bind();
 		GL11.glDrawArrays(primitiveMode, 0, vertices_count);

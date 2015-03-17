@@ -73,7 +73,7 @@ public class FrameBufferObject implements Drawable, Resource
 	}
 	
 	@Override
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
 		ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, this.bufferId);
 		int fbo_status = ARBFramebufferObject.glCheckFramebufferStatus(ARBFramebufferObject.GL_FRAMEBUFFER);
@@ -82,7 +82,7 @@ public class FrameBufferObject implements Drawable, Resource
 			GL11.glPushAttrib(savingAttribute);
 			GL11.glViewport(0, 0, viewportWidth, viewportHeight);
 			if(this.scanvager != null) this.scanvager.scanvage();
-			this.drawable.onDraw(container);
+			this.drawable.onUpdate(container);
 			GL11.glPopAttrib();
 		}
 		ARBFramebufferObject.glBindFramebuffer(ARBFramebufferObject.GL_FRAMEBUFFER, 0);

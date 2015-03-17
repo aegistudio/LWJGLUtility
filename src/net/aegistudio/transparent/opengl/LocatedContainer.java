@@ -41,9 +41,9 @@ public abstract class LocatedContainer implements Container
 	}
 	
 	@Override
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
-		this.theContainer.onDraw(container);
+		this.theContainer.onUpdate(container);
 	}
 	
 	@Override

@@ -113,7 +113,7 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 				else GL11.glViewport(0, 0, width, height);
 			}
 			
-			this.onDraw(null);
+			this.onUpdate(null);
 			swapBuffers();
 		}
 		catch(Exception exception)
@@ -151,10 +151,10 @@ public class WrappedAWTGLCanvas extends AWTGLCanvas implements Container
 	}
 
 	@Override
-	public void onDraw(Container canvas)
+	public void onUpdate(Container canvas)
 	{
 		if(this.scanvager != null) this.scanvager.scanvage();
-		this.theContainer.onDraw(canvas);
+		this.theContainer.onUpdate(canvas);
 	}
 
 	@Override

@@ -87,7 +87,7 @@ public class GlslEditor
 	{
 		modelviewer = new ModelViewer()
 		{
-			public synchronized void onDraw(Container container)
+			public synchronized void onUpdate(Container container)
 			{
 				if(shaderProgram != null || flushCurrentShader)
 				{
@@ -131,7 +131,7 @@ public class GlslEditor
 					}
 				}
 				
-				super.onDraw(container);
+				super.onUpdate(container);
 				if(legacyShaderProgram != null)
 					legacyShaderProgram.unbind();
 			}

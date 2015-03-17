@@ -18,7 +18,7 @@ public class WrappedDrawable implements Drawable
 			Drawable.Init initmethod = method.getAnnotation(Drawable.Init.class);
 			if(initmethod != null) onInitMethod = method;
 			
-			Drawable.Draw drawmethod = method.getAnnotation(Drawable.Draw.class);
+			Drawable.Update drawmethod = method.getAnnotation(Drawable.Update.class);
 			if(drawmethod != null) onDrawMethod = method;
 			
 			Drawable.Destroy destroymethod = method.getAnnotation(Drawable.Destroy.class);
@@ -48,7 +48,7 @@ public class WrappedDrawable implements Drawable
 	}
 
 	@Override
-	public void onDraw(Container canvas)
+	public void onUpdate(Container canvas)
 	{
 		if(this.onDrawMethod != null)
 		try

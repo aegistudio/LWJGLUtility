@@ -25,7 +25,7 @@ public abstract class Camera extends LocatedContainer
 	
 	protected abstract void settingCamera();
 	
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
@@ -38,7 +38,7 @@ public abstract class Camera extends LocatedContainer
 		GL11.glTranslated(-x, -y, -z);
 		
 		this.settingCamera();
-		theContainer.onDraw(container);
+		theContainer.onUpdate(container);
 	}
 	
 	private static final double GL_ANGLE_RATIO = 180.D / Math.PI;

@@ -3,11 +3,11 @@ package net.aegistudio.transparent.util;
 import net.aegistudio.transparent.opengl.Container;
 import net.aegistudio.transparent.opengl.Drawable;
 
-public class ScopedGraphic implements Drawable
+public class GraphicResource implements Drawable
 {
 	protected final Resource scopedGraphic;
 	
-	public ScopedGraphic(Resource scopedGraphic)
+	public GraphicResource(Resource scopedGraphic)
 	{
 		this.scopedGraphic = scopedGraphic;
 	}
@@ -19,7 +19,7 @@ public class ScopedGraphic implements Drawable
 	}
 
 	@Override
-	public void onDraw(Container container)
+	public void onUpdate(Container container)
 	{
 		
 	}
@@ -30,4 +30,8 @@ public class ScopedGraphic implements Drawable
 		this.scopedGraphic.destroy();
 	}
 	
+	public boolean equals(Object object)
+	{
+		return this.scopedGraphic.equals(object);
+	}
 }
