@@ -13,6 +13,7 @@ public class Light implements Resource, Bindable
 {
 	private static boolean[] allocated = null;
 	protected boolean isColorDirty = true;
+	protected boolean isSpotlightDirty = true;
 	
 	public Light()
 	{
@@ -20,6 +21,8 @@ public class Light implements Resource, Bindable
 		this.ambient(0.F, 0.F, 0.F, 1.F);
 		this.diffuse(0.F, 0.F, 0.F, 1.F);
 		this.specular(0.F, 0.F, 0.F, 1.F);
+		this.spotlight(180.F, 0.0F);
+		this.attenuation(1.0F, 0.0F, 0.0F);
 		this.orient(0, 0, -1);
 	}
 	
@@ -92,6 +95,11 @@ public class Light implements Resource, Bindable
 		return lightIndex;
 	}
 
+	public int getLightParameter()
+	{
+		return lightParameter;
+	}
+	
 	protected FloatBuffer position_buffer;
 	
 	/**
@@ -176,9 +184,8 @@ public class Light implements Resource, Bindable
 		this.spotlight_buffer.flip();
 	}
 	
-	protected boolean isSpotlightDirty = true;
-	
-	protected float spotlight_cutoff = 180.F, spotlight_exponent = 0.F;
+	protected float spotlight_cutoff;
+	protected float spotlight_exponent;
 	
 	/**
 	 * Set the other parameters of the spotlight.
@@ -187,11 +194,14 @@ public class Light implements Resource, Bindable
 	 */
 	public void spotlight(float spotlight_cutoff, float spotlight_exponent)
 	{
-		this.spotlight_cutoff = spotlight_cutoff; this.spotlight_exponent = spotlight_exponent;
+		this.spotlight_cutoff = spotlight_cutoff;
+		this.spotlight_exponent = spotlight_exponent;
 		this.isSpotlightDirty = true;
 	}
 	
-	protected float constant = 1.F, linear = 0.F, quadratic = 0.F;
+	protected float constant;
+	protected float linear;
+	protected float quadratic;
 	
 	/**
 	 * The light attenuation equation is L(Attenuation) = L(Origin) / (C + L*R + Q * R^2)
@@ -203,7 +213,9 @@ public class Light implements Resource, Bindable
 	
 	public void attenuation(float constant, float linear, float quadratic)
 	{
-		this.constant = constant; this.linear = linear; this.quadratic = quadratic;
+		this.constant = constant;
+		this.linear = linear;
+		this.quadratic = quadratic;
 		this.isSpotlightDirty = true;
 	}
 	
