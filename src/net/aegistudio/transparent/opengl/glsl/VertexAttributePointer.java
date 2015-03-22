@@ -6,21 +6,19 @@ import net.aegistudio.transparent.opengl.model.ArrayPointer;
 
 public class VertexAttributePointer implements ArrayPointer
 {
-	public ShaderProgram usingShaderProgram;
-	public String vertexAttribName;
-	public int index = 0, size = 1;
+	public VertexAttribute vertexAttribute;
+	public int index = 0, size;
 	public boolean normalized = false;
 	
-	public VertexAttributePointer(ShaderProgram usingShaderProgram, String vertexAttribName)
+	public VertexAttributePointer(VertexAttribute attribute)
 	{
-		this.usingShaderProgram = usingShaderProgram;
-		this.vertexAttribName = vertexAttribName;
+		this.vertexAttribute = attribute;
+		this.size = vertexAttribute.dataType.size;
 	}
 	
 	@Override
 	public void enable()
 	{
-		index = usingShaderProgram.getAttributeVariable(vertexAttribName);
 		GL20.glEnableVertexAttribArray(index);
 	}
 
@@ -45,7 +43,6 @@ public class VertexAttributePointer implements ArrayPointer
 	@Override
 	public int identify()
 	{
-		return 100 + this.vertexAttribName.hashCode();
+		return 100 + this.vertexAttribute.vertexAttributeLocation;
 	}
-	
 }

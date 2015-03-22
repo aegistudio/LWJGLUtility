@@ -40,12 +40,12 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import org.lwjgl.opengl.ARBShaderObjects;
-
 import net.aegistudio.transparent.opengl.Container;
+import net.aegistudio.transparent.opengl.glsl.EnumShaderData;
 import net.aegistudio.transparent.opengl.glsl.EnumShaderType;
 import net.aegistudio.transparent.opengl.glsl.Shader;
 import net.aegistudio.transparent.opengl.glsl.ShaderProgram;
+import net.aegistudio.transparent.opengl.glsl.Uniform;
 
 public class GlslEditor
 {
@@ -87,6 +87,8 @@ public class GlslEditor
 	{
 		modelviewer = new ModelViewer()
 		{
+			Uniform uniform;
+			
 			public synchronized void onUpdate(Container container)
 			{
 				if(shaderProgram != null || flushCurrentShader)
@@ -126,8 +128,8 @@ public class GlslEditor
 					legacyShaderProgram.bind();
 					if(this.texture != null)
 					{
-						int uniformShaderPos = legacyShaderProgram.getUniformVariable("sampler");
-						if(uniformShaderPos >= 0) ARBShaderObjects.glUniform1iARB(uniformShaderPos, 0);
+						uniform = legacyShaderProgram.getUniform("sampler", EnumShaderData.TEXTURE);
+						if(uniform != null) uniform.set(texture);
 					}
 				}
 				

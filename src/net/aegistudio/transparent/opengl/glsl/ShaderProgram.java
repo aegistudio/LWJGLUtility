@@ -79,7 +79,7 @@ public class ShaderProgram implements Resource, Bindable
 		this.shaderProgramId = 0;
 	}
 	
-	public int getUniformVariable(String string)
+	public Uniform getUniform(String string, EnumShaderData shaderData)
 	{
 		Integer uniformVariable = uniformVariables.get(string);
 		if(uniformVariable == null)
@@ -87,10 +87,11 @@ public class ShaderProgram implements Resource, Bindable
 			uniformVariable = ARBShaderObjects.glGetUniformLocationARB(shaderProgramId, string);
 			uniformVariables.put(string, uniformVariable);
 		}
-		return uniformVariable;
+		if(uniformVariable < 0) return null;
+		return new Uniform(uniformVariable, shaderData);
 	}
 	
-	public int getAttributeVariable(String string)
+	public VertexAttribute getVertexAttribute(String string, EnumShaderData shaderData)
 	{
 		Integer attributeVariable = attributeVariables.get(string);
 		if(attributeVariable == null)
@@ -98,7 +99,8 @@ public class ShaderProgram implements Resource, Bindable
 			attributeVariable = ARBVertexShader.glGetAttribLocationARB(shaderProgramId, string);
 			attributeVariables.put(string, attributeVariable);
 		}
-		return attributeVariable;
+		if(attributeVariable < 0) return null;
+		return new VertexAttribute(attributeVariable, shaderData);
 	}
 	
 	public void finalize() throws Throwable
