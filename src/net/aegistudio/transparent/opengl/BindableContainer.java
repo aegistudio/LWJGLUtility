@@ -27,7 +27,7 @@ public class BindableContainer implements Container
 	@Override
 	public void onUpdate(Container container)
 	{
-		while(appendQueue.isEmpty())
+		while(!appendQueue.isEmpty())
 		{
 			Bindable bindable = appendQueue.removeFirst();
 			if(!this.bindables.contains(bindable)) this.bindables.add(bindable);
@@ -40,7 +40,7 @@ public class BindableContainer implements Container
 		for(int i = 0; i < this.bindables.size(); i ++)
 			bindables.get(i).unbind();
 		
-		while(removeQueue.isEmpty())
+		while(!removeQueue.isEmpty())
 		{
 			Bindable bindable = removeQueue.removeFirst();
 			if(this.bindables.contains(bindable)) this.bindables.remove(bindable);
