@@ -21,15 +21,15 @@ public class RenderTexture extends Texture
 	 */
 	public RenderTexture(FrameBufferObject fbo, int width, int height, int... attachments)
 	{
-		this(fbo, EnumPixelFormat.RGBA, EnumDataType.BYTE, width, height, GL11.GL_TEXTURE_2D, attachments);
+		this(fbo, EnumPixelFormat.RGBA, EnumDataType.BYTE, width, height, EnumTextureTarget.PLAIN, attachments);
 	}
 	
-	public RenderTexture(FrameBufferObject fbo, EnumPixelFormat pixelFormat, EnumDataType pixelType, int width, int height, int texTarget, int... attachments)
+	public RenderTexture(FrameBufferObject fbo, EnumPixelFormat pixelFormat, EnumDataType pixelType, int width, int height, EnumTextureTarget texTarget, int... attachments)
 	{
 		if(fbo == null) throw new IllegalArgumentException("The rendering FBO for this texture should not be null!");
 		this.fbo = fbo;
 		
-		this.texTarget = texTarget;
+		this.texTarget = texTarget.texTarget;
 		this.pixelFormat = pixelFormat.stateId;
 		this.pixelType = pixelType.inferGLType();
 		this.width = width;

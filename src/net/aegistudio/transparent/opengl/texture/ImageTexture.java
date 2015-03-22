@@ -16,20 +16,20 @@ public class ImageTexture extends Texture
 	private Buffer buffer;
 	private BufferProcessor processor;
 	
-	public ImageTexture(Image image, int texTarget)
+	public ImageTexture(Image image, EnumTextureTarget texTarget)
 	{
 		this(image.getRasterData(), image.getPixelFormat(), image.getPixelType(), image.getWidth(), image.getHeight(), texTarget);
 	}
 	
 	public ImageTexture(Image image)
 	{
-		this(image, GL11.GL_TEXTURE_2D);
+		this(image, EnumTextureTarget.PLAIN);
 	}
 	
-	public ImageTexture(Object texture, EnumPixelFormat pixelFormat, EnumDataType pixelType, int width, int height, int texTarget)
+	public ImageTexture(Object texture, EnumPixelFormat pixelFormat, EnumDataType pixelType, int width, int height, EnumTextureTarget texTarget)
 	{
 		if(texture == null) throw new IllegalArgumentException("Buffer should not be null!");
-		this.texTarget = texTarget;
+		this.texTarget = texTarget.texTarget;
 		this.pixelFormat = pixelFormat.stateId;
 		this.pixelType = pixelType.inferGLType();
 		this.width = width;

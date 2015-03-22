@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
-
-import org.lwjgl.opengl.GL11;
-
+import net.aegistudio.transparent.opengl.texture.EnumTextureTarget;
 import net.aegistudio.transparent.opengl.texture.ImageTexture;
 import net.aegistudio.transparent.opengl.util.EnumBufferTarget;
 import net.aegistudio.transparent.opengl.util.EnumBufferUsage;
@@ -19,7 +17,7 @@ public final class ImageUtils
 	
 	public static ImageTexture createImageTexture(Image image)
 	{
-		return new ImageTexture(image.getRasterData(), image.getPixelFormat(), image.getPixelType(), image.getWidth(), image.getHeight(), GL11.GL_TEXTURE_2D);
+		return new ImageTexture(image.getRasterData(), image.getPixelFormat(), image.getPixelType(), image.getWidth(), image.getHeight(), EnumTextureTarget.PLAIN);
 	}
 	
 	public static VertexBufferObject createImageVBO(Image image)

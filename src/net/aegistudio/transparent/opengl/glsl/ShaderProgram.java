@@ -59,16 +59,22 @@ public class ShaderProgram implements Resource, Bindable
 			}
 		}
 	}
+	
+	protected static boolean shaderProgramUsing = false;
+	
 	public void bind()
 	{
+		if(shaderProgramUsing) throw new RuntimeException("There's already a shader program in use!");
 		if(this.shaderProgramId == 0) throw new RuntimeException("You must create the shader program object before binding it!");
 		ARBShaderObjects.glUseProgramObjectARB(this.shaderProgramId);
+		shaderProgramUsing = true;
 	}
 	
 	public void unbind()
 	{
 		if(this.shaderProgramId == 0) throw new RuntimeException("You must create the shader program object before unbinding it!");
 		ARBShaderObjects.glUseProgramObjectARB(0);
+		shaderProgramUsing = false;
 	}
 	
 	public void destroy()
