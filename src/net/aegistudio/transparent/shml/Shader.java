@@ -1,4 +1,4 @@
-package net.aegistudio.transparent.shml.dom;
+package net.aegistudio.transparent.shml;
 
 import java.util.ArrayList;
 import java.util.List;

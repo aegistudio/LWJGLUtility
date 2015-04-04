@@ -1,4 +1,4 @@
-package net.aegistudio.transparent.shml.dom;
+package net.aegistudio.transparent.shml;
 
 @SuppressWarnings("serial")
 public class ShaderMarkupException extends Exception

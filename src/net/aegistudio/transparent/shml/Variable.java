@@ -1,4 +1,4 @@
-package net.aegistudio.transparent.shml.dom;
+package net.aegistudio.transparent.shml;
 
 import org.w3c.dom.Node;
 
