@@ -22,13 +22,14 @@ public class ShaderMarkupLanguage extends ShaderMarkupNode
 		super.markups.put("shaders", ShaderProgram.class);
 	}
 	
-	public static void main(String[] arguments) throws Exception
+	public static ShaderMarkupLanguage build(String filename) throws Exception
 	{
 		DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = documentBuilder.newDocumentBuilder();
-		Document document = builder.parse(new File("shader/perPixelLight.shml"));
+		Document document = builder.parse(new File(filename));
 		ShaderMarkupLanguage instance = new ShaderMarkupLanguage();
 		instance.parse(document);
+		return instance;
 	}
 	
 	public void parse(Node node) throws ShaderMarkupException
